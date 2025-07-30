@@ -16,6 +16,10 @@ export async function registerUser(
   username?: string
 ): Promise<UserCredential> {
   try {
+    if (!auth) {
+      throw new Error('Firebase Auth未正确初始化，请检查Firebase配置');
+    }
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     
     // 创建用户资料
@@ -33,6 +37,10 @@ export async function registerUser(
 // 用户登录
 export async function loginUser(email: string, password: string): Promise<UserCredential> {
   try {
+    if (!auth) {
+      throw new Error('Firebase Auth未正确初始化，请检查Firebase配置');
+    }
+
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     
     // 更新最后登录时间
@@ -54,6 +62,9 @@ export async function loginUser(email: string, password: string): Promise<UserCr
 // 用户登出
 export async function logoutUser(): Promise<void> {
   try {
+    if (!auth) {
+      throw new Error('Firebase Auth未正确初始化');
+    }
     await signOut(auth);
   } catch (error) {
     console.error('登出失败:', error);
@@ -63,16 +74,28 @@ export async function logoutUser(): Promise<void> {
 
 // 获取当前用户
 export function getCurrentUser(): User | null {
+  if (!auth) {
+    console.warn('Firebase Auth未初始化');
+    return null;
+  }
   return auth.currentUser;
 }
 
 // 监听用户状态变化
 export function onAuthStateChange(callback: (user: User | null) => void) {
+  if (!auth) {
+    console.warn('Firebase Auth未初始化，返回空的取消订阅函数');
+    // 返回一个空的取消订阅函数
+    return () => {};
+  }
   return onAuthStateChanged(auth, callback);
 }
 
 // 检查用户是否已登录
 export function isUserLoggedIn(): boolean {
+  if (!auth) {
+    return false;
+  }
   return auth.currentUser !== null;
 }
 
