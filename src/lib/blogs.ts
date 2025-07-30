@@ -9,6 +9,7 @@ export type BlogType = {
   author: string
   date: string
   slug: string
+  tags?: string[]
 }
 
 async function importBlog(
@@ -24,6 +25,7 @@ async function importBlog(
   // @ts-expect-error
   return {
     slug: blogFilename.replace(/\.mdx$/, ''),
+    tags: data.tags || [],
     ...data,
   }
 }

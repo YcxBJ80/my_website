@@ -70,6 +70,24 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			// 莫奈色系
+  			monet: {
+  				'blue': '#6C9BD1',      // 莫奈蓝
+  				'blue-light': '#B8D4F0', // 浅莫奈蓝
+  				'blue-dark': '#4A73A8',  // 深莫奈蓝
+  				'green': '#8FBC8F',      // 莫奈绿
+  				'green-light': '#B8D4B8', // 浅莫奈绿
+  				'green-dark': '#6B9A6B',  // 深莫奈绿
+  				'purple': '#9370DB',     // 莫奈紫
+  				'purple-light': '#C4A8E8', // 浅莫奈紫
+  				'purple-dark': '#7051B8', // 深莫奈紫
+  				'pink': '#DDA0DD',       // 莫奈粉
+  				'pink-light': '#F0C4F0',  // 浅莫奈粉
+  				'pink-dark': '#B878B8',   // 深莫奈粉
+  				'yellow': '#F0E68C',     // 莫奈黄
+  				'yellow-light': '#F8F2B8', // 浅莫奈黄
+  				'yellow-dark': '#C8BA70'  // 深莫奈黄
   			}
   		}
   	}
