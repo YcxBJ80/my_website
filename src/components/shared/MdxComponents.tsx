@@ -33,7 +33,7 @@ const CustomLink = (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
 
 export const mdxComponents: MDXComponents = {
   Image: (props: ImageProps) => (
-    <Image {...props} className="my-6 rounded-3xl" />
+    <Image {...props} alt={props.alt || ""} className="my-6 rounded-3xl" />
   ),
   a: CustomLink,
   h1: (props: any) => (

@@ -210,7 +210,7 @@ export default function BlogsIndex() {
               找到 {filteredBlogs.length} 篇相关文章
               {searchTerm && (
                 <span className="ml-2">
-                  关于 "<span className="text-monet-blue font-medium">{searchTerm}</span>"
+                                     关于 &ldquo;<span className="text-monet-blue font-medium">{searchTerm}</span>&rdquo;
                 </span>
               )}
             </div>
