@@ -74,7 +74,7 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
               </div>
             )}
             
-            {/* 统计信息 */}
+            {/* 统计信息和阅读全文 */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-6 text-sm text-muted-foreground">
                 <div className="flex items-center space-x-1">
@@ -96,11 +96,12 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
                   </svg>
                   <span>{blog.comments || 0}</span>
                 </div>
+                
+                {/* 阅读全文按钮 */}
+                <Card.Cta>
+                  <span className="text-monet-blue hover:text-monet-blue-dark ml-4">阅读全文</span>
+                </Card.Cta>
               </div>
-              
-              <Card.Cta>
-                <span className="text-monet-blue hover:text-monet-blue-dark">阅读全文</span>
-              </Card.Cta>
             </div>
           </Card>
         </div>

@@ -6,7 +6,6 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { UserProfile } from '@/components/auth/UserProfile';
 import { getCurrentUser, onAuthStateChange } from '@/lib/auth';
-import { Container } from '@/components/layout/Container';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -41,43 +40,41 @@ export default function AuthPage() {
 
   if (user) {
     return (
-      <div className="min-h-screen bg-background">
-        <Container className="py-16 flex items-center justify-center min-h-screen">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-2xl">
           <UserProfile />
-        </Container>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Container className="py-16 flex items-center justify-center min-h-screen">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-bold text-xl">AI</span>
-            </div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">
-              {isLogin ? '欢迎回来' : '加入我们'}
-            </h1>
-            <p className="text-muted-foreground">
-              {isLogin ? '登录您的AI社团账号' : '创建您的AI社团账号'}
-            </p>
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-gradient-to-br from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-xl">AI</span>
           </div>
-
-          {isLogin ? (
-            <LoginForm 
-              onSuccess={handleAuthSuccess}
-              onSwitchToRegister={() => setIsLogin(false)}
-            />
-          ) : (
-            <RegisterForm 
-              onSuccess={handleAuthSuccess}
-              onSwitchToLogin={() => setIsLogin(true)}
-            />
-          )}
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            {isLogin ? '欢迎回来' : '加入我们'}
+          </h1>
+          <p className="text-muted-foreground">
+            {isLogin ? '登录您的AI社团账号' : '创建您的AI社团账号'}
+          </p>
         </div>
-      </Container>
+
+        {isLogin ? (
+          <LoginForm 
+            onSuccess={handleAuthSuccess}
+            onSwitchToRegister={() => setIsLogin(false)}
+          />
+        ) : (
+          <RegisterForm 
+            onSuccess={handleAuthSuccess}
+            onSwitchToLogin={() => setIsLogin(true)}
+          />
+        )}
+      </div>
     </div>
   );
 }
