@@ -9,8 +9,21 @@ import { Prose } from '@/components/shared/Prose'
 import { CommentSection } from '@/components/blog/CommentSection'
 import { LikeButton } from '@/components/blog/LikeButton'
 import { BlogStatsComponent } from '@/components/blog/BlogStats'
-import { type BlogType } from '@/lib/blogs'
 import { formatDate } from '@/lib/formatDate'
+
+interface BlogData {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  date: string;
+  slug: string;
+  tags?: string[];
+  views?: number;
+  likes?: number;
+  comments?: number;
+  content: string;
+}
 
 function ArrowLeftIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
   return (
@@ -29,7 +42,7 @@ export function BlogLayout({
   blog,
   children,
 }: {
-  blog: BlogType
+  blog: BlogData
   children: React.ReactNode
 }) {
   let router = useRouter()
@@ -67,60 +80,37 @@ export function BlogLayout({
                     <span>{blog.author}</span>
                   </div>
                   
+                  {/* 博客标签 */}
+                  {blog.tags && blog.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {blog.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 text-xs rounded-md bg-monet-blue/10 text-monet-blue border border-monet-blue/20"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
                   {/* 博客统计 */}
                   <BlogStatsComponent blogSlug={blog.slug} />
                 </div>
               </header>
               
               {/* 博客内容 */}
-              <Prose className="mt-8" data-mdx-content>
-                {children}
-              </Prose>
+              <Prose>{children}</Prose>
               
-              {/* 博客操作区域 */}
-              <div className="border-t border-white/10 pt-8">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <LikeButton blogSlug={blog.slug} />
-                    
-                    {/* 分享按钮 */}
-                    <button 
-                      onClick={() => {
-                        if (navigator.share) {
-                          navigator.share({
-                            title: blog.title,
-                            text: `查看这篇精彩的文章：${blog.title}`,
-                            url: window.location.href
-                          });
-                        } else {
-                          navigator.clipboard.writeText(window.location.href);
-                          alert('链接已复制到剪贴板');
-                        }
-                      }}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-xl font-medium bg-card border border-border text-card-foreground hover:bg-accent hover:text-monet-green transition-all duration-300"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                      </svg>
-                      <span className="hidden sm:inline">分享</span>
-                    </button>
-                  </div>
-                  
-                  {/* 回到顶部按钮 */}
-                  <button
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-xl font-medium bg-gradient-to-r from-monet-blue to-monet-purple text-white hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                    <span className="hidden sm:inline">回到顶部</span>
-                  </button>
-                </div>
+              {/* 互动按钮 */}
+              <div className="flex items-center justify-center py-8 border-t border-border">
+                <LikeButton blogSlug={blog.slug} />
               </div>
               
-              {/* 评论系统 */}
-              <CommentSection blogSlug={blog.slug} />
+              {/* 评论区域 */}
+              <div className="border-t border-border pt-8">
+                <CommentSection blogSlug={blog.slug} />
+              </div>
             </article>
           </div>
         </div>
