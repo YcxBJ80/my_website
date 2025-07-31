@@ -16,6 +16,24 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
+// 统一日期处理函数 - 与CommentSection保持一致
+function getDateFromTimestamp(timestamp: any): Date {
+  if (!timestamp) return new Date();
+  
+  // 如果是Firebase Timestamp，调用toDate()
+  if (timestamp && typeof timestamp.toDate === 'function') {
+    return timestamp.toDate();
+  }
+  
+  // 如果已经是Date对象，直接返回
+  if (timestamp instanceof Date) {
+    return timestamp;
+  }
+  
+  // 如果是字符串或数字，尝试转换
+  return new Date(timestamp);
+}
+
 // 评论接口 - 扩展支持回复
 export interface Comment {
   id: string;
@@ -115,8 +133,9 @@ export async function getBlogComments(blogSlug: string): Promise<Comment[]> {
       comment.replies = replies
         .filter(reply => reply.parentId === comment.id)
         .sort((a, b) => {
-          const aTime = a.createdAt?.toDate?.() || new Date(a.createdAt);
-          const bTime = b.createdAt?.toDate?.() || new Date(b.createdAt);
+          // 使用统一的日期处理函数
+          const aTime = getDateFromTimestamp(a.createdAt);
+          const bTime = getDateFromTimestamp(b.createdAt);
           return aTime.getTime() - bTime.getTime(); // 回复按时间正序
         });
     });

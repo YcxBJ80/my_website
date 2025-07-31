@@ -55,8 +55,8 @@ function CommentItem({ comment, blogSlug, onReply, onDelete, user }: CommentItem
     try {
       await onReply(comment.id, replyContent.trim());
       setReplyContent('');
-      setShowReplyForm(false);
-      setShowReplies(true); // 提交回复后自动展开回复列表
+      setShowReplyForm(false); // 关闭输入栏
+      setShowReplies(false); // 自动折叠回复列表
     } catch (error) {
       console.error('回复失败:', error);
     } finally {
