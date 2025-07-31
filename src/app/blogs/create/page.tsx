@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserDisplayName, getUserProfile, type UserProfile } from '@/lib/user';
 import { createBlog, generateTagColor } from '@/lib/blogOperations';
@@ -228,6 +228,7 @@ export default function CreateBlogPage() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const user = getCurrentUser();
   const router = useRouter();
+  const contentTextareaRef = useRef<HTMLTextAreaElement>(null); // 添加ref
 
   useEffect(() => {
     if (user) {
@@ -373,13 +374,47 @@ export default function CreateBlogPage() {
           placeholderPattern, 
           imageMarkdown
         );
+        console.log(`✅ 替换占位符: ![[${fileName}]] → 图片链接`);
         return { ...prev, content: updatedContent };
       } else {
-        // 如果没有占位符，插入到末尾
-        return {
-          ...prev,
-          content: currentContent + '\n\n' + imageMarkdown
-        };
+        // 如果没有占位符，在光标位置插入
+        const textarea = contentTextareaRef.current;
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          
+          // 在光标位置插入图片markdown
+          const beforeCursor = currentContent.slice(0, start);
+          const afterCursor = currentContent.slice(end);
+          
+          // 确保图片前后有换行符（如果需要的话）
+          let imageToInsert = imageMarkdown;
+          if (beforeCursor && !beforeCursor.endsWith('\n')) {
+            imageToInsert = '\n' + imageToInsert;
+          }
+          if (afterCursor && !afterCursor.startsWith('\n')) {
+            imageToInsert = imageToInsert + '\n';
+          }
+          
+          const newContent = beforeCursor + imageToInsert + afterCursor;
+          
+          // 设置新的光标位置
+          setTimeout(() => {
+            const newCursorPosition = start + imageToInsert.length;
+            textarea.focus();
+            textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+          }, 0);
+          
+          console.log(`✅ 在光标位置插入图片: ${fileName}`);
+          return { ...prev, content: newContent };
+        } else {
+          // 如果无法获取textarea引用，插入到末尾
+          console.log(`ℹ️ 无法获取光标位置，插入到末尾: ${fileName}`);
+          return {
+            ...prev,
+            content: currentContent + '\n\n' + imageMarkdown
+          };
+        }
       }
     });
   };
@@ -560,7 +595,7 @@ export default function CreateBlogPage() {
                               type="button"
                               onClick={() => insertImageAtCursor(image.url, image.name)}
                               className="text-xs px-3 py-1.5 bg-monet-blue text-white rounded hover:bg-monet-blue-dark transition-colors"
-                              title="插入到内容"
+                              title="在光标位置插入图片"
                             >
                               插入
                             </button>
@@ -637,7 +672,7 @@ export default function CreateBlogPage() {
                       <p className="text-xs text-monet-blue font-medium mb-1">💡 智能图片插入指南：</p>
                       <ul className="text-xs text-muted-foreground space-y-1">
                         <li>• <strong>占位符方式</strong>：在内容中写 <code className="bg-card px-1 rounded">![[图片名]]</code>，上传同名图片会自动替换</li>
-                        <li>• <strong>手动插入</strong>：点击&ldquo;插入&rdquo;按钮将图片添加到内容中</li>
+                        <li>• <strong>光标位置插入</strong>：将光标放到想要插入的位置，点击&ldquo;插入&rdquo;按钮</li>
                         <li>• <strong>支持数学公式</strong>：行内公式 <code className="bg-card px-1 rounded">$E=mc^2$</code>，块级公式 <code className="bg-card px-1 rounded">{'$$\\frac{a}{b}$$'}</code></li>
                       </ul>
                     </div>
@@ -788,6 +823,7 @@ export default function CreateBlogPage() {
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">内容编辑</h3>
                 <textarea
+                  ref={contentTextareaRef} // 添加ref
                   value={formData.content || ''}
                   onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
                   placeholder="在这里编写你的Markdown内容..."
