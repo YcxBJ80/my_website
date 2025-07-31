@@ -291,7 +291,7 @@ export default function HomePage() {
               ))}
             </div>
           ) : recentBlogs.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
               {recentBlogs.map((blog, index) => (
                 <ScrollReveal key={blog.slug} delay={index * 100}>
                   <Link
@@ -394,7 +394,7 @@ export default function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {recentProjects.map((project, index) => (
               <ScrollReveal key={project.id} delay={index * 100}>
                 <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col">
