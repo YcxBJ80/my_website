@@ -360,15 +360,47 @@ export default function CreateBlogPage() {
     setUploadedImages(prev => prev.filter(img => img.id !== imageId));
   };
 
+  // 检测内容中未处理的图片占位符
+  const getUnprocessedPlaceholders = (content: string): string[] => {
+    const placeholderRegex = /!\[\[([^\]]+)\]\]/g;
+    const placeholders: string[] = [];
+    let match;
+    
+    while ((match = placeholderRegex.exec(content)) !== null) {
+      const fileName = match[1];
+      placeholders.push(fileName);
+    }
+    
+    return [...new Set(placeholders)]; // 去重
+  };
+
+  // 获取建议的图片匹配
+  const getSuggestedImages = (placeholders: string[]): Array<{placeholder: string, image: UploadedImage | null}> => {
+    return placeholders.map(placeholder => {
+      // 查找匹配的图片 (支持无扩展名匹配)
+      const matchedImage = uploadedImages.find(img => {
+        const imgNameWithoutExt = img.name.split('.')[0];
+        return imgNameWithoutExt === placeholder || img.name === placeholder;
+      });
+      
+      return {
+        placeholder,
+        image: matchedImage || null
+      };
+    });
+  };
+
+  // 智能图片插入 - 优先替换占位符，如果没有占位符则插入到光标位置
   const insertImageAtCursor = (imageUrl: string, imageName: string) => {
-    const fileName = imageName.split('.')[0]; // 去掉扩展名
+    const fileName = imageName.split('.')[0]; // 移除扩展名
     const imageMarkdown = `![${fileName}](${imageUrl})`;
     
     setFormData(prev => {
       const currentContent = prev.content || '';
-      const placeholderPattern = new RegExp(`!\\[\\[${fileName}\\]\\]`, 'gi');
       
-      // 先尝试替换占位符
+      // 1. 首先尝试替换对应的占位符 ![[fileName]] 
+      const placeholderPattern = new RegExp(`!\\[\\[${fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]\\]`, 'gi');
+      
       if (placeholderPattern.test(currentContent)) {
         const updatedContent = currentContent.replace(
           placeholderPattern, 
@@ -376,69 +408,65 @@ export default function CreateBlogPage() {
         );
         console.log(`✅ 替换占位符: ![[${fileName}]] → 图片链接`);
         return { ...prev, content: updatedContent };
-      } else {
-        // 如果没有占位符，在光标位置插入
-        const textarea = contentTextareaRef.current;
-        if (textarea) {
-          const start = textarea.selectionStart;
-          const end = textarea.selectionEnd;
-          
-          // 在光标位置插入图片markdown
-          const beforeCursor = currentContent.slice(0, start);
-          const afterCursor = currentContent.slice(end);
-          
-          // 确保图片前后有换行符（如果需要的话）
-          let imageToInsert = imageMarkdown;
-          if (beforeCursor && !beforeCursor.endsWith('\n')) {
-            imageToInsert = '\n' + imageToInsert;
-          }
-          if (afterCursor && !afterCursor.startsWith('\n')) {
-            imageToInsert = imageToInsert + '\n';
-          }
-          
-          const newContent = beforeCursor + imageToInsert + afterCursor;
-          
-          // 设置新的光标位置
-          setTimeout(() => {
-            const newCursorPosition = start + imageToInsert.length;
-            textarea.focus();
-            textarea.setSelectionRange(newCursorPosition, newCursorPosition);
-          }, 0);
-          
-          console.log(`✅ 在光标位置插入图片: ${fileName}`);
-          return { ...prev, content: newContent };
-        } else {
-          // 如果无法获取textarea引用，插入到末尾
-          console.log(`ℹ️ 无法获取光标位置，插入到末尾: ${fileName}`);
-          return {
-            ...prev,
-            content: currentContent + '\n\n' + imageMarkdown
-          };
+      }
+      
+      // 2. 如果没有找到对应占位符，插入到光标位置
+      const textarea = contentTextareaRef.current;
+      if (textarea) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        
+        // 插入图片markdown到光标位置
+        const beforeCursor = currentContent.slice(0, start);
+        const afterCursor = currentContent.slice(end);
+        
+        // 确保前后有适当的换行
+        let imageToInsert = imageMarkdown;
+        if (beforeCursor && !beforeCursor.endsWith('\n')) {
+          imageToInsert = '\n' + imageToInsert;
         }
+        if (afterCursor && !afterCursor.startsWith('\n')) {
+          imageToInsert = imageToInsert + '\n';
+        }
+        
+        const newContent = beforeCursor + imageToInsert + afterCursor;
+        
+        // 设置新的光标位置
+        setTimeout(() => {
+          const newCursorPosition = start + imageToInsert.length;
+          textarea.focus();
+          textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+        }, 0);
+        
+        console.log(`✅ 在光标位置插入图片: ${fileName}`);
+        return { ...prev, content: newContent };
+      } else {
+        // 备用方案：插入到内容末尾
+        console.log(`ℹ️ 无法获取光标位置，插入到末尾: ${fileName}`);
+        return {
+          ...prev,
+          content: currentContent + '\n\n' + imageMarkdown
+        };
       }
     });
   };
-
-  // 检查内容中是否有未处理的占位符
-  const getUnprocessedPlaceholders = (): string[] => {
-    const content = formData.content || '';
-    const placeholderRegex = /!\[\[([^\]]+)\]\]/g;
-    const matches = [];
-    let match;
-    
-    while ((match = placeholderRegex.exec(content)) !== null) {
-      matches.push(match[1]); // 文件名部分
-    }
-    
-    return matches;
+  
+  // 辅助函数：转义正则表达式特殊字符
+  const escapeRegExp = (string: string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
 
-  // 为占位符生成建议
-  const getSuggestedImages = (placeholder: string): UploadedImage[] => {
-    return uploadedImages.filter(img => {
-      const fileName = img.name.split('.')[0].toLowerCase();
-      return fileName.includes(placeholder.toLowerCase()) || 
-             placeholder.toLowerCase().includes(fileName);
+  // 替换占位符的快捷插入
+  const replaceImagePlaceholder = (placeholder: string, imageUrl: string) => {
+    const imageMarkdown = `![${placeholder}](${imageUrl})`;
+    
+    setFormData(prev => {
+      const currentContent = prev.content || '';
+      const placeholderPattern = new RegExp(`!\\[\\[${escapeRegExp(placeholder)}\\]\\]`, 'gi');
+      const updatedContent = currentContent.replace(placeholderPattern, imageMarkdown);
+      
+      console.log(`✅ 替换占位符: ![[${placeholder}]] → 图片链接`);
+      return { ...prev, content: updatedContent };
     });
   };
 
@@ -529,6 +557,10 @@ export default function CreateBlogPage() {
     );
   }
 
+  // 获取未处理的占位符
+  const unprocessedPlaceholders = getUnprocessedPlaceholders(formData.content || '');
+  const suggestedImages = getSuggestedImages(unprocessedPlaceholders);
+
   // 过滤掉已选择的标签
   const availableTags = predefinedTags.filter(tag => !formData.tags?.includes(tag));
 
@@ -537,7 +569,7 @@ export default function CreateBlogPage() {
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-foreground mb-8 text-center">发布博客文章</h1>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
           {/* 左侧：编辑区域 (2/4 = 50%) */}
           <div className="lg:col-span-2 space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -586,7 +618,7 @@ export default function CreateBlogPage() {
                                 {image.name}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {image.name.split('.')[0]} - 可用占位符: ![[{image.name.split('.')[0]}]]
+                                占位符: ![[{image.name.split('.')[0]}]]
                               </p>
                             </div>
                           </div>
@@ -595,14 +627,14 @@ export default function CreateBlogPage() {
                               type="button"
                               onClick={() => insertImageAtCursor(image.url, image.name)}
                               className="text-xs px-3 py-1.5 bg-monet-blue text-white rounded hover:bg-monet-blue-dark transition-colors"
-                              title="在光标位置插入图片"
+                              title="智能插入图片"
                             >
                               插入
                             </button>
                             <button
                               type="button"
                               onClick={() => removeImage(image.id)}
-                              className="text-xs px-3 py-1.5 bg-destructive text-white rounded hover:bg-destructive/80 transition-colors"
+                              className="text-xs px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                               title="删除图片"
                             >
                               删除
@@ -614,126 +646,74 @@ export default function CreateBlogPage() {
                   </div>
                 )}
 
-                {/* 占位符管理 */}
-                {(() => {
-                  const unprocessedPlaceholders = getUnprocessedPlaceholders();
-                  return unprocessedPlaceholders.length > 0 && (
-                    <div className="mt-4">
-                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
-                        📍 未处理的图片占位符:
-                      </h4>
-                      <div className="space-y-2">
-                        {unprocessedPlaceholders.map((placeholder, index) => {
-                          const suggestedImages = getSuggestedImages(placeholder);
-                          return (
-                            <div key={index} className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                              <div className="flex items-center justify-between mb-2">
-                                <code className="text-sm font-mono text-amber-800 dark:text-amber-200">
-                                  ![[{placeholder}]]
-                                </code>
-                                <span className="text-xs text-amber-600 dark:text-amber-400">
-                                  等待图片
-                                </span>
-                              </div>
-                              
-                              {suggestedImages.length > 0 ? (
-                                <div className="space-y-2">
-                                  <p className="text-xs text-muted-foreground">建议匹配的图片:</p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {suggestedImages.map((img) => (
-                                      <button
-                                        key={img.id}
-                                        type="button"
-                                        onClick={() => insertImageAtCursor(img.url, img.name)}
-                                        className="flex items-center space-x-2 px-2 py-1 bg-monet-blue/10 hover:bg-monet-blue/20 border border-monet-blue/30 rounded text-xs transition-colors"
-                                        title={`使用 ${img.name} 替换占位符`}
-                                      >
-                                        <img src={img.url} alt={img.name} className="w-6 h-6 object-cover rounded" />
-                                        <span className="text-monet-blue">{img.name.split('.')[0]}</span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                </div>
-                              ) : (
-                                <p className="text-xs text-muted-foreground">
-                                  上传名为 &ldquo;{placeholder}&rdquo; 的图片将自动替换此占位符
-                                </p>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })()}
-                    
-                    {/* 快速插入说明 */}
-                    <div className="mt-3 p-3 bg-monet-blue/10 border border-monet-blue/20 rounded-lg">
-                      <p className="text-xs text-monet-blue font-medium mb-1">💡 智能图片插入指南：</p>
-                      <ul className="text-xs text-muted-foreground space-y-1">
-                        <li>• <strong>占位符方式</strong>：在内容中写 <code className="bg-card px-1 rounded">![[图片名]]</code>，上传同名图片会自动替换</li>
-                        <li>• <strong>光标位置插入</strong>：将光标放到想要插入的位置，点击&ldquo;插入&rdquo;按钮</li>
-                        <li>• <strong>支持数学公式</strong>：行内公式 <code className="bg-card px-1 rounded">$E=mc^2$</code>，块级公式 <code className="bg-card px-1 rounded">{'$$\\frac{a}{b}$$'}</code></li>
-                      </ul>
-                    </div>
-
-                    {/* 正在上传的提示 */}
-                    {uploadingImages.size > 0 && (
-                      <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div className="flex items-center space-x-2">
-                          <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-                          <span className="text-sm text-blue-600 dark:text-blue-400">
-                            正在上传 {uploadingImages.size} 张图片...
+                {/* 未处理的图片占位符 */}
+                {unprocessedPlaceholders.length > 0 && (
+                  <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <h4 className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-2">
+                      🔍 未处理的图片占位符:
+                    </h4>
+                    <div className="space-y-2">
+                      {suggestedImages.map(({placeholder, image}) => (
+                        <div key={placeholder} className="flex items-center justify-between text-xs">
+                          <span className="font-mono text-amber-600 dark:text-amber-400">
+                            ![[{placeholder}]]
                           </span>
+                          {image ? (
+                            <button
+                              type="button"
+                              onClick={() => replaceImagePlaceholder(placeholder, image.url)}
+                              className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                            >
+                              插入 {image.name}
+                            </button>
+                          ) : (
+                            <span className="text-orange-500">未找到匹配图片</span>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 智能图片插入指南 */}
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+                <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">💡 智能图片插入指南</h4>
+                <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
+                  <p><strong>方法1 (推荐):</strong> 在内容中写 <code>![[图片名]]</code>，然后上传对应图片，系统会自动替换</p>
+                  <p><strong>方法2:</strong> 将光标放在想插入图片的位置，点击图片的&quot;插入&quot;按钮</p>
+                  <p><strong>例如:</strong> 写 <code>![[avatar]]</code>，然后上传 <code>avatar.jpg</code></p>
+                </div>
               </div>
 
               {/* 基本信息 */}
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">基本信息</h3>
                 
-                {/* 标题 */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-muted-foreground mb-2">
-                    标题 *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.title || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    placeholder="输入一个吸引人的标题..."
-                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                {/* 描述 */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-muted-foreground mb-2">
-                    描述
-                  </label>
-                  <textarea
-                    value={formData.description || ''}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="简短描述你的文章内容..."
-                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
-                    rows={3}
-                  />
-                </div>
-
-                {/* 作者 */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-muted-foreground mb-2">
-                    作者
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.author || ''}
-                    readOnly
-                    className="w-full p-3 border border-border rounded-lg bg-muted text-muted-foreground"
-                  />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">标题</label>
+                    <input
+                      type="text"
+                      value={formData.title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="输入博客标题..."
+                      className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">描述</label>
+                    <textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="简短描述博客内容..."
+                      className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                      rows={3}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -741,24 +721,26 @@ export default function CreateBlogPage() {
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">标签</h3>
                 
-                {/* 已选择的标签 */}
+                {/* 已选标签 */}
                 {formData.tags && formData.tags.length > 0 && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      已选择标签:
-                    </label>
                     <div className="flex flex-wrap gap-2">
                       {formData.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center px-3 py-1 text-sm rounded-full border-2 text-foreground"
-                          style={{ borderColor: generateTagColor(tag) }}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
+                          style={{
+                            backgroundColor: `${generateTagColor(tag)}20`,
+                            borderColor: generateTagColor(tag),
+                            color: generateTagColor(tag),
+                            border: '1px solid'
+                          }}
                         >
                           {tag}
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-2 text-muted-foreground hover:text-destructive"
+                            className="ml-2 text-current hover:bg-current hover:bg-opacity-20 rounded-full p-0.5"
                           >
                             ×
                           </button>
@@ -768,19 +750,17 @@ export default function CreateBlogPage() {
                   </div>
                 )}
 
-                {/* 预定义标签 */}
+                {/* 预设标签 */}
                 {availableTags.length > 0 && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-muted-foreground mb-2">
-                      选择标签:
-                    </label>
-                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">预设标签</label>
+                    <div className="flex flex-wrap gap-2">
                       {availableTags.map((tag) => (
                         <button
                           key={tag}
                           type="button"
                           onClick={() => addTag(tag)}
-                          className="px-3 py-1 text-sm bg-background border border-border rounded-full hover:bg-accent hover:text-monet-blue transition-colors"
+                          className="px-3 py-1 text-sm border border-border rounded-full hover:bg-accent hover:text-accent-foreground transition-colors"
                         >
                           {tag}
                         </button>
@@ -791,10 +771,8 @@ export default function CreateBlogPage() {
 
                 {/* 自定义标签 */}
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-2">
-                    添加自定义标签:
-                  </label>
-                  <div className="flex gap-2">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">自定义标签</label>
+                  <div className="flex space-x-2">
                     <input
                       type="text"
                       value={customTag}
@@ -823,11 +801,20 @@ export default function CreateBlogPage() {
               <div className="bg-card border border-border rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-card-foreground mb-4">内容编辑</h3>
                 <textarea
-                  ref={contentTextareaRef} // 添加ref
+                  ref={contentTextareaRef}
                   value={formData.content || ''}
                   onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                  placeholder="在这里编写你的Markdown内容..."
-                  className="w-full h-64 p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent font-mono text-sm"
+                  placeholder="在这里编写你的Markdown内容...
+
+💡 提示：使用 ![[图片名]] 来标记图片位置，例如：
+# 我的文章标题
+
+这是一段内容。
+
+![[screenshot]]
+
+这里是图片下方的内容。"
+                  className="w-full h-96 p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent font-mono text-sm"
                   required
                 />
               </div>
@@ -843,32 +830,35 @@ export default function CreateBlogPage() {
             </form>
           </div>
 
-          {/* 右侧：预览区域 (2/4 = 50%) */}
+          {/* 右侧：预览区域 (2/4 = 50%) - 限制高度和左侧一致 */}
           <div className="lg:col-span-2">
-            <div className="bg-card border border-border rounded-xl p-6 sticky top-4">
-              <h3 className="text-lg font-semibold text-card-foreground mb-4">实时预览</h3>
+            <div className="bg-card border border-border rounded-xl p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-hidden flex flex-col">
+              <h3 className="text-lg font-semibold text-card-foreground mb-4 flex-shrink-0">实时预览</h3>
               
-              {formData.content ? (
-                <div className="prose prose-invert max-w-none">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm, remarkMath]}
-                    rehypePlugins={[rehypeKatex]}
-                    components={MarkdownComponents}
-                  >
-                    {formData.content}
-                  </ReactMarkdown>
-                </div>
-              ) : (
-                <div className="text-center py-16 text-muted-foreground">
-                  <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
+              <div className="flex-1 overflow-y-auto">
+                {formData.content ? (
+                  <div className="prose prose-invert max-w-none">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm, remarkMath]}
+                      rehypePlugins={[rehypeKatex]}
+                      components={MarkdownComponents}
+                    >
+                      {formData.content}
+                    </ReactMarkdown>
                   </div>
-                  <p className="text-lg font-medium">开始编写你的内容</p>
-                  <p className="text-sm mt-2">在左侧编辑器中输入Markdown内容，这里将实时显示预览效果</p>
-                </div>
-              )}
+                ) : (
+                  <div className="text-center py-16 text-muted-foreground">
+                    <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </div>
+                    <p className="text-lg font-medium">开始编写你的内容</p>
+                    <p className="text-sm mt-2">在左侧编辑器中输入Markdown内容，这里将实时显示预览效果</p>
+                    <p className="text-xs mt-2 text-blue-400">💡 使用 ![[图片名]] 来标记图片位置</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
