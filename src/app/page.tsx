@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/layout/Container';
 import { getCurrentUser } from '@/lib/auth';
+import { formatDate } from '@/lib/formatDate';
 
 interface BlogType {
+  id: string;
   title: string;
   description: string;
   author: string;
@@ -39,6 +41,23 @@ export default function HomePage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // 处理作者名称显示
+  const getDisplayAuthor = (author: string) => {
+    if (!author) return '匿名';
+    
+    // 如果是邮箱，提取用户名部分
+    if (author.includes('@')) {
+      return author.split('@')[0];
+    }
+    
+    // 如果名称太长，截断
+    if (author.length > 10) {
+      return author.substring(0, 10) + '...';
+    }
+    
+    return author;
   };
 
   const features = [
@@ -136,15 +155,15 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* 功能特色 */}
-      <section className="py-20 bg-card/30">
+      {/* 特色功能 */}
+      <section className="py-20 bg-accent/20">
         <Container>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              社团特色
+              为什么选择我们
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              我们提供全方位的AI学习和实践平台，让每个成员都能在人工智能领域茁壮成长
+              在这里，你将获得全面的AI学习体验，从理论知识到实践项目，从个人成长到团队合作
             </p>
           </div>
 
@@ -212,19 +231,21 @@ export default function HomePage() {
                   className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
                 >
                   <div className="flex items-center text-sm text-muted-foreground mb-3">
-                    <span>{blog.date}</span>
+                    <span>{formatDate(blog.date)}</span>
                     <span className="mx-2">·</span>
-                    <span>{blog.author}</span>
+                    <span className="truncate" title={blog.author}>
+                      {getDisplayAuthor(blog.author)}
+                    </span>
                   </div>
-                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors">
+                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed line-clamp-3">
+                  <p className="text-muted-foreground line-clamp-3">
                     {blog.description}
                   </p>
-                  <div className="mt-4 inline-flex items-center text-monet-blue font-medium">
-                    阅读更多
-                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="mt-4 inline-flex items-center text-monet-blue text-sm font-medium">
+                    阅读全文
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
                   </div>
@@ -232,41 +253,24 @@ export default function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">暂无文章</h3>
-              <p className="text-muted-foreground">快来发布第一篇技术文章吧！</p>
+              <p className="text-muted-foreground mb-6">快来发布第一篇技术文章吧！</p>
+              {user && (
+                <Link
+                  href="/blogs/create"
+                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+                >
+                  发布文章
+                </Link>
+              )}
             </div>
           )}
-        </Container>
-      </section>
-
-      {/* CTA区域 */}
-      <section className="py-20 bg-gradient-to-r from-monet-blue to-monet-purple">
-        <Container>
-          <div className="text-center text-white">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              准备好加入我们了吗？
-            </h2>
-            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              与志同道合的同学一起，在AI的世界中探索、学习、成长
-            </p>
-            {!user && (
-              <Link
-                href="/auth"
-                className="bg-white text-monet-blue px-8 py-4 rounded-xl font-medium hover:bg-gray-100 transition-all duration-300 shadow-lg text-lg inline-flex items-center"
-              >
-                立即注册
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            )}
-          </div>
         </Container>
       </section>
     </div>
