@@ -574,9 +574,9 @@ export default function CreateBlogPage() {
       <div className="max-w-7xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-foreground mb-8 text-center">发布博客文章</h1>
         
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          {/* 左侧：编辑区域 (2/4 = 50%) */}
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          {/* 左侧：编辑区域 (1/3) */}
+          <div className="lg:col-span-1 space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* 文件上传 */}
               <div className="bg-card border border-border rounded-xl p-6">
@@ -674,14 +674,11 @@ export default function CreateBlogPage() {
                 )}
               </div>
 
-              {/* 自动图片转换指南 */}
+              {/* 图片转换提示 */}
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">💡 自动图片转换指南</h4>
-                <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
-                  <p><strong>方法1 (推荐):</strong> 在内容中写 <code>![[图片名]]</code>，上传对应图片后自动转换为标准markdown</p>
-                  <p><strong>方法2:</strong> 点击图片的&quot;插入&quot;按钮直接在光标位置插入标准markdown格式</p>
-                  <p><strong>例如:</strong> 写 <code>![[avatar]]</code> → 上传 <code>avatar.jpg</code> → 自动变成 <code>![avatar](图片链接)</code></p>
-                </div>
+                <p className="text-sm text-blue-600 dark:text-blue-400">
+                  💡 在内容中写 <code>![[图片名]]</code>，上传对应图片后自动转换为标准markdown
+                </p>
               </div>
 
               {/* 基本信息 */}
@@ -828,7 +825,7 @@ export default function CreateBlogPage() {
             </form>
           </div>
 
-          {/* 右侧：预览区域 (2/4 = 50%) - 限制高度和左侧一致 */}
+          {/* 右侧：预览区域 (2/3) - 限制高度和左侧一致 */}
           <div className="lg:col-span-2">
             <div className="bg-card border border-border rounded-xl p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-hidden flex flex-col">
               <h3 className="text-lg font-semibold text-card-foreground mb-4 flex-shrink-0">实时预览</h3>
