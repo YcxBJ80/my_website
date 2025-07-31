@@ -2,30 +2,30 @@ export function formatDate(dateString: string | Date) {
   try {
     let date: Date;
     
-    // 处理不同的日期格式
+    // Handle different date formats
     if (dateString instanceof Date) {
       date = dateString;
     } else if (typeof dateString === 'string') {
-      // 如果是ISO字符串或其他格式
+      // If it's an ISO string or other format
       date = new Date(dateString);
     } else {
-      // 如果是其他类型，尝试转换
+      // If it's another type, try to convert
       date = new Date(String(dateString));
     }
     
-    // 检查日期是否有效
+    // Check if date is valid
     if (isNaN(date.getTime())) {
       console.warn('Invalid date:', dateString);
-      return '日期无效';
+      return 'Invalid Date';
     }
     
-    return date.toLocaleDateString('zh-CN', {
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
     });
   } catch (error) {
     console.error('Date formatting error:', error, 'Input:', dateString);
-    return '日期格式错误';
+    return 'Date Format Error';
   }
 }

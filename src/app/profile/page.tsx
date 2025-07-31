@@ -56,28 +56,25 @@ export default function ProfilePage() {
   const validateForm = async () => {
     const newErrors: Record<string, string> = {};
 
-    // 验证用户名
+    // Validate username
     if (!formData.username.trim()) {
-      newErrors.username = '用户名不能为空';
+      newErrors.username = 'Username cannot be empty';
     } else if (formData.username.length < 2) {
-      newErrors.username = '用户名至少需要2个字符';
+      newErrors.username = 'Username must be at least 2 characters';
     } else if (formData.username.length > 20) {
-      newErrors.username = '用户名不能超过20个字符';
-    } else if (formData.username !== profile?.username) {
-      const isAvailable = await isUsernameAvailable(formData.username, user?.uid);
-      if (!isAvailable) {
-        newErrors.username = '用户名已被使用';
-      }
+      newErrors.username = 'Username cannot exceed 20 characters';
+    } else if (await isUsernameAvailable(formData.username, user?.uid)) {
+      newErrors.username = 'Username is already taken';
     }
 
-    // 验证个人简介
+    // Validate personal bio
     if (formData.bio && formData.bio.length > 200) {
-      newErrors.bio = '个人简介不能超过200个字符';
+      newErrors.bio = 'Personal bio cannot exceed 200 characters';
     }
 
-    // 验证学校
+    // Validate school
     if (formData.school && formData.school.length > 50) {
-      newErrors.school = '学校名称不能超过50个字符';
+      newErrors.school = 'School name cannot exceed 50 characters';
     }
 
     setErrors(newErrors);

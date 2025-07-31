@@ -26,7 +26,7 @@ export function UserProfile() {
       if (user) {
         try {
           if (!isConfigValid || !db) {
-            setError('Firebase配置无效，请检查环境变量设置');
+            setError('Invalid Firebase configuration, please check environment variables');
             setLoading(false);
             return;
           }
@@ -35,22 +35,22 @@ export function UserProfile() {
           if (userDoc.exists()) {
             setUserData(userDoc.data() as UserData);
           } else {
-            // 如果用户文档不存在，创建一个基本的用户数据
+            // If user document doesn't exist, create basic user data
             setUserData({
-              username: user.displayName || user.email?.split('@')[0] || '未设置',
+              username: user.displayName || user.email?.split('@')[0] || 'Not set',
               email: user.email || '',
               role: 'user',
               createdAt: null
             });
           }
         } catch (error: any) {
-          console.error('获取用户资料失败:', error);
+          console.error('Failed to fetch user profile:', error);
           if (error.code === 'unavailable') {
-            setError('Firebase服务暂时不可用，请稍后重试');
+            setError('Firebase service temporarily unavailable, please try again later');
           } else if (error.message?.includes('offline')) {
-            setError('网络连接问题，请检查网络或Firebase配置');
+            setError('Network connection issue, please check network or Firebase configuration');
           } else {
-            setError('获取用户资料失败，请确保Firestore Database已启用');
+            setError('Failed to fetch user profile, please ensure Firestore Database is enabled');
           }
         }
       } else {
@@ -67,7 +67,7 @@ export function UserProfile() {
     try {
       await logoutUser();
     } catch (error) {
-      console.error('登出失败:', error);
+      console.error('Logout failed:', error);
     }
   };
 
@@ -76,7 +76,7 @@ export function UserProfile() {
       <div className="bg-card border border-border rounded-2xl shadow-lg p-6 max-w-lg w-full">
         <div className="flex items-center justify-center space-x-2">
           <div className="w-6 h-6 border-2 border-monet-blue border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-muted-foreground">加载中...</span>
+          <span className="text-muted-foreground">Loading...</span>
         </div>
       </div>
     );
@@ -94,7 +94,7 @@ export function UserProfile() {
             {(userData?.username || user.email)?.charAt(0).toUpperCase()}
           </span>
         </div>
-        用户资料
+        User Profile
       </h2>
 
       {error && (
@@ -103,15 +103,15 @@ export function UserProfile() {
             <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-destructive text-sm font-medium">连接错误</span>
+            <span className="text-destructive text-sm font-medium">Connection Error</span>
           </div>
           <p className="text-destructive text-sm mt-1">{error}</p>
           <div className="mt-3 text-xs text-muted-foreground">
-            <p>请确保已在Firebase控制台启用以下服务：</p>
+            <p>Please ensure the following services are enabled in Firebase Console:</p>
             <ul className="list-disc list-inside mt-1 space-y-1">
-              <li>Authentication (身份验证)</li>
-              <li>Firestore Database (数据库)</li>
-              <li>Storage (存储)</li>
+              <li>Authentication</li>
+              <li>Firestore Database</li>
+              <li>Storage</li>
             </ul>
           </div>
         </div>
@@ -119,32 +119,32 @@ export function UserProfile() {
       
       <div className="space-y-4 mb-6">
         <div className="bg-background/50 rounded-lg p-3">
-          <label className="text-sm font-medium text-muted-foreground">用户名</label>
-          <div className="text-card-foreground font-medium">{userData?.username || '未设置'}</div>
+          <label className="text-sm font-medium text-muted-foreground">Username</label>
+          <div className="text-card-foreground font-medium">{userData?.username || 'Not set'}</div>
         </div>
         
         <div className="bg-background/50 rounded-lg p-3">
-          <label className="text-sm font-medium text-muted-foreground">邮箱</label>
+          <label className="text-sm font-medium text-muted-foreground">Email</label>
           <div className="text-card-foreground font-medium break-all">{user.email}</div>
         </div>
         
         <div className="bg-background/50 rounded-lg p-3">
-          <label className="text-sm font-medium text-muted-foreground">角色</label>
+          <label className="text-sm font-medium text-muted-foreground">Role</label>
           <div className="text-card-foreground font-medium">
             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
               userData?.role === 'admin' 
                 ? 'bg-monet-purple/10 text-monet-purple' 
                 : 'bg-monet-blue/10 text-monet-blue'
             }`}>
-              {userData?.role === 'admin' ? '管理员' : '用户'}
+              {userData?.role === 'admin' ? 'Admin' : 'User'}
             </span>
           </div>
         </div>
         
         <div className="bg-background/50 rounded-lg p-3">
-          <label className="text-sm font-medium text-muted-foreground">注册时间</label>
+          <label className="text-sm font-medium text-muted-foreground">Registration Date</label>
           <div className="text-card-foreground font-medium">
-            {userData?.createdAt ? new Date(userData.createdAt.toDate()).toLocaleDateString('zh-CN') : '未知'}
+            {userData?.createdAt ? new Date(userData.createdAt.toDate()).toLocaleDateString('en-US') : 'Unknown'}
           </div>
         </div>
       </div>
@@ -153,7 +153,7 @@ export function UserProfile() {
         onClick={handleLogout}
         className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white py-3 rounded-xl font-medium hover:from-red-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-red-500/20"
       >
-        登出
+        Sign Out
       </button>
     </div>
   );

@@ -23,7 +23,7 @@ export default function AuthPage() {
   }, []);
 
   const handleAuthSuccess = () => {
-    // 认证成功后可以跳转到首页或其他页面
+    // Redirect to homepage after successful authentication
     router.push('/');
   };
 
@@ -32,7 +32,7 @@ export default function AuthPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-monet-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-muted-foreground">加载中...</div>
+          <div className="text-muted-foreground">Loading...</div>
         </div>
       </div>
     );
@@ -56,10 +56,10 @@ export default function AuthPage() {
             <span className="text-white font-bold text-xl">AI</span>
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            {isLogin ? '欢迎回来' : '加入我们'}
+            {isLogin ? 'Welcome Back' : 'Join Us'}
           </h1>
           <p className="text-muted-foreground">
-            {isLogin ? '登录您的AI社团账号' : '创建您的AI社团账号'}
+            {isLogin ? 'Sign in to your BJ80 AI account' : 'Create your BJ80 AI account'}
           </p>
         </div>
 

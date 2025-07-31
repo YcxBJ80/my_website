@@ -16,6 +16,7 @@ interface BlogType {
   author: string;
   date: string;
   slug: string;
+  tags?: string[];
 }
 
 interface ProjectType {
@@ -79,15 +80,21 @@ export default function HomePage() {
   const getDisplayAuthor = (author: string) => {
     if (!author) return 'Anonymous';
     
-    if (author.includes('@')) {
-      return author.split('@')[0];
+    // Remove role information in parentheses (like "ycx (管理)" -> "ycx")
+    const cleanAuthor = author.replace(/\s*\([^)]*\)/g, '').trim();
+    
+    // Handle email format
+    if (cleanAuthor.includes('@')) {
+      const username = cleanAuthor.split('@')[0];
+      return username.length > 12 ? username.substring(0, 12) + '...' : username;
     }
     
-    if (author.length > 10) {
-      return author.substring(0, 10) + '...';
+    // Truncate long usernames
+    if (cleanAuthor.length > 12) {
+      return cleanAuthor.substring(0, 12) + '...';
     }
     
-    return author;
+    return cleanAuthor;
   };
 
   const features = [
@@ -289,21 +296,51 @@ export default function HomePage() {
                 <ScrollReveal key={blog.slug} delay={index * 100}>
                   <Link
                     href={`/blogs/${blog.slug}`}
-                    className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
+                    className="block bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30"
                   >
-                    <div className="flex items-center text-sm text-muted-foreground mb-3">
+                    {/* Date and Author */}
+                    <div className="flex items-center text-sm text-muted-foreground mb-4">
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
                       <span>{formatDate(blog.date)}</span>
-                      <span className="mx-2">·</span>
+                      <span className="mx-2">•</span>
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
                       <span className="truncate" title={blog.author}>
                         {getDisplayAuthor(blog.author)}
                       </span>
                     </div>
-                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2">
+
+                    {/* Title */}
+                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2 leading-tight">
                       {blog.title}
                     </h3>
-                    <p className="text-muted-foreground line-clamp-3">
+
+                    {/* Description */}
+                    <p className="text-muted-foreground line-clamp-3 leading-relaxed mb-4">
                       {blog.description}
                     </p>
+
+                    {/* Tags */}
+                    {blog.tags && blog.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {blog.tags.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-1 text-xs bg-monet-blue/10 text-monet-blue rounded-full border border-monet-blue/20"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                        {blog.tags.length > 3 && (
+                          <span className="px-2 py-1 text-xs text-muted-foreground">
+                            +{blog.tags.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </Link>
                 </ScrollReveal>
               ))}

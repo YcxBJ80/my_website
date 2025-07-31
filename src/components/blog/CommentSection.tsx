@@ -254,12 +254,12 @@ export function CommentSection({ blogId }: CommentSectionProps) {
     e.preventDefault();
     
     if (!user) {
-      alert('请先登录后再评论');
+      alert('Please login first to comment');
       return;
     }
 
     if (!newComment.trim()) {
-      alert('请输入评论内容');
+      alert('Please enter comment content');
       return;
     }
 
@@ -397,7 +397,7 @@ export function CommentSection({ blogId }: CommentSectionProps) {
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="分享你的想法..."
+              placeholder="Share your thoughts..."
               className="w-full p-4 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
               rows={4}
               disabled={isSubmitting}
@@ -409,18 +409,18 @@ export function CommentSection({ blogId }: CommentSectionProps) {
               disabled={isSubmitting || !newComment.trim()}
               className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 py-2 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-blue/20"
             >
-              {isSubmitting ? '发布中...' : '发布评论'}
+              {isSubmitting ? 'Publishing...' : 'Post Comment'}
             </button>
           </div>
         </form>
       ) : (
         <div className="bg-card border border-border rounded-xl p-6 text-center">
-          <p className="text-muted-foreground mb-4">请登录后参与评论</p>
+          <p className="text-muted-foreground mb-4">Please login to participate in comments</p>
           <a
             href="/auth"
             className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 py-2 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 inline-block shadow-lg hover:shadow-monet-blue/20"
           >
-            立即登录
+            Login Now
           </a>
         </div>
       )}
@@ -429,11 +429,11 @@ export function CommentSection({ blogId }: CommentSectionProps) {
       <div className="space-y-6">
         {isLoading ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">加载评论中...</p>
+            <p className="text-muted-foreground">Loading comments...</p>
           </div>
         ) : comments.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground">暂无评论，快来发表第一条评论吧！</p>
+            <p className="text-muted-foreground">No comments yet, be the first to leave one!</p>
           </div>
         ) : (
           comments.map((comment) => (

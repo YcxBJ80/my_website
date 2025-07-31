@@ -20,48 +20,50 @@ export function LikeButton({ blogId, className = '' }: LikeButtonProps) {
   const [isUpdating, setIsUpdating] = useState(false);
   const user = getCurrentUser();
 
-  const loadLikeStatus = useCallback(async () => {
-    try {
-      // 获取博客统计信息
-      const stats = await getBlogStats(blogId);
-      setLikeCount(stats.likes);
-
-      // 如果用户已登录，检查是否已点赞
-      if (user) {
-        const userLiked = await checkUserLikedBlog(blogId, user.uid);
-        setIsLiked(userLiked);
-      }
-    } catch (error) {
-      console.error('加载点赞状态失败:', error);
-    }
-  }, [blogId, user]);
-
+  // Check if user is already logged in
   useEffect(() => {
-    loadLikeStatus();
-  }, [loadLikeStatus]);
+    if (user && blogId) {
+      loadLikeStatus();
+    }
+  }, [user, blogId]);
 
-  const handleToggleLike = async () => {
+  const loadLikeStatus = async () => {
+    if (!user) return;
+    
+    try {
+      // If user is logged in, check if already liked
+      const response = await fetch(`/api/stats?action=getUserLikeStatus&blogId=${blogId}&userId=${user.uid}`, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache',
+        },
+      });
+      const data = await response.json();
+      setIsLiked(data.isLiked || false);
+    } catch (error) {
+      console.error('Failed to load like status:', error);
+    }
+  };
+
+  const handleLike = async () => {
     if (!user) {
-      alert('请先登录后再点赞');
+      alert('Please login first to like');
       return;
     }
 
-    if (isUpdating) return; // 防止重复点击
-
-    // 客户端优先：立即更新UI
-    const newLikedState = !isLiked;
-    const newLikeCount = newLikedState ? likeCount + 1 : likeCount - 1;
+    // Optimistic update
+    const previousIsLiked = isLiked;
+    const previousLikeCount = likeCount;
     
-    setIsLiked(newLikedState);
-    setLikeCount(newLikeCount);
-    setIsUpdating(true);
+    setIsLiked(!isLiked);
+    setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
 
     // 异步更新到服务端
     try {
       const serverLikedState = await toggleBlogLike(blogId, user.uid);
       
       // 如果服务端结果与客户端预期不一致，以服务端为准
-      if (serverLikedState !== newLikedState) {
+      if (serverLikedState !== previousIsLiked) {
         setIsLiked(serverLikedState);
         // 重新获取准确的点赞数
         const stats = await getBlogStats(blogId);
@@ -70,8 +72,8 @@ export function LikeButton({ blogId, className = '' }: LikeButtonProps) {
     } catch (error) {
       console.error('切换点赞状态失败:', error);
       // 发生错误时恢复到之前的状态
-      setIsLiked(!newLikedState);
-      setLikeCount(likeCount);
+      setIsLiked(previousIsLiked);
+      setLikeCount(previousLikeCount);
     } finally {
       setIsUpdating(false);
     }
@@ -79,14 +81,14 @@ export function LikeButton({ blogId, className = '' }: LikeButtonProps) {
 
   return (
     <button
-      onClick={handleToggleLike}
+      onClick={handleLike}
       disabled={!user || isUpdating}
       className={`flex items-center space-x-2 transition-all duration-200 ${
         isLiked 
           ? 'text-red-500 hover:text-red-600' 
           : 'text-muted-foreground hover:text-red-500'
       } ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} ${className}`}
-      title={!user ? '请先登录' : isLiked ? '取消点赞' : '点赞'}
+      title={!user ? 'Please login' : isLiked ? 'Unlike' : 'Like'}
     >
       <svg 
         className={`w-5 h-5 transition-all duration-200 ${

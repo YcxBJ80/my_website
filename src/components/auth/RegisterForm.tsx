@@ -22,13 +22,13 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
     setError('');
 
     if (password !== confirmPassword) {
-      setError('两次输入的密码不一致');
+      setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError('密码长度至少为6位');
+      setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
@@ -37,15 +37,15 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       await registerUser(email, password, username);
       onSuccess?.();
     } catch (error: any) {
-      console.error('注册错误:', error);
-      let errorMessage = '注册失败，请重试';
+      console.error('Registration error:', error);
+      let errorMessage = 'Registration failed, please try again';
       
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = '该邮箱已被使用';
+        errorMessage = 'This email is already in use';
       } else if (error.code === 'auth/weak-password') {
-        errorMessage = '密码强度不够';
+        errorMessage = 'Password is too weak';
       } else if (error.code === 'auth/invalid-email') {
-        errorMessage = '邮箱格式不正确';
+        errorMessage = 'Invalid email format';
       }
       
       setError(errorMessage);
@@ -59,42 +59,42 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-card-foreground mb-2">
-            用户名
+            Username
           </label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
-            placeholder="请输入用户名"
+            placeholder="Enter your username"
             required
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-card-foreground mb-2">
-            邮箱
+            Email
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
-            placeholder="请输入邮箱"
+            placeholder="Enter your email"
             required
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-card-foreground mb-2">
-            密码
+            Password
           </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
-            placeholder="请输入密码（至少6位）"
+            placeholder="Enter password (at least 6 characters)"
             required
             minLength={6}
           />
@@ -102,14 +102,14 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
 
         <div>
           <label className="block text-sm font-medium text-card-foreground mb-2">
-            确认密码
+            Confirm Password
           </label>
           <input
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
-            placeholder="请再次输入密码"
+            placeholder="Confirm your password"
             required
           />
         </div>
@@ -125,7 +125,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
           disabled={loading}
           className="w-full bg-gradient-to-r from-monet-green to-monet-blue text-white py-3 rounded-xl font-medium hover:from-monet-green-dark hover:to-monet-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-green/20"
         >
-          {loading ? '注册中...' : '注册'}
+          {loading ? 'Creating Account...' : 'Sign Up'}
         </button>
       </form>
 
@@ -134,7 +134,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
           onClick={onSwitchToLogin}
           className="text-monet-blue hover:text-monet-blue-dark text-sm transition-colors"
         >
-          已有账号？立即登录
+          Already have an account? Sign in
         </button>
       </div>
     </div>
