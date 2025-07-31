@@ -137,7 +137,16 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       {/* Hero Section with Animated Background */}
       <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex flex-col">
-        <SquaresBackground className="opacity-60" squareCount={30} />
+        <div className="absolute inset-0">
+          <SquaresBackground 
+            direction="diagonal" 
+            speed={0.5} 
+            borderColor="rgba(79, 70, 229, 0.3)" 
+            squareSize={60} 
+            hoverFillColor="rgba(79, 70, 229, 0.1)"
+            className="opacity-80"
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
         
         <Container className="relative z-10 flex-1 flex flex-col">
@@ -164,44 +173,44 @@ export default function HomePage() {
               </h1>
             </div>
           </div>
-
-          {/* Bottom Left Content */}
-          {showSecondaryText && (
-            <div className="absolute bottom-20 left-8 right-8 max-w-2xl lg:right-auto">
-              <ScrollReveal>
-                <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
-                  Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future
-                </p>
-              </ScrollReveal>
-              
-              <ScrollReveal delay={300}>
-                <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
-                  {user ? (
-                    <Link
-                      href="/blogs"
-                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
-                    >
-                      Browse Blogs
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/auth"
-                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
-                    >
-                      Join Now
-                    </Link>
-                  )}
-                  <Link
-                    href="/about"
-                    className="border border-border text-foreground px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-base md:text-lg text-center"
-                  >
-                    Learn More
-                  </Link>
-                </div>
-              </ScrollReveal>
-            </div>
-          )}
         </Container>
+
+        {/* Bottom Left Content - 移到 section 内但在 Container 外 */}
+        {showSecondaryText && (
+          <div className="absolute bottom-8 left-8 right-8 max-w-2xl z-20 lg:right-auto">
+            <ScrollReveal>
+              <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
+                Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future
+              </p>
+            </ScrollReveal>
+            
+            <ScrollReveal delay={300}>
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                {user ? (
+                  <Link
+                    href="/blogs"
+                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
+                  >
+                    Browse Blogs
+                  </Link>
+                ) : (
+                  <Link
+                    href="/auth"
+                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
+                  >
+                    Join Now
+                  </Link>
+                )}
+                <Link
+                  href="/about"
+                  className="border border-border text-foreground px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-base md:text-lg text-center"
+                >
+                  Learn More
+                </Link>
+              </div>
+            </ScrollReveal>
+          </div>
+        )}
       </section>
 
       {/* Features Section */}

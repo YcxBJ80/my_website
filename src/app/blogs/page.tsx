@@ -33,7 +33,7 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
       <div className="flex items-center mb-6">
         <div className="flex-shrink-0 w-24 text-right pr-6">
           <time
-            dateTime={blog.date}
+          dateTime={blog.date}
             className="text-sm font-medium text-monet-blue bg-monet-blue/10 px-3 py-1 rounded-full"
           >
             {formatDate(blog.date).split(' ')[0]}
@@ -353,6 +353,6 @@ export default function BlogsIndex() {
           </ScrollReveal>
         )}
       </Container>
-    </div>
+      </div>
   );
 }
