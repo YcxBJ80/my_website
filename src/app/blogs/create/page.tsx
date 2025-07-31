@@ -5,6 +5,7 @@ import { getCurrentUser } from '@/lib/auth';
 import { getUserDisplayName, getUserProfile, type UserProfile } from '@/lib/user';
 import { createBlog, generateTagColor } from '@/lib/blogOperations';
 import { uploadBlogImage } from '@/lib/storage';
+import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -226,6 +227,7 @@ export default function CreateBlogPage() {
   const [uploadingImages, setUploadingImages] = useState<Set<string>>(new Set());
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const user = getCurrentUser();
+  const router = useRouter();
 
   useEffect(() => {
     if (user) {
@@ -308,15 +310,28 @@ export default function CreateBlogPage() {
               placeholderPattern, 
               `![${fileName}](${imageUrl})`
             );
+            console.log(`✅ 自动替换占位符: ![[${fileName}]] → 图片链接`);
             return { ...prev, content: updatedContent };
           } else {
             // 如果没有找到占位符，不自动插入，让用户手动操作
+            console.log(`ℹ️ 未找到占位符 ![[${fileName}]]，请手动插入`);
             return prev;
           }
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error(`图片上传失败 ${file.name}:`, error);
-        alert(`图片上传失败: ${file.name}`);
+        
+        // 显示详细的错误信息
+        let errorMessage = `图片上传失败: ${file.name}`;
+        if (error.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+          errorMessage += '\n\n可能原因：\n• 浏览器广告拦截器阻止了上传\n• 浏览器安全设置过于严格\n\n解决方案：\n• 暂时禁用广告拦截器\n• 将本站添加到白名单\n• 尝试使用其他浏览器';
+        } else if (error.message?.includes('网络')) {
+          errorMessage += '\n\n请检查网络连接后重试';
+        } else {
+          errorMessage += `\n\n错误详情: ${error.message}`;
+        }
+        
+        alert(errorMessage);
       } finally {
         setUploadingImages(prev => {
           const newSet = new Set(prev);
@@ -458,6 +473,7 @@ export default function CreateBlogPage() {
       setUploadedImages([]);
       
       console.log('博客发布成功:', result);
+      router.push('/blogs'); // 跳转到博客列表页面
       
     } catch (error) {
       console.error('发布博客失败:', error);

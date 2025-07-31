@@ -1,6 +1,41 @@
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage, isConfigValid } from './firebase';
 
+// 重试上传函数
+async function uploadWithRetry(
+  imageRef: any,
+  file: File,
+  metadata: any,
+  maxRetries: number = 3
+): Promise<any> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`尝试上传 (${attempt}/${maxRetries}):`, file.name);
+      const snapshot = await uploadBytes(imageRef, file, metadata);
+      console.log('上传成功:', file.name);
+      return snapshot;
+    } catch (error: any) {
+      console.error(`上传失败 (尝试 ${attempt}/${maxRetries}):`, error.message);
+      
+      // 如果是网络错误且还有重试次数，等待后重试
+      if (attempt < maxRetries && (
+        error.code === 'storage/network-request-failed' ||
+        error.message?.includes('ERR_BLOCKED_BY_CLIENT') ||
+        error.message?.includes('network') ||
+        error.message?.includes('offline')
+      )) {
+        const delay = Math.pow(2, attempt) * 1000; // 指数退避
+        console.log(`等待 ${delay}ms 后重试...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      
+      // 不是网络错误或已达到最大重试次数
+      throw error;
+    }
+  }
+}
+
 export async function uploadBlogImage(file: File, userId: string, blogId?: string): Promise<string> {
   try {
     // 检查Firebase配置
@@ -36,19 +71,32 @@ export async function uploadBlogImage(file: File, userId: string, blogId?: strin
       }
     };
     
-    // 上传文件
-    const snapshot = await uploadBytes(imageRef, file, metadata);
+    // 使用重试机制上传文件
+    const snapshot = await uploadWithRetry(imageRef, file, metadata);
     
     // 获取下载URL
     const downloadURL = await getDownloadURL(snapshot.ref);
     
+    console.log('图片上传完成:', file.name, '→', downloadURL);
     return downloadURL;
-  } catch (error) {
+  } catch (error: any) {
     console.error('图片上传失败:', error);
-    if (error instanceof Error) {
-      throw error;
+    
+    // 提供更友好的错误信息
+    let errorMessage = '图片上传失败';
+    if (error.code === 'storage/network-request-failed') {
+      errorMessage = '网络连接失败，请检查网络或稍后重试';
+    } else if (error.message?.includes('ERR_BLOCKED_BY_CLIENT')) {
+      errorMessage = '上传被阻止，请检查浏览器设置或广告拦截器';
+    } else if (error.code === 'storage/unauthorized') {
+      errorMessage = 'Firebase存储权限不足，请检查安全规则';
+    } else if (error.code === 'storage/quota-exceeded') {
+      errorMessage = 'Firebase存储空间不足';
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
     }
-    throw new Error('图片上传失败');
+    
+    throw new Error(errorMessage);
   }
 }
 

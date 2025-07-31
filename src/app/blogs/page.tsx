@@ -145,10 +145,18 @@ export default function BlogsIndex() {
       setIsLoading(true);
       setError('');
       
-      const response = await fetch('/api/blogs');
+      // 添加no-cache标头，确保获取最新数据
+      const response = await fetch('/api/blogs', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       if (response.ok) {
         const blogsData = await response.json();
         setBlogs(blogsData);
+        console.log('博客数据已更新:', blogsData.length, '篇博客');
       } else {
         const errorData = await response.json();
         setError(errorData.error || '获取博客失败');
@@ -176,30 +184,40 @@ export default function BlogsIndex() {
             </p>
           </header>
 
-          {/* 搜索栏 */}
-          <div className="relative mb-12">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* 搜索和刷新区域 */}
+          <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="relative flex-1 max-w-md">
+              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
+              <input
+                type="text"
+                placeholder="搜索博客..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+              />
             </div>
-            <input
-              type="text"
-              placeholder="搜索文章标题、内容或作者..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-4 bg-card border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent transition-all"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+            
+            {/* 刷新按钮 */}
+            <button
+              onClick={loadBlogs}
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-4 py-3 bg-monet-blue text-white rounded-xl hover:bg-monet-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="刷新博客列表"
+            >
+              <svg 
+                className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
               >
-                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="hidden sm:inline">
+                {isLoading ? '刷新中...' : '刷新'}
+              </span>
+            </button>
           </div>
 
           {/* 搜索结果计数 */}

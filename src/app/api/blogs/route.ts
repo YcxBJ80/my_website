@@ -49,18 +49,22 @@ export async function GET() {
       });
     });
 
-    return NextResponse.json(blogs);
+    // 添加no-cache头部，确保数据实时更新
+    return NextResponse.json(blogs, { 
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
   } catch (error: any) {
     console.error('获取博客失败:', error);
-    
-    // 提供更详细的错误信息
     let errorMessage = '获取博客失败';
     if (error.code === 'permission-denied') {
       errorMessage = 'Firestore权限不足，请检查安全规则配置';
     } else if (error.code === 'unavailable') {
       errorMessage = 'Firebase服务不可用，请稍后重试';
     }
-    
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 } 

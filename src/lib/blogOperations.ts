@@ -50,12 +50,23 @@ export async function createBlog(blogData: CreateBlogData) {
 }
 
 function generateSlug(title: string): string {
-  return title
+  // 基础slug生成
+  const baseSlug = title
     .toLowerCase()
     .replace(/[^\w\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '') // 移除开头和结尾的连字符
     .trim();
+  
+  // 添加时间戳确保唯一性
+  const timestamp = Date.now();
+  const shortTimestamp = timestamp.toString().slice(-6); // 取最后6位
+  
+  // 如果基础slug为空，使用默认名称
+  const finalSlug = baseSlug || 'untitled';
+  
+  return `${finalSlug}-${shortTimestamp}`;
 }
 
 export async function updateBlogTags(blogId: string, tags: string[]) {
