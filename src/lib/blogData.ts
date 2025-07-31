@@ -11,6 +11,7 @@ import {
   increment,
   serverTimestamp,
   getDoc,
+  setDoc,
   FieldValue
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -184,7 +185,7 @@ export async function getBlogStats(blogSlug: string): Promise<BlogStats> {
         likes: 0,
         comments: 0
       };
-      await updateDoc(docRef, defaultStats);
+      await setDoc(docRef, defaultStats); // 使用setDoc而不是updateDoc
       return defaultStats;
     }
   } catch (error) {
@@ -197,6 +198,22 @@ export async function getBlogStats(blogSlug: string): Promise<BlogStats> {
 export async function updateBlogStats(blogSlug: string, updates: Record<string, any>): Promise<void> {
   try {
     const docRef = doc(db, 'blogStats', blogSlug);
+    
+    // 先检查文档是否存在
+    const docSnap = await getDoc(docRef);
+    
+    if (!docSnap.exists()) {
+      // 如果文档不存在，先创建基础文档
+      const defaultStats = {
+        slug: blogSlug,
+        views: 0,
+        likes: 0,
+        comments: 0
+      };
+      await setDoc(docRef, defaultStats);
+    }
+    
+    // 然后更新文档
     await updateDoc(docRef, updates);
   } catch (error) {
     console.error('更新博客统计失败:', error);
