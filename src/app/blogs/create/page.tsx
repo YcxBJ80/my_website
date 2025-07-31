@@ -35,6 +35,180 @@ const predefinedTags = [
   '创业', '技术分享', '学习笔记', '项目经验', '工具推荐', '行业洞察'
 ];
 
+// 自定义Markdown组件 - 与博客页面保持一致
+const MarkdownComponents = {
+  // 标题组件
+  h1: ({ children, ...props }: any) => (
+    <h1 className="text-3xl font-bold text-foreground mt-6 mb-4 pb-2 border-b border-border" {...props}>
+      {children}
+    </h1>
+  ),
+  h2: ({ children, ...props }: any) => (
+    <h2 className="text-2xl font-semibold text-foreground mt-5 mb-3" {...props}>
+      {children}
+    </h2>
+  ),
+  h3: ({ children, ...props }: any) => (
+    <h3 className="text-xl font-semibold text-foreground mt-4 mb-2" {...props}>
+      {children}
+    </h3>
+  ),
+  h4: ({ children, ...props }: any) => (
+    <h4 className="text-lg font-medium text-foreground mt-3 mb-2" {...props}>
+      {children}
+    </h4>
+  ),
+  h5: ({ children, ...props }: any) => (
+    <h5 className="text-base font-medium text-foreground mt-2 mb-2" {...props}>
+      {children}
+    </h5>
+  ),
+  h6: ({ children, ...props }: any) => (
+    <h6 className="text-sm font-medium text-foreground mt-2 mb-1" {...props}>
+      {children}
+    </h6>
+  ),
+
+  // 段落组件
+  p: ({ children, ...props }: any) => (
+    <p className="text-muted-foreground leading-relaxed mb-3" {...props}>
+      {children}
+    </p>
+  ),
+
+  // 图片组件
+  img: ({ src, alt, ...props }: any) => (
+    <div className="my-4">
+      <img 
+        src={src} 
+        alt={alt || ''}
+        className="max-w-full h-auto rounded-lg shadow-md mx-auto block"
+        loading="lazy"
+        {...props}
+      />
+      {alt && (
+        <p className="text-center text-xs text-muted-foreground mt-1 italic">
+          {alt}
+        </p>
+      )}
+    </div>
+  ),
+
+  // 链接组件
+  a: ({ href, children, ...props }: any) => (
+    <a 
+      href={href}
+      className="text-monet-blue hover:text-monet-blue-dark underline underline-offset-2 transition-colors"
+      target={href?.startsWith('http') ? '_blank' : undefined}
+      rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+      {...props}
+    >
+      {children}
+    </a>
+  ),
+
+  // 列表组件
+  ul: ({ children, ...props }: any) => (
+    <ul className="list-disc list-inside text-muted-foreground mb-3 ml-4 space-y-1" {...props}>
+      {children}
+    </ul>
+  ),
+  ol: ({ children, ...props }: any) => (
+    <ol className="list-decimal list-inside text-muted-foreground mb-3 ml-4 space-y-1" {...props}>
+      {children}
+    </ol>
+  ),
+  li: ({ children, ...props }: any) => (
+    <li className="leading-relaxed" {...props}>
+      {children}
+    </li>
+  ),
+
+  // 引用组件
+  blockquote: ({ children, ...props }: any) => (
+    <blockquote className="border-l-4 border-monet-blue pl-3 py-2 my-3 bg-card/50 rounded-r-lg" {...props}>
+      <div className="text-muted-foreground italic">
+        {children}
+      </div>
+    </blockquote>
+  ),
+
+  // 表格组件
+  table: ({ children, ...props }: any) => (
+    <div className="overflow-x-auto my-4">
+      <table className="min-w-full border border-border rounded-lg text-sm" {...props}>
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children, ...props }: any) => (
+    <thead className="bg-card" {...props}>
+      {children}
+    </thead>
+  ),
+  th: ({ children, ...props }: any) => (
+    <th className="px-3 py-2 text-left font-semibold text-foreground border-b border-border text-sm" {...props}>
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }: any) => (
+    <td className="px-3 py-2 text-muted-foreground border-b border-border/50 text-sm" {...props}>
+      {children}
+    </td>
+  ),
+
+  // 水平线组件
+  hr: ({ ...props }: any) => (
+    <hr className="my-6 border-border" {...props} />
+  ),
+
+  // 强调组件
+  strong: ({ children, ...props }: any) => (
+    <strong className="font-semibold text-foreground" {...props}>
+      {children}
+    </strong>
+  ),
+  em: ({ children, ...props }: any) => (
+    <em className="italic text-muted-foreground" {...props}>
+      {children}
+    </em>
+  ),
+
+  // 内联代码组件
+  code: ({ className, children, ...props }: any) => {
+    const match = /language-(\w+)/.exec(className || '');
+    const isInline = !className;
+    
+    return !isInline && match ? (
+      <div className="my-4">
+        <SyntaxHighlighter
+          style={oneDark as any}
+          language={match[1]}
+          PreTag="div"
+          className="rounded-lg text-sm"
+          {...props}
+        >
+          {String(children).replace(/\n$/, '')}
+        </SyntaxHighlighter>
+      </div>
+    ) : (
+      <code 
+        className="px-1.5 py-0.5 bg-card border border-border rounded text-xs font-mono text-monet-blue" 
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
+
+  // 预格式化文本
+  pre: ({ children, ...props }: any) => (
+    <pre className="bg-card border border-border rounded-lg p-3 overflow-x-auto my-3 text-sm" {...props}>
+      {children}
+    </pre>
+  ),
+};
+
 export default function CreateBlogPage() {
   const [formData, setFormData] = useState<Partial<BlogData>>({
     title: '',
@@ -208,19 +382,16 @@ export default function CreateBlogPage() {
     setIsSubmitting(true);
 
     try {
-      const slug = generateSlug(formData.title);
       const blogData = {
         title: formData.title!,
         description: formData.description || '',
         content: formData.content!,
         tags: formData.tags || [],
-        slug,
-        date: new Date().toISOString(),
         author: formData.author || getUserDisplayName(user, userProfile),
         authorId: user.uid,
       };
 
-      await createBlog(blogData);
+      const result = await createBlog(blogData);
       alert('博客发布成功！');
       
       // 重置表单
@@ -233,9 +404,11 @@ export default function CreateBlogPage() {
       });
       setUploadedImages([]);
       
+      console.log('博客发布成功:', result);
+      
     } catch (error) {
       console.error('发布博客失败:', error);
-      alert('发布失败，请重试');
+      alert(`发布失败：${error instanceof Error ? error.message : '请重试'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -299,20 +472,25 @@ export default function CreateBlogPage() {
                 {uploadedImages.length > 0 && (
                   <div className="mt-4">
                     <h4 className="text-sm font-medium text-muted-foreground mb-2">已上传图片:</h4>
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto">
                       {uploadedImages.map((image) => (
-                        <div key={image.id} className="flex items-center justify-between bg-background/50 p-2 rounded-lg">
-                          <div className="flex items-center space-x-2">
-                            <img src={image.url} alt={image.name} className="w-8 h-8 object-cover rounded" />
-                            <span className="text-xs text-foreground truncate max-w-20" title={image.name}>
-                              {image.name}
-                            </span>
+                        <div key={image.id} className="flex items-center justify-between bg-background/50 p-3 rounded-lg border border-border/50">
+                          <div className="flex items-center space-x-3 flex-1 min-w-0">
+                            <img src={image.url} alt={image.name} className="w-12 h-12 object-cover rounded border" />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate" title={image.name}>
+                                {image.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                点击插入按钮将图片添加到内容中
+                              </p>
+                            </div>
                           </div>
-                          <div className="flex space-x-1">
+                          <div className="flex space-x-2 ml-2">
                             <button
                               type="button"
                               onClick={() => insertImageAtCursor(image.url, image.name)}
-                              className="text-xs px-2 py-1 bg-monet-blue text-white rounded hover:bg-monet-blue-dark"
+                              className="text-xs px-3 py-1.5 bg-monet-blue text-white rounded hover:bg-monet-blue-dark transition-colors"
                               title="插入到内容"
                             >
                               插入
@@ -320,14 +498,24 @@ export default function CreateBlogPage() {
                             <button
                               type="button"
                               onClick={() => removeImage(image.id)}
-                              className="text-xs px-2 py-1 bg-destructive text-white rounded hover:bg-destructive/80"
-                              title="删除"
+                              className="text-xs px-3 py-1.5 bg-destructive text-white rounded hover:bg-destructive/80 transition-colors"
+                              title="删除图片"
                             >
                               删除
                             </button>
                           </div>
                         </div>
                       ))}
+                    </div>
+                    
+                    {/* 快速插入说明 */}
+                    <div className="mt-3 p-3 bg-monet-blue/10 border border-monet-blue/20 rounded-lg">
+                      <p className="text-xs text-monet-blue font-medium mb-1">💡 图片插入提示：</p>
+                      <ul className="text-xs text-muted-foreground space-y-1">
+                        <li>• 点击&ldquo;插入&rdquo;按钮将图片添加到内容末尾</li>
+                        <li>• 也可以手动输入：<code className="bg-card px-1 rounded">![图片名称](图片链接)</code></li>
+                        <li>• 支持拖拽调整图片在内容中的位置</li>
+                      </ul>
                     </div>
                   </div>
                 )}
@@ -501,27 +689,7 @@ export default function CreateBlogPage() {
                 <div className="prose prose-invert max-w-none">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
-                    components={{
-                      code({ className, children, ...props }: any) {
-                        const match = /language-(\w+)/.exec(className || '');
-                        const isInline = !className;
-                        
-                        return !isInline && match ? (
-                          <SyntaxHighlighter
-                            style={oneDark as any}
-                            language={match[1]}
-                            PreTag="div"
-                            {...props}
-                          >
-                            {String(children).replace(/\n$/, '')}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className={className} {...props}>
-                            {children}
-                          </code>
-                        );
-                      },
-                    }}
+                    components={MarkdownComponents}
                   >
                     {formData.content}
                   </ReactMarkdown>
