@@ -8,28 +8,34 @@ export default function AboutPage() {
 
   const teamMembers = [
     {
-      name: "Club Founder",
-      role: "Technical Leader",
-      description: "Focusing on deep learning and computer vision research",
-      avatar: "TC"
+      name: "Chengxuan Yang",
+      role: "Club Founder",
+      description: "Founder & Builder of this website",
+      avatar: "CY"
     },
     {
-      name: "Technical Mentor",
-      role: "AI Expert",
-      description: "Rich teaching experience in machine learning field",
-      avatar: "TM"
+      name: "Jason Yu",
+      role: "Club Cofounder",
+      description: "F1D expert",
+      avatar: "JY"
     },
     {
-      name: "Club Member",
-      role: "Frontend Developer",
-      description: "Passionate about web development and user experience design",
-      avatar: "FE"
+      name: "Changhong Zhao",
+      role: "Club Cofounder",
+      description: "C++ expert",
+      avatar: "CZ"
     },
     {
-      name: "Club Member",
-      role: "Data Science",
-      description: "Focusing on data analysis and machine learning applications",
-      avatar: "DS"
+      name: "Zhitong Ning",
+      role: "Club Cofounder",
+      description: "Machine Learning expert",
+      avatar: "ZN"
+    },
+    {
+      name: "Yubo Wang",
+      role: "Club Cofounder",
+      description: "",
+      avatar: "YW"
     }
   ];
 
@@ -52,7 +58,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-foreground text-center mb-12">
               Our Team
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
               {teamMembers.map((member, index) => (
                 <div key={index} className="bg-card border border-border rounded-xl p-6 text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
