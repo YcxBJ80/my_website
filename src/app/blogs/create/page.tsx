@@ -261,8 +261,8 @@ export default function CreateBlogPage() {
         <h1 className="text-3xl font-bold text-foreground mb-8 text-center">发布博客文章</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* 左侧：编辑区域 (1/4) */}
-          <div className="lg:col-span-1 space-y-6">
+          {/* 左侧：编辑区域 (2/4 = 50%) */}
+          <div className="lg:col-span-2 space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* 文件上传 */}
               <div className="bg-card border border-border rounded-xl p-6">
@@ -492,8 +492,8 @@ export default function CreateBlogPage() {
             </form>
           </div>
 
-          {/* 右侧：预览区域 (3/4) */}
-          <div className="lg:col-span-3">
+          {/* 右侧：预览区域 (2/4 = 50%) */}
+          <div className="lg:col-span-2">
             <div className="bg-card border border-border rounded-xl p-6 sticky top-4">
               <h3 className="text-lg font-semibold text-card-foreground mb-4">实时预览</h3>
               
