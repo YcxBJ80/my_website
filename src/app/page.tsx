@@ -136,22 +136,25 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section with Animated Background */}
-      <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex items-center">
-        <SquaresBackground className="opacity-30" squareCount={25} />
-        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-background/90 to-monet-purple/5"></div>
+      <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex flex-col">
+        <SquaresBackground className="opacity-60" squareCount={30} />
+        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
         
-        <Container className="relative z-10">
-          <div className="text-center max-w-5xl mx-auto">
-            <div className="mb-8">
-              <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium mb-8">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Welcome to BJ80 AI
-              </div>
-              
-              {/* Animated Title */}
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-8 leading-tight">
+        <Container className="relative z-10 flex-1 flex flex-col">
+          {/* Top Badge */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              Welcome to BJ80 AI
+            </div>
+          </div>
+
+          {/* Centered Title */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground leading-tight">
                 <TextType 
                   text="Welcome to BJ80 AI"
                   speed={120}
@@ -159,44 +162,45 @@ export default function HomePage() {
                   onComplete={() => setShowSecondaryText(true)}
                 />
               </h1>
-              
-              {showSecondaryText && (
-                <ScrollReveal>
-                  <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-4xl mx-auto">
-                    Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future
-                  </p>
-                </ScrollReveal>
-              )}
             </div>
+          </div>
 
-            {showSecondaryText && (
+          {/* Bottom Left Content */}
+          {showSecondaryText && (
+            <div className="absolute bottom-20 left-8 right-8 max-w-2xl lg:right-auto">
+              <ScrollReveal>
+                <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
+                  Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future
+                </p>
+              </ScrollReveal>
+              
               <ScrollReveal delay={300}>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                   {user ? (
                     <Link
                       href="/blogs"
-                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-8 py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-lg"
+                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
                     >
                       Browse Blogs
                     </Link>
                   ) : (
                     <Link
                       href="/auth"
-                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-8 py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-lg"
+                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
                     >
                       Join Now
                     </Link>
                   )}
                   <Link
                     href="/about"
-                    className="border border-border text-foreground px-8 py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-lg"
+                    className="border border-border text-foreground px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-base md:text-lg text-center"
                   >
                     Learn More
                   </Link>
                 </div>
               </ScrollReveal>
-            )}
-          </div>
+            </div>
+          )}
         </Container>
       </section>
 
