@@ -296,7 +296,7 @@ export default function HomePage() {
                 <ScrollReveal key={blog.slug} delay={index * 100}>
                   <Link
                     href={`/blogs/${blog.slug}`}
-                    className="block bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30"
+                    className="block bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col"
                   >
                     {/* Date and Author */}
                     <div className="flex items-center text-sm text-muted-foreground mb-4">
@@ -314,18 +314,18 @@ export default function HomePage() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2 leading-tight">
+                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2 leading-tight flex-1">
                       {blog.title}
                     </h3>
 
                     {/* Description */}
-                    <p className="text-muted-foreground line-clamp-3 leading-relaxed mb-4">
+                    <p className="text-muted-foreground line-clamp-3 leading-relaxed mb-4 flex-1">
                       {blog.description}
                     </p>
 
                     {/* Tags */}
                     {blog.tags && blog.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 mt-auto">
                         {blog.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
@@ -397,15 +397,15 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {recentProjects.map((project, index) => (
               <ScrollReveal key={project.id} delay={index * 100}>
-                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
-                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors">
+                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col">
+                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors flex-1">
                     {project.title}
                   </h3>
-                  <p className="text-muted-foreground mb-4 line-clamp-3">
+                  <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
                     {project.description}
                   </p>
                   {project.tags && (
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mt-auto">
                       {project.tags.map((tag) => (
                         <span
                           key={tag}

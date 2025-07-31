@@ -21,7 +21,7 @@ export default function Projects() {
             </p>
           </header>
           
-          {/* 暂时展示空状态 */}
+          {/* Temporary empty state */}
           <div className="text-center py-16">
             <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,17 +29,17 @@ export default function Projects() {
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-4">
-              项目开发中
+              Projects in Development
             </h3>
             <p className="text-muted-foreground max-w-md mx-auto">
-              我们正在努力开发各种AI项目，敬请期待！如果你有好的项目想法或想要参与开发，欢迎联系我们。
+              We are working hard on various AI projects, stay tuned! If you have great project ideas or want to participate in development, feel free to contact us.
             </p>
             <div className="mt-8">
               <a
                 href="/blogs/create"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
               >
-                分享你的项目想法
+                Share Your Project Ideas
               </a>
             </div>
           </div>
