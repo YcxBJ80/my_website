@@ -4,36 +4,36 @@ import { AuthButton } from '@/components/auth/AuthButton'
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="fullscreen-layout ai-gradient-bg">
-      {/* 顶部导航栏 */}
+      {/* Top Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo和标题 */}
+            {/* Logo and Title */}
             <Link href="/" className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-br from-monet-blue to-monet-purple rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">AI</span>
               </div>
-              <span className="text-white font-semibold text-lg">高中AI社团</span>
+              <span className="text-white font-semibold text-lg">BJ80 AI</span>
             </Link>
             
-            {/* 导航链接 */}
+            {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-                                 <Link href="/blogs" className="text-gray-300 hover:text-monet-blue transition-colors">
-                     博客
-                   </Link>
-                   <Link href="/blogs/create" className="text-gray-300 hover:text-monet-green transition-colors">
-                     发布
-                   </Link>
+              <Link href="/blogs" className="text-gray-300 hover:text-monet-blue transition-colors">
+                Blog
+              </Link>
+              <Link href="/blogs/create" className="text-gray-300 hover:text-monet-green transition-colors">
+                Publish
+              </Link>
               <Link href="/projects" className="text-gray-300 hover:text-monet-green transition-colors">
-                项目
+                Projects
               </Link>
               <Link href="/about" className="text-gray-300 hover:text-monet-purple transition-colors">
-                关于我们
+                About
               </Link>
               <AuthButton />
             </div>
             
-            {/* 移动端菜单按钮 */}
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <AuthButton />
             </div>
@@ -41,16 +41,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       
-      {/* 主要内容区域 */}
+      {/* Main Content Area */}
       <main className="pt-16 min-h-screen">
         {children}
       </main>
       
-      {/* 底部信息 */}
+      {/* Footer */}
       <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center text-gray-400">
-            <p>&copy; 2024 高中AI社团. 探索人工智能的无限可能</p>
+            <p>&copy; 2024 BJ80 AI. Exploring the infinite possibilities of AI</p>
           </div>
         </div>
       </footer>
