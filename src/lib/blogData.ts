@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
-// 评论接口
+// 评论接口 - 扩展支持回复
 export interface Comment {
   id: string;
   blogSlug: string;
@@ -27,6 +27,8 @@ export interface Comment {
   updatedAt: any;
   likes: number;
   likedBy: string[];
+  parentId?: string; // 父评论ID，如果为空则是顶级评论
+  replies?: Comment[]; // 子回复
 }
 
 // 点赞接口
@@ -52,15 +54,16 @@ export interface BlogStatsUpdate {
   comments?: number | FieldValue;
 }
 
-// 添加评论
+// 添加评论（支持回复）
 export async function addComment(
   blogSlug: string, 
   userId: string, 
   username: string, 
-  content: string
+  content: string,
+  parentId?: string
 ): Promise<string> {
   try {
-    const docRef = await addDoc(collection(db, 'comments'), {
+    const commentData: any = {
       blogSlug,
       userId,
       username,
@@ -69,7 +72,14 @@ export async function addComment(
       updatedAt: serverTimestamp(),
       likes: 0,
       likedBy: []
-    });
+    };
+
+    // 如果是回复，添加父评论ID
+    if (parentId) {
+      commentData.parentId = parentId;
+    }
+
+    const docRef = await addDoc(collection(db, 'comments'), commentData);
     
     // 更新博客评论数
     await updateBlogStats(blogSlug, { comments: increment(1) });
@@ -81,7 +91,7 @@ export async function addComment(
   }
 }
 
-// 获取博客评论
+// 获取博客评论（带回复层级结构）
 export async function getBlogComments(blogSlug: string): Promise<Comment[]> {
   try {
     const q = query(
@@ -91,10 +101,27 @@ export async function getBlogComments(blogSlug: string): Promise<Comment[]> {
     );
     
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    const allComments = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     })) as Comment[];
+
+    // 组织评论层级结构
+    const topLevelComments = allComments.filter(comment => !comment.parentId);
+    const replies = allComments.filter(comment => comment.parentId);
+
+    // 为每个顶级评论添加回复
+    topLevelComments.forEach(comment => {
+      comment.replies = replies
+        .filter(reply => reply.parentId === comment.id)
+        .sort((a, b) => {
+          const aTime = a.createdAt?.toDate?.() || new Date(a.createdAt);
+          const bTime = b.createdAt?.toDate?.() || new Date(b.createdAt);
+          return aTime.getTime() - bTime.getTime(); // 回复按时间正序
+        });
+    });
+
+    return topLevelComments;
   } catch (error) {
     console.error('获取评论失败:', error);
     return [];

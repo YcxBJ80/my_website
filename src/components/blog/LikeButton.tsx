@@ -11,12 +11,13 @@ import {
 
 interface LikeButtonProps {
   blogSlug: string;
+  className?: string;
 }
 
-export function LikeButton({ blogSlug }: LikeButtonProps) {
+export function LikeButton({ blogSlug, className = '' }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const user = getCurrentUser();
 
   useEffect(() => {
@@ -45,34 +46,52 @@ export function LikeButton({ blogSlug }: LikeButtonProps) {
       return;
     }
 
+    if (isUpdating) return; // 防止重复点击
+
+    // 客户端优先：立即更新UI
+    const newLikedState = !isLiked;
+    const newLikeCount = newLikedState ? likeCount + 1 : likeCount - 1;
+    
+    setIsLiked(newLikedState);
+    setLikeCount(newLikeCount);
+    setIsUpdating(true);
+
+    // 异步更新到服务端
     try {
-      setIsLoading(true);
-      const newLikedState = await toggleBlogLike(blogSlug, user.uid);
-      setIsLiked(newLikedState);
+      const serverLikedState = await toggleBlogLike(blogSlug, user.uid);
       
-      // 更新点赞数
-      setLikeCount(prev => newLikedState ? prev + 1 : prev - 1);
+      // 如果服务端结果与客户端预期不一致，以服务端为准
+      if (serverLikedState !== newLikedState) {
+        setIsLiked(serverLikedState);
+        // 重新获取准确的点赞数
+        const stats = await getBlogStats(blogSlug);
+        setLikeCount(stats.likes);
+      }
     } catch (error) {
       console.error('切换点赞状态失败:', error);
-      alert('操作失败，请重试');
+      // 发生错误时恢复到之前的状态
+      setIsLiked(!newLikedState);
+      setLikeCount(likeCount);
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
   };
 
   return (
     <button
       onClick={handleToggleLike}
-      disabled={isLoading}
-      className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
-        isLiked
-          ? 'bg-gradient-to-r from-monet-pink to-monet-purple text-white shadow-lg hover:shadow-monet-pink/20'
-          : 'bg-card border border-border text-card-foreground hover:bg-accent hover:text-monet-pink'
-      }`}
+      disabled={!user || isUpdating}
+      className={`flex items-center space-x-2 transition-all duration-200 ${
+        isLiked 
+          ? 'text-red-500 hover:text-red-600' 
+          : 'text-muted-foreground hover:text-red-500'
+      } ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} ${className}`}
+      title={!user ? '请先登录' : isLiked ? '取消点赞' : '点赞'}
     >
       <svg 
-        className={`w-5 h-5 transition-all duration-300 ${isLiked ? 'fill-current' : ''}`} 
-        fill={isLiked ? 'currentColor' : 'none'} 
+        className={`w-5 h-5 transition-all duration-200 ${
+          isLiked ? 'fill-current' : 'fill-none'
+        }`} 
         stroke="currentColor" 
         viewBox="0 0 24 24"
       >
@@ -83,8 +102,7 @@ export function LikeButton({ blogSlug }: LikeButtonProps) {
           d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
         />
       </svg>
-      <span>{isLoading ? '...' : likeCount}</span>
-      <span className="hidden sm:inline">{isLiked ? '已点赞' : '点赞'}</span>
+      <span className="text-sm font-medium">{likeCount}</span>
     </button>
   );
 } 
