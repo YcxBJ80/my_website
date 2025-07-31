@@ -177,7 +177,7 @@ export default function HomePage() {
 
         {/* Bottom Left Content - 移到 section 内但在 Container 外 */}
         {showSecondaryText && (
-          <div className="absolute bottom-8 left-8 right-8 max-w-2xl z-20 lg:right-auto">
+          <div className="absolute bottom-20 left-8 right-8 max-w-2xl z-20 lg:right-auto">
             <ScrollReveal>
               <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-6 md:mb-8 leading-relaxed">
                 Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future
