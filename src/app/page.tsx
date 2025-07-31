@@ -30,26 +30,7 @@ interface ProjectType {
 
 export default function HomePage() {
   const [recentBlogs, setRecentBlogs] = useState<BlogType[]>([]);
-  const [recentProjects] = useState<ProjectType[]>([
-    {
-      id: '1',
-      title: 'AI Image Recognition',
-      description: 'A deep learning model for real-time image classification using TensorFlow',
-      tags: ['Python', 'TensorFlow', 'Computer Vision']
-    },
-    {
-      id: '2', 
-      title: 'Natural Language Chatbot',
-      description: 'An intelligent chatbot powered by transformer models and NLP',
-      tags: ['Python', 'NLP', 'Transformers']
-    },
-    {
-      id: '3',
-      title: 'Data Analysis Platform',
-      description: 'Interactive data visualization and analysis tool for students',
-      tags: ['Python', 'Pandas', 'Streamlit']
-    }
-  ]);
+  const [recentProjects, setRecentProjects] = useState<ProjectType[]>([]);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showSecondaryText, setShowSecondaryText] = useState(false);
@@ -394,32 +375,57 @@ export default function HomePage() {
             </div>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
-            {recentProjects.map((project, index) => (
-              <ScrollReveal key={project.id} delay={index * 100}>
-                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col">
-                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors flex-1">
-                    {project.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
-                    {project.description}
-                  </p>
-                  {project.tags && (
-                    <div className="flex flex-wrap gap-2 mt-auto">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-1 text-xs bg-monet-blue/10 text-monet-blue rounded-md border border-monet-blue/20"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-card border border-border rounded-xl p-6 animate-pulse">
+                  <div className="h-4 bg-muted rounded mb-4"></div>
+                  <div className="h-6 bg-muted rounded mb-2"></div>
+                  <div className="h-4 bg-muted rounded mb-4"></div>
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
                 </div>
-              </ScrollReveal>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : recentProjects.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+              {recentProjects.map((project, index) => (
+                <ScrollReveal key={project.id} delay={index * 100}>
+                  <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col">
+                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors flex-1">
+                      {project.title}
+                    </h3>
+                    <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
+                      {project.description}
+                    </p>
+                    {project.tags && (
+                      <div className="flex flex-wrap gap-2 mt-auto">
+                        {project.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-1 text-xs bg-monet-blue/10 text-monet-blue rounded-md border border-monet-blue/20"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          ) : (
+            <ScrollReveal>
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Projects Yet</h3>
+                <p className="text-muted-foreground mb-6">Projects are coming soon!</p>
+              </div>
+            </ScrollReveal>
+          )}
         </Container>
       </section>
     </div>
