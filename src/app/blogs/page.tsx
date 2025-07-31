@@ -187,7 +187,7 @@ export default function BlogsIndex() {
       if (response.ok) {
         const blogsData = await response.json();
         setBlogs(blogsData);
-        console.log('🔄 博客数据已强制更新:', blogsData.length, '篇博客', `(时间戳: ${timestamp})`);
+        console.log('🔄 博客数据已更新:', blogsData.length, '篇博客', `(时间戳: ${timestamp})`);
         
         // 额外日志：显示每篇博客的ID和标题，便于调试
         blogsData.forEach((blog: any, index: number) => {
@@ -222,17 +222,23 @@ export default function BlogsIndex() {
 
           {/* 搜索和刷新区域 */}
           <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
-              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="搜索博客..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
-              />
+            <div className="flex-1 max-w-md">
+              <div className="relative">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="搜索博客..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                />
+              </div>
+              {/* 延迟提示 */}
+              <p className="text-xs text-gray-400 mt-2">
+                💡 上传博客可能有3-5分钟的延迟
+              </p>
             </div>
             
             {/* 数据状态显示 */}
@@ -242,12 +248,12 @@ export default function BlogsIndex() {
                 {isLoading && <span className="text-monet-blue ml-1">刷新中...</span>}
               </div>
               
-              {/* 强制刷新按钮 */}
+              {/* 刷新按钮 */}
               <button
                 onClick={loadBlogs}
                 disabled={isLoading}
-                className="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-blue/20"
-                title="强制从服务端刷新最新博客数据"
+                className="flex items-center space-x-2 px-4 py-3 bg-monet-blue text-white rounded-xl hover:bg-monet-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="刷新博客列表"
               >
                 <svg 
                   className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
@@ -258,7 +264,7 @@ export default function BlogsIndex() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
                 <span className="hidden sm:inline font-medium">
-                  {isLoading ? '强制刷新中...' : '强制刷新'}
+                  {isLoading ? '刷新中...' : '刷新'}
                 </span>
               </button>
             </div>
