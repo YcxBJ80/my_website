@@ -225,8 +225,6 @@ export default function CreateBlogPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [uploadingImages, setUploadingImages] = useState<string[]>([]);
-  const [selectedMarkdownFile, setSelectedMarkdownFile] = useState<string>('');
-  const [selectedImageFiles, setSelectedImageFiles] = useState<string[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const user = getCurrentUser();
   const router = useRouter();
@@ -270,7 +268,6 @@ export default function CreateBlogPage() {
     try {
       const content = await file.text();
       setFormData(prev => ({ ...prev, content }));
-      setSelectedMarkdownFile(file.name);
       
       console.log('📄 Markdown file loaded successfully:', file.name);
     } catch (error) {
@@ -296,7 +293,6 @@ export default function CreateBlogPage() {
     }
 
     setUploadingImages(prev => [...prev, ...imageFiles.map(f => f.name)]);
-    setSelectedImageFiles(prev => [...prev, ...imageFiles.map(f => f.name)]);
 
     // Smart image insertion - find and replace placeholders
     const currentContent = formData.content || '';
@@ -579,27 +575,12 @@ export default function CreateBlogPage() {
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Upload Markdown File
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept=".md,.markdown"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      id="markdown-file-input"
-                    />
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => document.getElementById('markdown-file-input')?.click()}
-                        className="px-4 py-2 bg-monet-blue text-white rounded-full text-sm font-semibold hover:bg-monet-blue-dark transition-colors"
-                      >
-                        Choose File
-                      </button>
-                      <span className="text-sm text-muted-foreground">
-                        {selectedMarkdownFile || 'No file selected'}
-                      </span>
-                    </div>
-                  </div>
+                  <input
+                    type="file"
+                    accept=".md,.markdown"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                    className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-monet-blue file:text-white hover:file:bg-monet-blue-dark"
+                  />
                 </div>
 
                 {/* Image Upload */}
@@ -607,28 +588,13 @@ export default function CreateBlogPage() {
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Upload Images (Multiple Selection)
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={(e) => e.target.files && handleMultipleImageUpload(e.target.files)}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      id="image-file-input"
-                    />
-                    <div className="flex items-center space-x-2">
-                      <button
-                        type="button"
-                        onClick={() => document.getElementById('image-file-input')?.click()}
-                        className="px-4 py-2 bg-monet-green text-white rounded-full text-sm font-semibold hover:bg-monet-green-dark transition-colors"
-                      >
-                        Choose Files
-                      </button>
-                      <span className="text-sm text-muted-foreground">
-                        {selectedImageFiles.length > 0 ? `${selectedImageFiles.length} file(s) selected` : 'No files selected'}
-                      </span>
-                    </div>
-                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => e.target.files && handleMultipleImageUpload(e.target.files)}
+                    className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-monet-green file:text-white hover:file:bg-monet-green-dark"
+                  />
                 </div>
 
                 {/* Uploaded Images List */}

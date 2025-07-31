@@ -34,14 +34,6 @@ export default function Projects() {
             <p className="text-muted-foreground max-w-md mx-auto">
               We are working hard on various AI projects, stay tuned! If you have great project ideas or want to participate in development, feel free to contact us.
             </p>
-            <div className="mt-8">
-              <a
-                href="/blogs/create"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
-              >
-                Share Your Project Ideas
-              </a>
-            </div>
           </div>
         </div>
       </Container>
