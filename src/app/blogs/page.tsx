@@ -3,23 +3,28 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/shared/Card'
 import { Container } from '@/components/layout/Container'
-import { type BlogType } from '@/lib/blogs'
 import { formatDate } from '@/lib/formatDate'
 import { blogHeadLine, blogIntro } from '@/config/infoConfig'
-import { getBlogStats } from '@/lib/blogData'
 import { generateTagColor } from '@/lib/blogOperations'
 
-interface BlogWithStats extends BlogType {
+interface BlogWithStats {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  date: string;
+  slug: string;
+  tags?: string[];
   views?: number;
   likes?: number;
   comments?: number;
-  tags?: string[];
+  content: string;
 }
 
 function BlogCard({ blog }: { blog: BlogWithStats }) {
   return (
     <div className="group relative">
-      {/* 左侧时间轴 */}
+      {/* Left timeline */}
       <div className="flex items-center mb-6">
         <div className="flex-shrink-0 w-24 text-right pr-6">
           <time
@@ -29,14 +34,14 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
             {formatDate(blog.date).split(' ')[0]}
           </time>
         </div>
-        
-        {/* 连接线 */}
+
+        {/* Connector line */}
         <div className="flex-shrink-0 relative">
           <div className="w-4 h-4 bg-monet-blue rounded-full border-4 border-background"></div>
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-0.5 h-20 bg-border group-last:hidden"></div>
         </div>
-        
-        {/* 博客卡片 */}
+
+        {/* Blog card */}
         <div className="flex-1 ml-6">
           <Card className="hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group-hover:-translate-y-1">
             <div className="flex justify-between items-start mb-3">
@@ -51,10 +56,10 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
                 </div>
               </div>
             </div>
-            
+
             <Card.Description>{blog.description}</Card.Description>
-            
-            {/* 标签 */}
+
+            {/* Tags */}
             {blog.tags && blog.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {blog.tags.map((tag) => (
@@ -115,13 +120,14 @@ export default function BlogsIndex() {
   const [filteredBlogs, setFilteredBlogs] = useState<BlogWithStats[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     loadBlogs();
   }, []);
 
   useEffect(() => {
-    // 搜索过滤
+    // 搜索过滤逻辑
     if (searchTerm.trim() === '') {
       setFilteredBlogs(blogs);
     } else {
@@ -137,29 +143,20 @@ export default function BlogsIndex() {
   const loadBlogs = async () => {
     try {
       setIsLoading(true);
+      setError('');
+      
       const response = await fetch('/api/blogs');
       if (response.ok) {
         const blogsData = await response.json();
-        
-        // 加载每个博客的统计信息
-        const blogsWithStats = await Promise.all(
-          blogsData.map(async (blog: BlogType) => {
-            try {
-              const stats = await getBlogStats(blog.slug);
-              return { ...blog, ...stats };
-            } catch (error) {
-              console.error(`获取博客 ${blog.slug} 统计失败:`, error);
-              return { ...blog, views: 0, likes: 0, comments: 0 };
-            }
-          })
-        );
-        
-        setBlogs(blogsWithStats);
+        setBlogs(blogsData);
       } else {
+        const errorData = await response.json();
+        setError(errorData.error || '获取博客失败');
         console.error('获取博客失败:', response.statusText);
       }
     } catch (error) {
       console.error('加载博客失败:', error);
+      setError('网络错误，请稍后重试');
     } finally {
       setIsLoading(false);
     }
@@ -205,21 +202,41 @@ export default function BlogsIndex() {
             )}
           </div>
 
-          {/* 搜索结果统计 */}
+          {/* 搜索结果计数 */}
           {searchTerm && (
             <div className="mb-6 text-sm text-muted-foreground">
               找到 {filteredBlogs.length} 篇相关文章
               {searchTerm && (
                 <span className="ml-2">
-                                     关于 &ldquo;<span className="text-monet-blue font-medium">{searchTerm}</span>&rdquo;
+                  关于 &ldquo;<span className="text-monet-blue font-medium">{searchTerm}</span>&rdquo;
                 </span>
               )}
+            </div>
+          )}
+
+          {/* 错误提示 */}
+          {error && (
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-destructive text-sm font-medium">加载失败</span>
+              </div>
+              <p className="text-destructive text-sm mt-1">{error}</p>
+              <button 
+                onClick={loadBlogs}
+                className="mt-2 text-xs text-monet-blue hover:text-monet-blue-dark transition-colors"
+              >
+                重新加载
+              </button>
             </div>
           )}
 
           {/* 博客列表 */}
           <div className="relative">
             {isLoading ? (
+              // 加载骨架屏
               <div className="space-y-8">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="flex items-center">
@@ -234,10 +251,11 @@ export default function BlogsIndex() {
                 ))}
               </div>
             ) : filteredBlogs.length === 0 ? (
+              // 无结果消息
               <div className="text-center py-16">
-                <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-2">
@@ -246,11 +264,21 @@ export default function BlogsIndex() {
                 <p className="text-muted-foreground">
                   {searchTerm ? '请尝试使用其他关键词搜索' : '快来发布第一篇技术文章吧！'}
                 </p>
+                {!searchTerm && (
+                  <div className="mt-6">
+                    <a
+                      href="/blogs/create"
+                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+                    >
+                      发布文章
+                    </a>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-0">
                 {filteredBlogs.map((blog: BlogWithStats) => (
-                  <BlogCard key={blog.slug} blog={blog} />
+                  <BlogCard key={blog.id} blog={blog} />
                 ))}
               </div>
             )}
@@ -258,5 +286,5 @@ export default function BlogsIndex() {
         </div>
       </Container>
     </div>
-  )
+  );
 }
