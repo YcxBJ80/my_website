@@ -360,115 +360,124 @@ export default function CreateBlogPage() {
     setUploadedImages(prev => prev.filter(img => img.id !== imageId));
   };
 
-  // 检测内容中未处理的图片占位符
-  const getUnprocessedPlaceholders = (content: string): string[] => {
-    const placeholderRegex = /!\[\[([^\]]+)\]\]/g;
-    const placeholders: string[] = [];
-    let match;
+  // 自动转换obsidian格式到标准markdown格式
+  const autoConvertObsidianToMarkdown = (content: string): string => {
+    if (!content) return content;
     
-    while ((match = placeholderRegex.exec(content)) !== null) {
-      const fileName = match[1];
-      placeholders.push(fileName);
-    }
+    let convertedContent = content;
+    const obsidianImageRegex = /!\[\[([^\]]+)\]\]/g;
+    let hasChanges = false;
     
-    return [...new Set(placeholders)]; // 去重
-  };
-
-  // 获取建议的图片匹配
-  const getSuggestedImages = (placeholders: string[]): Array<{placeholder: string, image: UploadedImage | null}> => {
-    return placeholders.map(placeholder => {
-      // 查找匹配的图片 (支持无扩展名匹配)
+    // 找到所有obsidian格式的图片引用
+    const matches = Array.from(content.matchAll(obsidianImageRegex));
+    
+    for (const match of matches) {
+      const [fullMatch, fileName] = match;
+      
+      // 查找匹配的已上传图片
       const matchedImage = uploadedImages.find(img => {
         const imgNameWithoutExt = img.name.split('.')[0];
-        return imgNameWithoutExt === placeholder || img.name === placeholder;
+        return imgNameWithoutExt === fileName || img.name === fileName;
       });
       
-      return {
-        placeholder,
-        image: matchedImage || null
-      };
-    });
+      if (matchedImage) {
+        // 转换为标准markdown格式
+        const standardMarkdown = `![${fileName}](${matchedImage.url})`;
+        convertedContent = convertedContent.replace(fullMatch, standardMarkdown);
+        hasChanges = true;
+        console.log(`🔄 自动转换: ${fullMatch} → ${standardMarkdown}`);
+      }
+    }
+    
+    return convertedContent;
   };
 
-  // 智能图片插入 - 优先替换占位符，如果没有占位符则插入到光标位置
+  // 处理内容变化，自动转换obsidian格式
+  const handleContentChange = (newContent: string) => {
+    // 先更新原始内容
+    setFormData(prev => ({ ...prev, content: newContent }));
+    
+    // 然后自动转换obsidian格式
+    setTimeout(() => {
+      const convertedContent = autoConvertObsidianToMarkdown(newContent);
+      if (convertedContent !== newContent) {
+        setFormData(prev => ({ ...prev, content: convertedContent }));
+      }
+    }, 500); // 延迟转换，避免输入时频繁转换
+  };
+
+  // 简化的图片插入 - 直接在光标位置插入标准markdown格式
   const insertImageAtCursor = (imageUrl: string, imageName: string) => {
     const fileName = imageName.split('.')[0]; // 移除扩展名
     const imageMarkdown = `![${fileName}](${imageUrl})`;
     
-    setFormData(prev => {
-      const currentContent = prev.content || '';
+    const textarea = contentTextareaRef.current;
+    if (textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const currentContent = formData.content || '';
       
-      // 1. 首先尝试替换对应的占位符 ![[fileName]] 
-      const placeholderPattern = new RegExp(`!\\[\\[${fileName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\]\\]`, 'gi');
+      // 在光标位置插入图片markdown
+      const beforeCursor = currentContent.slice(0, start);
+      const afterCursor = currentContent.slice(end);
       
-      if (placeholderPattern.test(currentContent)) {
-        const updatedContent = currentContent.replace(
-          placeholderPattern, 
-          imageMarkdown
-        );
-        console.log(`✅ 替换占位符: ![[${fileName}]] → 图片链接`);
-        return { ...prev, content: updatedContent };
+      // 确保前后有适当的换行
+      let imageToInsert = imageMarkdown;
+      if (beforeCursor && !beforeCursor.endsWith('\n')) {
+        imageToInsert = '\n' + imageToInsert;
+      }
+      if (afterCursor && !afterCursor.startsWith('\n')) {
+        imageToInsert = imageToInsert + '\n';
       }
       
-      // 2. 如果没有找到对应占位符，插入到光标位置
-      const textarea = contentTextareaRef.current;
-      if (textarea) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        
-        // 插入图片markdown到光标位置
-        const beforeCursor = currentContent.slice(0, start);
-        const afterCursor = currentContent.slice(end);
-        
-        // 确保前后有适当的换行
-        let imageToInsert = imageMarkdown;
-        if (beforeCursor && !beforeCursor.endsWith('\n')) {
-          imageToInsert = '\n' + imageToInsert;
-        }
-        if (afterCursor && !afterCursor.startsWith('\n')) {
-          imageToInsert = imageToInsert + '\n';
-        }
-        
-        const newContent = beforeCursor + imageToInsert + afterCursor;
-        
-        // 设置新的光标位置
-        setTimeout(() => {
-          const newCursorPosition = start + imageToInsert.length;
-          textarea.focus();
-          textarea.setSelectionRange(newCursorPosition, newCursorPosition);
-        }, 0);
-        
-        console.log(`✅ 在光标位置插入图片: ${fileName}`);
-        return { ...prev, content: newContent };
-      } else {
-        // 备用方案：插入到内容末尾
-        console.log(`ℹ️ 无法获取光标位置，插入到末尾: ${fileName}`);
-        return {
-          ...prev,
-          content: currentContent + '\n\n' + imageMarkdown
-        };
-      }
-    });
-  };
-  
-  // 辅助函数：转义正则表达式特殊字符
-  const escapeRegExp = (string: string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const newContent = beforeCursor + imageToInsert + afterCursor;
+      setFormData(prev => ({ ...prev, content: newContent }));
+      
+      // 设置新的光标位置
+      setTimeout(() => {
+        const newCursorPosition = start + imageToInsert.length;
+        textarea.focus();
+        textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+      }, 0);
+      
+      console.log(`✅ 在光标位置插入图片: ${fileName}`);
+    } else {
+      // 备用方案：插入到内容末尾
+      const currentContent = formData.content || '';
+      setFormData(prev => ({
+        ...prev,
+        content: currentContent + '\n\n' + imageMarkdown
+      }));
+      console.log(`ℹ️ 无法获取光标位置，插入到末尾: ${fileName}`);
+    }
   };
 
-  // 替换占位符的快捷插入
-  const replaceImagePlaceholder = (placeholder: string, imageUrl: string) => {
-    const imageMarkdown = `![${placeholder}](${imageUrl})`;
+  // 检测未转换的obsidian格式
+  const getUnconvertedObsidianImages = (): string[] => {
+    const content = formData.content || '';
+    const obsidianImageRegex = /!\[\[([^\]]+)\]\]/g;
+    const unconverted: string[] = [];
+    let match;
     
-    setFormData(prev => {
-      const currentContent = prev.content || '';
-      const placeholderPattern = new RegExp(`!\\[\\[${escapeRegExp(placeholder)}\\]\\]`, 'gi');
-      const updatedContent = currentContent.replace(placeholderPattern, imageMarkdown);
+    while ((match = obsidianImageRegex.exec(content)) !== null) {
+      const fileName = match[1];
+      // 检查是否有对应的已上传图片
+      const hasMatchingImage = uploadedImages.some(img => {
+        const imgNameWithoutExt = img.name.split('.')[0];
+        return imgNameWithoutExt === fileName || img.name === fileName;
+      });
       
-      console.log(`✅ 替换占位符: ![[${placeholder}]] → 图片链接`);
-      return { ...prev, content: updatedContent };
-    });
+      if (!hasMatchingImage) {
+        unconverted.push(fileName);
+      }
+    }
+    
+    return [...new Set(unconverted)]; // 去重
   };
+
+  const unconvertedImages = getUnconvertedObsidianImages();
+
+
 
   const addTag = (tag: string) => {
     if (!tag.trim()) return;
@@ -557,10 +566,6 @@ export default function CreateBlogPage() {
     );
   }
 
-  // 获取未处理的占位符
-  const unprocessedPlaceholders = getUnprocessedPlaceholders(formData.content || '');
-  const suggestedImages = getSuggestedImages(unprocessedPlaceholders);
-
   // 过滤掉已选择的标签
   const availableTags = predefinedTags.filter(tag => !formData.tags?.includes(tag));
 
@@ -646,43 +651,36 @@ export default function CreateBlogPage() {
                   </div>
                 )}
 
-                {/* 未处理的图片占位符 */}
-                {unprocessedPlaceholders.length > 0 && (
+                {/* 未转换的obsidian格式图片 */}
+                {unconvertedImages.length > 0 && (
                   <div className="mt-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
                     <h4 className="text-sm font-medium text-amber-700 dark:text-amber-300 mb-2">
-                      🔍 未处理的图片占位符:
+                      🔍 需要上传的图片:
                     </h4>
                     <div className="space-y-2">
-                      {suggestedImages.map(({placeholder, image}) => (
-                        <div key={placeholder} className="flex items-center justify-between text-xs">
+                      {unconvertedImages.map((fileName) => (
+                        <div key={fileName} className="flex items-center justify-between text-xs">
                           <span className="font-mono text-amber-600 dark:text-amber-400">
-                            ![[{placeholder}]]
+                            ![[{fileName}]]
                           </span>
-                          {image ? (
-                            <button
-                              type="button"
-                              onClick={() => replaceImagePlaceholder(placeholder, image.url)}
-                              className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                            >
-                              插入 {image.name}
-                            </button>
-                          ) : (
-                            <span className="text-orange-500">未找到匹配图片</span>
-                          )}
+                          <span className="text-orange-500">请上传名为 &quot;{fileName}&quot; 的图片</span>
                         </div>
                       ))}
                     </div>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                      💡 上传对应名称的图片后，系统会自动转换为标准markdown格式
+                    </p>
                   </div>
                 )}
               </div>
 
-              {/* 智能图片插入指南 */}
+              {/* 自动图片转换指南 */}
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">💡 智能图片插入指南</h4>
+                <h4 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">💡 自动图片转换指南</h4>
                 <div className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
-                  <p><strong>方法1 (推荐):</strong> 在内容中写 <code>![[图片名]]</code>，然后上传对应图片，系统会自动替换</p>
-                  <p><strong>方法2:</strong> 将光标放在想插入图片的位置，点击图片的&quot;插入&quot;按钮</p>
-                  <p><strong>例如:</strong> 写 <code>![[avatar]]</code>，然后上传 <code>avatar.jpg</code></p>
+                  <p><strong>方法1 (推荐):</strong> 在内容中写 <code>![[图片名]]</code>，上传对应图片后自动转换为标准markdown</p>
+                  <p><strong>方法2:</strong> 点击图片的&quot;插入&quot;按钮直接在光标位置插入标准markdown格式</p>
+                  <p><strong>例如:</strong> 写 <code>![[avatar]]</code> → 上传 <code>avatar.jpg</code> → 自动变成 <code>![avatar](图片链接)</code></p>
                 </div>
               </div>
 
@@ -803,7 +801,7 @@ export default function CreateBlogPage() {
                 <textarea
                   ref={contentTextareaRef}
                   value={formData.content || ''}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  onChange={(e) => handleContentChange(e.target.value)}
                   placeholder="在这里编写你的Markdown内容...
 
 💡 提示：使用 ![[图片名]] 来标记图片位置，例如：
