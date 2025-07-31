@@ -23,6 +23,24 @@ interface CommentItemProps {
   user: any;
 }
 
+// 统一日期处理函数
+function getDateFromTimestamp(timestamp: any): Date {
+  if (!timestamp) return new Date();
+  
+  // 如果是Firebase Timestamp，调用toDate()
+  if (timestamp && typeof timestamp.toDate === 'function') {
+    return timestamp.toDate();
+  }
+  
+  // 如果已经是Date对象，直接返回
+  if (timestamp instanceof Date) {
+    return timestamp;
+  }
+  
+  // 如果是字符串或数字，尝试转换
+  return new Date(timestamp);
+}
+
 function CommentItem({ comment, blogSlug, onReply, onDelete, user }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
@@ -59,7 +77,7 @@ function CommentItem({ comment, blogSlug, onReply, onDelete, user }: CommentItem
           <div>
             <p className="font-medium text-card-foreground">{comment.username}</p>
             <p className="text-sm text-muted-foreground">
-              {comment.createdAt ? formatDate(comment.createdAt.toDate()) : '刚刚'}
+              {formatDate(getDateFromTimestamp(comment.createdAt))}
             </p>
           </div>
         </div>
@@ -166,7 +184,7 @@ function CommentItem({ comment, blogSlug, onReply, onDelete, user }: CommentItem
                   <div>
                     <p className="font-medium text-card-foreground text-sm">{reply.username}</p>
                     <p className="text-xs text-muted-foreground">
-                      {reply.createdAt ? formatDate(reply.createdAt.toDate()) : '刚刚'}
+                      {formatDate(getDateFromTimestamp(reply.createdAt))}
                     </p>
                   </div>
                 </div>
@@ -238,8 +256,8 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
       userId: user.uid,
       username: user.displayName || user.email || '用户',
       content: newComment.trim(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date(), // 普通Date对象
+      updatedAt: new Date(), // 普通Date对象
       likes: 0,
       likedBy: [],
       replies: []
@@ -278,8 +296,8 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
       userId: user.uid,
       username: user.displayName || user.email || '用户',
       content,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date(), // 普通Date对象
+      updatedAt: new Date(), // 普通Date对象
       likes: 0,
       likedBy: [],
       parentId
