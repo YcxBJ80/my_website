@@ -88,4 +88,9 @@
       hsl(var(--background)) 100%
     );
   }
+  
+  /* 自定义文件上传按钮文本 */
+  input[type="file"]::file-selector-button {
+    content: var(--file-button-text, "Choose File");
+  }
 }

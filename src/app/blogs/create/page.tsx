@@ -580,6 +580,9 @@ export default function CreateBlogPage() {
                     accept=".md,.markdown"
                     onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
                     className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-monet-blue file:text-white hover:file:bg-monet-blue-dark"
+                    style={{ 
+                      '--file-button-text': '"Choose File"' 
+                    } as React.CSSProperties}
                   />
                 </div>
 
@@ -594,6 +597,9 @@ export default function CreateBlogPage() {
                     multiple
                     onChange={(e) => e.target.files && handleMultipleImageUpload(e.target.files)}
                     className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-monet-green file:text-white hover:file:bg-monet-green-dark"
+                    style={{ 
+                      '--file-button-text': '"Choose Files"' 
+                    } as React.CSSProperties}
                   />
                 </div>
 
