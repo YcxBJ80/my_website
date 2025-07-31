@@ -8,6 +8,7 @@ import {
   deleteComment,
   type Comment 
 } from '@/lib/blogData';
+import { getUserDisplayName, getUserProfile, type UserProfile } from '@/lib/user';
 import { formatDate } from '@/lib/formatDate';
 import { LikeButton } from './LikeButton';
 
@@ -218,11 +219,24 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const user = getCurrentUser();
 
   useEffect(() => {
     loadComments();
-  }, [blogSlug]);
+    loadUserProfile();
+  }, [blogSlug, user]);
+
+  const loadUserProfile = async () => {
+    if (user) {
+      try {
+        const profile = await getUserProfile(user.uid);
+        setUserProfile(profile);
+      } catch (error) {
+        console.error('获取用户资料失败:', error);
+      }
+    }
+  };
 
   const loadComments = async () => {
     try {
@@ -249,12 +263,15 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
       return;
     }
 
+    // 获取正确的用户显示名
+    const displayName = getUserDisplayName(user, userProfile);
+
     // 客户端优先：立即添加评论到UI
     const optimisticComment: Comment = {
       id: `temp-${Date.now()}`,
       blogSlug,
       userId: user.uid,
-      username: user.displayName || user.email || '用户',
+      username: displayName,
       content: newComment.trim(),
       createdAt: new Date(), // 普通Date对象
       updatedAt: new Date(), // 普通Date对象
@@ -268,7 +285,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     setIsSubmitting(true);
 
     try {
-      const commentId = await addComment(blogSlug, user.uid, user.displayName || user.email || '用户', newComment.trim());
+      const commentId = await addComment(blogSlug, user.uid, displayName, newComment.trim());
       
       // 用服务端返回的真实ID更新评论
       setComments(prev => prev.map(comment => 
@@ -289,12 +306,15 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
   const handleReply = async (parentId: string, content: string) => {
     if (!user) return;
 
+    // 获取正确的用户显示名
+    const displayName = getUserDisplayName(user, userProfile);
+
     // 客户端优先：立即添加回复到UI
     const optimisticReply: Comment = {
       id: `temp-reply-${Date.now()}`,
       blogSlug,
       userId: user.uid,
-      username: user.displayName || user.email || '用户',
+      username: displayName,
       content,
       createdAt: new Date(), // 普通Date对象
       updatedAt: new Date(), // 普通Date对象
@@ -314,7 +334,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     }));
 
     try {
-      const replyId = await addComment(blogSlug, user.uid, user.displayName || user.email || '用户', content, parentId);
+      const replyId = await addComment(blogSlug, user.uid, displayName, content, parentId);
       
       // 用服务端返回的真实ID更新回复
       setComments(prev => prev.map(comment => {

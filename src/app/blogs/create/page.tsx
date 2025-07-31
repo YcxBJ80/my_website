@@ -1,22 +1,24 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Container } from '@/components/layout/Container';
 import { getCurrentUser } from '@/lib/auth';
-import { createBlog } from '@/lib/blogOperations';
+import { getUserDisplayName, getUserProfile, type UserProfile } from '@/lib/user';
+import { createBlog, generateTagColor } from '@/lib/blogOperations';
 import { uploadBlogImage } from '@/lib/storage';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-interface BlogFormData {
+interface BlogData {
+  id: string;
   title: string;
   description: string;
   content: string;
+  author: string;
   tags: string[];
-  coverImage?: string;
+  slug: string;
+  date: string;
 }
 
 interface UploadedImage {
@@ -26,49 +28,67 @@ interface UploadedImage {
 }
 
 const predefinedTags = [
-  'AI', '机器学习', '深度学习', '神经网络', 'Python', 'TensorFlow', 'PyTorch',
-  '自然语言处理', '计算机视觉', '数据科学', '算法', '编程', '项目分享', '学习心得'
+  '机器学习', '深度学习', '人工智能', 'Python', 'TensorFlow', 'PyTorch',
+  '自然语言处理', '计算机视觉', '数据科学', '算法', '编程技术', 'Web开发',
+  '前端开发', '后端开发', '移动开发', '区块链', '云计算', '大数据',
+  '网络安全', '软件工程', '数据库', 'DevOps', 'UI/UX', '产品设计',
+  '创业', '技术分享', '学习笔记', '项目经验', '工具推荐', '行业洞察'
 ];
 
 export default function CreateBlogPage() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<BlogFormData>({
+  const [formData, setFormData] = useState<Partial<BlogData>>({
     title: '',
     description: '',
     content: '',
-    tags: []
+    author: '',
+    tags: [],
   });
-  const [newTag, setNewTag] = useState('');
+  const [customTag, setCustomTag] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [uploadingImages, setUploadingImages] = useState<Set<string>>(new Set());
-  const router = useRouter();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const user = getCurrentUser();
 
   useEffect(() => {
-    const checkUser = async () => {
-      const currentUser = await getCurrentUser();
-      if (!currentUser) {
-        router.push('/auth');
-        return;
+    if (user) {
+      loadUserProfile();
+    } else {
+      window.location.href = '/auth';
+    }
+  }, [user]);
+
+  const loadUserProfile = async () => {
+    if (user) {
+      try {
+        const profile = await getUserProfile(user.uid);
+        setUserProfile(profile);
+        
+        // 设置作者名称
+        const displayName = getUserDisplayName(user, profile);
+        setFormData(prev => ({ ...prev, author: displayName }));
+      } catch (error) {
+        console.error('获取用户资料失败:', error);
+        // 如果获取失败，使用默认的显示名称
+        const displayName = getUserDisplayName(user, null);
+        setFormData(prev => ({ ...prev, author: displayName }));
       }
-      setUser(currentUser);
-      setLoading(false);
-    };
-    checkUser();
-  }, [router]);
+    }
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!file.name.endsWith('.md')) {
+      alert('请上传 .md 格式的文件');
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      setFormData(prev => ({
-        ...prev,
-        content: content
-      }));
+      setFormData(prev => ({ ...prev, content: content }));
     };
     reader.readAsText(file);
   };
@@ -88,8 +108,7 @@ export default function CreateBlogPage() {
       setUploadingImages(prev => new Set(prev).add(imageId));
 
       try {
-        // 上传到Firebase Storage，使用博客特定的路径
-        const blogId = Date.now().toString(); // 临时ID，实际应该是博客创建后的ID
+        const blogId = Date.now().toString(); // 临时ID，实际应为创建后的博客ID
         const imageUrl = await uploadBlogImage(file, user.uid, blogId);
         
         const uploadedImage: UploadedImage = {
@@ -99,12 +118,12 @@ export default function CreateBlogPage() {
         };
 
         setUploadedImages(prev => [...prev, uploadedImage]);
-        
-        // 在markdown内容中插入图片引用
+
+        // 自动插入到内容中
         const imageMarkdown = `![${file.name}](${imageUrl})`;
         setFormData(prev => ({
           ...prev,
-          content: prev.content + '\n\n' + imageMarkdown
+          content: (prev.content || '') + '\n\n' + imageMarkdown
         }));
 
       } catch (error) {
@@ -127,14 +146,14 @@ export default function CreateBlogPage() {
     const image = uploadedImages.find(img => img.id === imageId);
     if (!image) return;
 
-    // 从content中移除图片引用
+    // 从content中移除对应的markdown
     const imageMarkdown = `![${image.name}](${image.url})`;
     setFormData(prev => ({
       ...prev,
-      content: prev.content.replace(imageMarkdown, '').replace(/\n{3,}/g, '\n\n')
+      content: (prev.content || '').replace(imageMarkdown, '').replace(/\n{3,}/g, '\n\n')
     }));
 
-    // 从上传列表中移除
+    // 从列表中移除
     setUploadedImages(prev => prev.filter(img => img.id !== imageId));
   };
 
@@ -142,30 +161,46 @@ export default function CreateBlogPage() {
     const imageMarkdown = `![${imageName}](${imageUrl})`;
     setFormData(prev => ({
       ...prev,
-      content: prev.content + '\n\n' + imageMarkdown
+      content: (prev.content || '') + '\n\n' + imageMarkdown
     }));
   };
 
   const addTag = (tag: string) => {
-    if (tag.trim() && !formData.tags.includes(tag.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        tags: [...prev.tags, tag.trim()]
-      }));
-    }
-    setNewTag('');
+    if (!tag.trim()) return;
+    if (formData.tags?.includes(tag.trim())) return;
+    
+    setFormData(prev => ({
+      ...prev,
+      tags: [...(prev.tags || []), tag.trim()]
+    }));
+    setCustomTag('');
   };
 
   const removeTag = (tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags?.filter(tag => tag !== tagToRemove) || []
     }));
+  };
+
+  const generateSlug = (title: string): string => {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !formData.title.trim() || !formData.content.trim()) {
+    
+    if (!user) {
+      alert('请先登录');
+      return;
+    }
+
+    if (!formData.title?.trim() || !formData.content?.trim()) {
       alert('请填写标题和内容');
       return;
     }
@@ -173,100 +208,111 @@ export default function CreateBlogPage() {
     setIsSubmitting(true);
 
     try {
-      await createBlog({
-        title: formData.title,
-        description: formData.description,
-        content: formData.content,
-        tags: formData.tags,
-        author: user.displayName || user.email,
-        authorId: user.uid
-      });
+      const slug = generateSlug(formData.title);
+      const blogData = {
+        title: formData.title!,
+        description: formData.description || '',
+        content: formData.content!,
+        tags: formData.tags || [],
+        slug,
+        date: new Date().toISOString(),
+        author: formData.author || getUserDisplayName(user, userProfile),
+        authorId: user.uid,
+      };
 
+      await createBlog(blogData);
       alert('博客发布成功！');
-      router.push('/blogs');
+      
+      // 重置表单
+      setFormData({
+        title: '',
+        description: '',
+        content: '',
+        author: getUserDisplayName(user, userProfile),
+        tags: [],
+      });
+      setUploadedImages([]);
+      
     } catch (error) {
-      console.error('发布失败:', error);
+      console.error('发布博客失败:', error);
       alert('发布失败，请重试');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (loading) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-monet-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <div className="text-muted-foreground">加载中...</div>
+          <h1 className="text-2xl font-bold text-foreground mb-4">请先登录</h1>
+          <a href="/auth" className="text-monet-blue hover:underline">前往登录</a>
         </div>
       </div>
     );
   }
 
+  // 过滤掉已选择的标签
+  const availableTags = predefinedTags.filter(tag => !formData.tags?.includes(tag));
+
   return (
-    <div className="min-h-screen bg-background">
-      <Container className="py-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-foreground mb-8">发布新博客</h1>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 h-[calc(100vh-200px)]">
-            {/* 左侧输入区域 (1/4) */}
-            <div className="lg:col-span-1 bg-card border border-border rounded-xl p-6 overflow-y-auto">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* 文件上传 */}
-                <div>
-                  <label className="block text-sm font-medium text-card-foreground mb-2">
-                    上传 Markdown 文件
+    <div className="min-h-screen bg-background py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        <h1 className="text-3xl font-bold text-foreground mb-8 text-center">发布博客文章</h1>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* 左侧：编辑区域 (1/4) */}
+          <div className="lg:col-span-1 space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* 文件上传 */}
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-card-foreground mb-4">文件上传</h3>
+                
+                {/* Markdown文件上传 */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
+                    上传Markdown文件
                   </label>
                   <input
                     type="file"
-                    accept=".md,.markdown"
+                    accept=".md"
                     onChange={handleFileUpload}
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-monet-blue"
+                    className="w-full p-2 border border-border rounded-lg bg-background text-foreground"
                   />
                 </div>
 
-                {/* 多图片上传 */}
+                {/* 图片上传 */}
                 <div>
-                  <label className="block text-sm font-medium text-card-foreground mb-2">
-                    上传图片 (支持多选)
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
+                    上传图片 (可多选)
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     multiple
                     onChange={handleMultipleImageUpload}
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-monet-green"
+                    className="w-full p-2 border border-border rounded-lg bg-background text-foreground"
                   />
-                  
-                  {/* 上传进度 */}
-                  {uploadingImages.size > 0 && (
-                    <div className="mt-2 text-xs text-monet-blue">
-                      正在上传 {uploadingImages.size} 张图片...
-                    </div>
-                  )}
+                </div>
 
-                  {/* 已上传的图片列表 */}
-                  {uploadedImages.length > 0 && (
-                    <div className="mt-3 space-y-2">
-                      <div className="text-xs font-medium text-card-foreground">已上传的图片:</div>
+                {/* 已上传的图片列表 */}
+                {uploadedImages.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2">已上传图片:</h4>
+                    <div className="space-y-2">
                       {uploadedImages.map((image) => (
-                        <div key={image.id} className="flex items-center justify-between bg-background rounded p-2">
+                        <div key={image.id} className="flex items-center justify-between bg-background/50 p-2 rounded-lg">
                           <div className="flex items-center space-x-2">
-                            <img 
-                              src={image.url} 
-                              alt={image.name}
-                              className="w-8 h-8 object-cover rounded"
-                            />
-                            <span className="text-xs text-muted-foreground truncate">
+                            <img src={image.url} alt={image.name} className="w-8 h-8 object-cover rounded" />
+                            <span className="text-xs text-foreground truncate max-w-20" title={image.name}>
                               {image.name}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-1">
+                          <div className="flex space-x-1">
                             <button
                               type="button"
                               onClick={() => insertImageAtCursor(image.url, image.name)}
-                              className="text-xs text-monet-blue hover:text-monet-blue-dark"
+                              className="text-xs px-2 py-1 bg-monet-blue text-white rounded hover:bg-monet-blue-dark"
                               title="插入到内容"
                             >
                               插入
@@ -274,8 +320,8 @@ export default function CreateBlogPage() {
                             <button
                               type="button"
                               onClick={() => removeImage(image.id)}
-                              className="text-xs text-red-500 hover:text-red-700"
-                              title="删除图片"
+                              className="text-xs px-2 py-1 bg-destructive text-white rounded hover:bg-destructive/80"
+                              title="删除"
                             >
                               删除
                             </button>
@@ -283,143 +329,183 @@ export default function CreateBlogPage() {
                         </div>
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
+                {/* 正在上传的提示 */}
+                {uploadingImages.size > 0 && (
+                  <div className="mt-2 text-sm text-muted-foreground">
+                    正在上传 {uploadingImages.size} 张图片...
+                  </div>
+                )}
+              </div>
+
+              {/* 基本信息 */}
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-card-foreground mb-4">基本信息</h3>
+                
                 {/* 标题 */}
-                <div>
-                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     标题 *
                   </label>
                   <input
                     type="text"
-                    value={formData.title}
+                    value={formData.title || ''}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue"
-                    placeholder="请输入博客标题"
+                    placeholder="输入一个吸引人的标题..."
+                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
                     required
                   />
                 </div>
 
                 {/* 描述 */}
-                <div>
-                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
                     描述
                   </label>
                   <textarea
-                    value={formData.description}
+                    value={formData.description || ''}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue"
-                    placeholder="请输入博客描述"
+                    placeholder="简短描述你的文章内容..."
+                    className="w-full p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
                     rows={3}
                   />
                 </div>
 
-                {/* 标签 */}
-                <div>
-                  <label className="block text-sm font-medium text-card-foreground mb-2">标签</label>
-                  
-                  {/* 已选标签 */}
-                  {formData.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-3">
+                {/* 作者 */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
+                    作者
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.author || ''}
+                    readOnly
+                    className="w-full p-3 border border-border rounded-lg bg-muted text-muted-foreground"
+                  />
+                </div>
+              </div>
+
+              {/* 标签管理 */}
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-card-foreground mb-4">标签</h3>
+                
+                {/* 已选择的标签 */}
+                {formData.tags && formData.tags.length > 0 && (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">
+                      已选择标签:
+                    </label>
+                    <div className="flex flex-wrap gap-2">
                       {formData.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center px-2 py-1 bg-monet-blue/20 text-monet-blue rounded-md text-xs"
+                          className="inline-flex items-center px-3 py-1 text-sm rounded-full border-2 text-foreground"
+                          style={{ borderColor: generateTagColor(tag) }}
                         >
                           {tag}
                           <button
                             type="button"
                             onClick={() => removeTag(tag)}
-                            className="ml-1 hover:text-red-500"
+                            className="ml-2 text-muted-foreground hover:text-destructive"
                           >
                             ×
                           </button>
                         </span>
                       ))}
                     </div>
-                  )}
-
-                  {/* 添加新标签 */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag(newTag))}
-                      className="flex-1 px-3 py-2 bg-background border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-monet-blue"
-                      placeholder="输入标签名称"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => addTag(newTag)}
-                      className="px-3 py-2 bg-monet-blue text-white rounded-lg text-sm hover:bg-monet-blue-dark transition-colors"
-                    >
-                      添加
-                    </button>
                   </div>
+                )}
 
-                  {/* 预定义标签 */}
-                  <div className="mt-3">
-                    <div className="text-xs text-muted-foreground mb-2">快速添加:</div>
-                    <div className="flex flex-wrap gap-1">
-                      {predefinedTags.filter(tag => !formData.tags.includes(tag)).map((tag) => (
+                {/* 预定义标签 */}
+                {availableTags.length > 0 && (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">
+                      选择标签:
+                    </label>
+                    <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+                      {availableTags.map((tag) => (
                         <button
                           key={tag}
                           type="button"
                           onClick={() => addTag(tag)}
-                          className="px-2 py-1 bg-accent text-accent-foreground rounded text-xs hover:bg-monet-blue hover:text-white transition-colors"
+                          className="px-3 py-1 text-sm bg-background border border-border rounded-full hover:bg-accent hover:text-monet-blue transition-colors"
                         >
                           {tag}
                         </button>
                       ))}
                     </div>
                   </div>
-                </div>
-
-                {/* 发布按钮 */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting || !formData.title.trim() || !formData.content.trim()}
-                  className="w-full py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-lg font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? '发布中...' : '发布博客'}
-                </button>
-              </form>
-            </div>
-
-            {/* 右侧预览区域 (3/4) */}
-            <div className="lg:col-span-3 bg-card border border-border rounded-xl p-6 overflow-y-auto">
-              <div className="mb-4 pb-4 border-b border-border">
-                <h2 className="text-xl font-semibold text-card-foreground mb-2">预览</h2>
-                {formData.title && (
-                  <h1 className="text-3xl font-bold text-foreground mb-2">{formData.title}</h1>
                 )}
-                {formData.description && (
-                  <p className="text-muted-foreground mb-4">{formData.description}</p>
-                )}
-                {formData.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {formData.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 bg-monet-blue/20 text-monet-blue rounded-md text-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+
+                {/* 自定义标签 */}
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
+                    添加自定义标签:
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customTag}
+                      onChange={(e) => setCustomTag(e.target.value)}
+                      placeholder="输入自定义标签..."
+                      className="flex-1 p-2 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          addTag(customTag);
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => addTag(customTag)}
+                      className="px-4 py-2 bg-monet-blue text-white rounded-lg hover:bg-monet-blue-dark transition-colors"
+                    >
+                      添加
+                    </button>
                   </div>
-                )}
+                </div>
               </div>
+
+              {/* 内容编辑 */}
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-card-foreground mb-4">内容编辑</h3>
+                <textarea
+                  value={formData.content || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder="在这里编写你的Markdown内容..."
+                  className="w-full h-64 p-3 border border-border rounded-lg bg-background text-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent font-mono text-sm"
+                  required
+                />
+              </div>
+
+              {/* 发布按钮 */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-monet-blue to-monet-purple text-white py-3 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-blue/20"
+              >
+                {isSubmitting ? '发布中...' : '发布博客'}
+              </button>
+            </form>
+          </div>
+
+          {/* 右侧：预览区域 (3/4) */}
+          <div className="lg:col-span-3">
+            <div className="bg-card border border-border rounded-xl p-6 sticky top-4">
+              <h3 className="text-lg font-semibold text-card-foreground mb-4">实时预览</h3>
               
-              <div className="prose prose-invert max-w-none">
-                {formData.content ? (
+              {formData.content ? (
+                <div className="prose prose-invert max-w-none">
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                     components={{
                       code({ className, children, ...props }: any) {
                         const match = /language-(\w+)/.exec(className || '');
                         const isInline = !className;
+                        
                         return !isInline && match ? (
                           <SyntaxHighlighter
                             style={oneDark as any}
@@ -439,19 +525,22 @@ export default function CreateBlogPage() {
                   >
                     {formData.content}
                   </ReactMarkdown>
-                ) : (
-                  <div className="text-center py-20 text-muted-foreground">
-                    <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </div>
+              ) : (
+                <div className="text-center py-16 text-muted-foreground">
+                  <div className="w-16 h-16 bg-gradient-to-r from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
-                    <p className="text-lg">在左侧输入内容或上传 Markdown 文件开始编写博客</p>
                   </div>
-                )}
-              </div>
+                  <p className="text-lg font-medium">开始编写你的内容</p>
+                  <p className="text-sm mt-2">在左侧编辑器中输入Markdown内容，这里将实时显示预览效果</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </Container>
+      </div>
     </div>
   );
 } 
