@@ -2,6 +2,20 @@ import { NextResponse } from 'next/server';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db, isConfigValid } from '@/lib/firebase';
 
+interface BlogData {
+  id: string;
+  title: string;
+  description: string;
+  author: string;
+  date: string;
+  slug: string;
+  tags: string[];
+  views: number;
+  likes: number;
+  comments: number;
+  content: string;
+}
+
 export async function GET() {
   try {
     // 检查Firebase配置
@@ -16,7 +30,7 @@ export async function GET() {
     );
     
     const querySnapshot = await getDocs(blogsQuery);
-    const blogs = [];
+    const blogs: BlogData[] = [];
     
     querySnapshot.forEach((doc) => {
       const data = doc.data();
