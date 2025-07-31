@@ -1,6 +1,9 @@
 import { Container } from '@/components/layout/Container';
+import { useState } from 'react';
 
 export default function AboutPage() {
+  const [showContact, setShowContact] = useState(false);
+
   const teamMembers = [
     {
       name: "Club Founder",
@@ -28,34 +31,6 @@ export default function AboutPage() {
     }
   ];
 
-  const milestones = [
-    {
-      year: "September 2023",
-      title: "Club Establishment",
-      description: "BJ80 AI Club was officially established and began recruiting the first batch of members"
-    },
-    {
-      year: "October 2023",
-      title: "First Tech Sharing",
-      description: "Held the first AI tech sharing session, attracting over 50 students to participate"
-    },
-    {
-      year: "December 2023",
-      title: "Project Practice Launch",
-      description: "Launched the first practical project: Smart Campus Assistant"
-    },
-    {
-      year: "March 2024",
-      title: "Tech Blog Platform",
-      description: "Established the club's tech blog platform, members began sharing learning insights"
-    },
-    {
-      year: "Now 2024",
-      title: "Continuous Development",
-      description: "The club now has over 30 active members and regularly hosts technical activities"
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Container className="py-16">
@@ -68,36 +43,6 @@ export default function AboutPage() {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               We are a group of high school students passionate about artificial intelligence, dedicated to promoting AI technology on campus and cultivating students&apos; innovative thinking and practical abilities
             </p>
-          </div>
-
-          {/* Mission & Vision */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-            <div className="bg-card border border-border rounded-xl p-8">
-              <div className="w-12 h-12 bg-gradient-to-r from-monet-blue to-monet-purple rounded-xl flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-card-foreground mb-4">Our Mission</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                To provide a platform for high school students to learn artificial intelligence, through tech sharing, project practice, and academic exchange,
-                cultivate the next generation of AI talent and help more students understand and master cutting-edge technology.
-              </p>
-            </div>
-
-            <div className="bg-card border border-border rounded-xl p-8">
-              <div className="w-12 h-12 bg-gradient-to-r from-monet-green to-monet-blue rounded-xl flex items-center justify-center mb-4">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-card-foreground mb-4">Our Vision</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                To become the most active technical club in the school, establish a comprehensive AI learning system,
-                cultivate young developers with innovative spirit, and contribute to future technological development.
-              </p>
-            </div>
           </div>
 
           {/* Team Members */}
@@ -125,45 +70,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Development Milestones */}
-          <div className="mb-20">
-            <h2 className="text-3xl font-bold text-foreground text-center mb-12">
-              Development Milestones
-            </h2>
-            <div className="relative">
-              {/* Timeline Line */}
-              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border"></div>
-              
-              <div className="space-y-8">
-                {milestones.map((milestone, index) => (
-                  <div key={index} className="relative flex items-start">
-                    {/* Timeline Dot */}
-                    <div className="flex-shrink-0 w-8 h-8 bg-monet-blue rounded-full border-4 border-background flex items-center justify-center">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="ml-6 flex-1">
-                      <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-3">
-                          <h3 className="text-lg font-semibold text-card-foreground">
-                            {milestone.title}
-                          </h3>
-                          <span className="text-sm text-monet-blue font-medium">
-                            {milestone.year}
-                          </span>
-                        </div>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {milestone.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
           {/* Contact Information */}
           <div className="text-center">
             <h2 className="text-3xl font-bold text-foreground mb-8">
@@ -180,16 +86,51 @@ export default function AboutPage() {
               >
                 Browse Our Blog
               </a>
-              <a
-                href="/auth"
+              <button
+                onClick={() => setShowContact(true)}
                 className="border border-border text-foreground px-8 py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300"
               >
                 Join the Club
-              </a>
+              </button>
             </div>
           </div>
         </div>
       </Container>
+
+      {/* Contact Modal */}
+      {showContact && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-card border border-border rounded-xl p-8 max-w-md mx-4">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-card-foreground mb-6">
+                Contact Information
+              </h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-center space-x-3">
+                  <svg className="w-5 h-5 text-monet-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span className="text-card-foreground font-medium">Email:</span>
+                  <span className="text-muted-foreground">yangchengxuan27@gmail.com</span>
+                </div>
+                <div className="flex items-center justify-center space-x-3">
+                  <svg className="w-5 h-5 text-monet-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <span className="text-card-foreground font-medium">WeChat:</span>
+                  <span className="text-muted-foreground">ycx_2025318</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowContact(false)}
+                className="mt-6 bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 py-2 rounded-lg font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
