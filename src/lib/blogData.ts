@@ -37,12 +37,12 @@ function getDateFromTimestamp(timestamp: any): Date {
 // 评论接口 - 扩展支持回复
 export interface Comment {
   id: string;
-  blogSlug: string;
+  blogId: string; // 改为blogId
   userId: string;
   username: string;
   content: string;
-  createdAt: any;
-  updatedAt: any;
+  createdAt: any; // Can be Firebase Timestamp or Date
+  updatedAt: any; // Can be Firebase Timestamp or Date
   likes: number;
   likedBy: string[];
   parentId?: string; // 父评论ID，如果为空则是顶级评论
@@ -52,14 +52,14 @@ export interface Comment {
 // 点赞接口
 export interface Like {
   id: string;
-  blogSlug: string;
+  blogId: string; // 改为blogId
   userId: string;
   createdAt: any;
 }
 
 // 博客统计接口
 export interface BlogStats {
-  slug: string;
+  id: string; // 改为id，对应blogId
   views: number;
   likes: number;
   comments: number;
@@ -74,7 +74,7 @@ export interface BlogStatsUpdate {
 
 // 添加评论（支持回复）
 export async function addComment(
-  blogSlug: string, 
+  blogId: string, // 改为blogId
   userId: string, 
   username: string, 
   content: string,
@@ -82,7 +82,7 @@ export async function addComment(
 ): Promise<string> {
   try {
     const commentData: any = {
-      blogSlug,
+      blogId, // 改为blogId
       userId,
       username,
       content,
@@ -100,7 +100,7 @@ export async function addComment(
     const docRef = await addDoc(collection(db, 'comments'), commentData);
     
     // 更新博客评论数
-    await updateBlogStats(blogSlug, { comments: increment(1) });
+    await updateBlogStats(blogId, { comments: increment(1) });
     
     return docRef.id;
   } catch (error) {
@@ -110,11 +110,11 @@ export async function addComment(
 }
 
 // 获取博客评论（带回复层级结构）
-export async function getBlogComments(blogSlug: string): Promise<Comment[]> {
+export async function getBlogComments(blogId: string): Promise<Comment[]> {
   try {
     const q = query(
       collection(db, 'comments'),
-      where('blogSlug', '==', blogSlug),
+      where('blogId', '==', blogId), // 改为blogId
       orderBy('createdAt', 'desc')
     );
     
@@ -148,12 +148,11 @@ export async function getBlogComments(blogSlug: string): Promise<Comment[]> {
 }
 
 // 删除评论
-export async function deleteComment(commentId: string, blogSlug: string): Promise<void> {
+export async function deleteComment(commentId: string, blogId: string): Promise<void> {
   try {
     await deleteDoc(doc(db, 'comments', commentId));
-    
     // 更新博客评论数
-    await updateBlogStats(blogSlug, { comments: increment(-1) });
+    await updateBlogStats(blogId, { comments: increment(-1) });
   } catch (error) {
     console.error('删除评论失败:', error);
     throw error;
@@ -161,12 +160,12 @@ export async function deleteComment(commentId: string, blogSlug: string): Promis
 }
 
 // 点赞/取消点赞博客
-export async function toggleBlogLike(blogSlug: string, userId: string): Promise<boolean> {
+export async function toggleBlogLike(blogId: string, userId: string): Promise<boolean> {
   try {
     const likesRef = collection(db, 'likes');
     const q = query(
       likesRef,
-      where('blogSlug', '==', blogSlug),
+      where('blogId', '==', blogId), // 改为blogId
       where('userId', '==', userId)
     );
     
@@ -175,13 +174,13 @@ export async function toggleBlogLike(blogSlug: string, userId: string): Promise<
     if (querySnapshot.empty) {
       // 添加点赞
       await addDoc(likesRef, {
-        blogSlug,
+        blogId, // 改为blogId
         userId,
         createdAt: serverTimestamp()
       });
       
       // 更新博客点赞数
-      await updateBlogStats(blogSlug, { likes: increment(1) });
+      await updateBlogStats(blogId, { likes: increment(1) });
       return true;
     } else {
       // 取消点赞
@@ -189,21 +188,22 @@ export async function toggleBlogLike(blogSlug: string, userId: string): Promise<
       await deleteDoc(doc(db, 'likes', likeDoc.id));
       
       // 更新博客点赞数
-      await updateBlogStats(blogSlug, { likes: increment(-1) });
+      await updateBlogStats(blogId, { likes: increment(-1) });
       return false;
     }
   } catch (error) {
-    console.error('切换点赞失败:', error);
+    console.error('切换点赞状态失败:', error);
     throw error;
   }
 }
 
 // 检查用户是否已点赞博客
-export async function checkUserLikedBlog(blogSlug: string, userId: string): Promise<boolean> {
+export async function checkUserLikedBlog(blogId: string, userId: string): Promise<boolean> {
   try {
+    const likesRef = collection(db, 'likes');
     const q = query(
-      collection(db, 'likes'),
-      where('blogSlug', '==', blogSlug),
+      likesRef,
+      where('blogId', '==', blogId), // 改为blogId
       where('userId', '==', userId)
     );
     
@@ -216,34 +216,34 @@ export async function checkUserLikedBlog(blogSlug: string, userId: string): Prom
 }
 
 // 获取博客统计信息
-export async function getBlogStats(blogSlug: string): Promise<BlogStats> {
+export async function getBlogStats(blogId: string): Promise<BlogStats> {
   try {
-    const docRef = doc(db, 'blogStats', blogSlug);
+    const docRef = doc(db, 'blogStats', blogId); // 使用blogId作为文档ID
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
-      return { slug: blogSlug, ...docSnap.data() } as BlogStats;
+      return { id: blogId, ...docSnap.data() } as BlogStats;
     } else {
       // 如果不存在，创建默认统计
       const defaultStats = {
-        slug: blogSlug,
+        id: blogId, // 改为id
         views: 0,
         likes: 0,
         comments: 0
       };
-      await setDoc(docRef, defaultStats); // 使用setDoc而不是updateDoc
+      await setDoc(docRef, defaultStats);
       return defaultStats;
     }
   } catch (error) {
     console.error('获取博客统计失败:', error);
-    return { slug: blogSlug, views: 0, likes: 0, comments: 0 };
+    return { id: blogId, views: 0, likes: 0, comments: 0 };
   }
 }
 
 // 更新博客统计信息
-export async function updateBlogStats(blogSlug: string, updates: Record<string, any>): Promise<void> {
+export async function updateBlogStats(blogId: string, updates: Record<string, any>): Promise<void> {
   try {
-    const docRef = doc(db, 'blogStats', blogSlug);
+    const docRef = doc(db, 'blogStats', blogId); // 使用blogId作为文档ID
     
     // 先检查文档是否存在
     const docSnap = await getDoc(docRef);
@@ -251,7 +251,7 @@ export async function updateBlogStats(blogSlug: string, updates: Record<string, 
     if (!docSnap.exists()) {
       // 如果文档不存在，先创建基础文档
       const defaultStats = {
-        slug: blogSlug,
+        id: blogId, // 改为id
         views: 0,
         likes: 0,
         comments: 0
@@ -268,10 +268,11 @@ export async function updateBlogStats(blogSlug: string, updates: Record<string, 
 }
 
 // 增加博客浏览量
-export async function incrementBlogViews(blogSlug: string): Promise<void> {
+export async function incrementBlogViews(blogId: string): Promise<void> {
   try {
-    await updateBlogStats(blogSlug, { views: increment(1) });
+    await updateBlogStats(blogId, { views: increment(1) });
   } catch (error) {
     console.error('增加浏览量失败:', error);
+    throw error;
   }
 } 

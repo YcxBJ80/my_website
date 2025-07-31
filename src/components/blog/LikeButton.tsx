@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getCurrentUser } from '@/lib/auth';
 import { 
   toggleBlogLike, 
@@ -10,35 +10,35 @@ import {
 } from '@/lib/blogData';
 
 interface LikeButtonProps {
-  blogSlug: string;
+  blogId: string; // 改为blogId
   className?: string;
 }
 
-export function LikeButton({ blogSlug, className = '' }: LikeButtonProps) {
+export function LikeButton({ blogId, className = '' }: LikeButtonProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
   const user = getCurrentUser();
 
-  useEffect(() => {
-    loadLikeStatus();
-  }, [blogSlug, user]);
-
-  const loadLikeStatus = async () => {
+  const loadLikeStatus = useCallback(async () => {
     try {
       // 获取博客统计信息
-      const stats = await getBlogStats(blogSlug);
+      const stats = await getBlogStats(blogId);
       setLikeCount(stats.likes);
 
       // 如果用户已登录，检查是否已点赞
       if (user) {
-        const userLiked = await checkUserLikedBlog(blogSlug, user.uid);
+        const userLiked = await checkUserLikedBlog(blogId, user.uid);
         setIsLiked(userLiked);
       }
     } catch (error) {
       console.error('加载点赞状态失败:', error);
     }
-  };
+  }, [blogId, user]);
+
+  useEffect(() => {
+    loadLikeStatus();
+  }, [loadLikeStatus]);
 
   const handleToggleLike = async () => {
     if (!user) {
@@ -58,13 +58,13 @@ export function LikeButton({ blogSlug, className = '' }: LikeButtonProps) {
 
     // 异步更新到服务端
     try {
-      const serverLikedState = await toggleBlogLike(blogSlug, user.uid);
+      const serverLikedState = await toggleBlogLike(blogId, user.uid);
       
       // 如果服务端结果与客户端预期不一致，以服务端为准
       if (serverLikedState !== newLikedState) {
         setIsLiked(serverLikedState);
         // 重新获取准确的点赞数
-        const stats = await getBlogStats(blogSlug);
+        const stats = await getBlogStats(blogId);
         setLikeCount(stats.likes);
       }
     } catch (error) {

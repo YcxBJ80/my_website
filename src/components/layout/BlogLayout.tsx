@@ -103,7 +103,7 @@ export function BlogLayout({
                   )}
                   
                   {/* 博客统计 */}
-                  <BlogStatsComponent blogSlug={blog.slug} />
+                  <BlogStatsComponent blogId={blog.id} />
                 </div>
               </header>
               
@@ -112,7 +112,7 @@ export function BlogLayout({
               
               {/* 评论区域 - 现在包含点赞按钮 */}
               <div className="border-t border-border pt-8">
-                <CommentSection blogSlug={blog.slug} />
+                <CommentSection blogId={blog.id} />
               </div>
             </article>
           </div>

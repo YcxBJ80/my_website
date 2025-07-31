@@ -13,12 +13,12 @@ import { formatDate } from '@/lib/formatDate';
 import { LikeButton } from './LikeButton';
 
 interface CommentSectionProps {
-  blogSlug: string;
+  blogId: string; // 改为blogId
 }
 
 interface CommentItemProps {
   comment: Comment;
-  blogSlug: string;
+  blogId: string; // 改为blogId
   onReply: (parentId: string, content: string) => void;
   onDelete: (commentId: string) => void;
   user: any;
@@ -42,7 +42,7 @@ function getDateFromTimestamp(timestamp: any): Date {
   return new Date(timestamp);
 }
 
-function CommentItem({ comment, blogSlug, onReply, onDelete, user }: CommentItemProps) {
+function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemProps) {
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -214,7 +214,7 @@ function CommentItem({ comment, blogSlug, onReply, onDelete, user }: CommentItem
   );
 }
 
-export function CommentSection({ blogSlug }: CommentSectionProps) {
+export function CommentSection({ blogId }: CommentSectionProps) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -225,7 +225,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
   useEffect(() => {
     loadComments();
     loadUserProfile();
-  }, [blogSlug, user]);
+  }, [blogId, user]);
 
   const loadUserProfile = async () => {
     if (user) {
@@ -241,7 +241,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
   const loadComments = async () => {
     try {
       setIsLoading(true);
-      const fetchedComments = await getBlogComments(blogSlug);
+      const fetchedComments = await getBlogComments(blogId);
       setComments(fetchedComments);
     } catch (error) {
       console.error('加载评论失败:', error);
@@ -269,7 +269,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     // 客户端优先：立即添加评论到UI
     const optimisticComment: Comment = {
       id: `temp-${Date.now()}`,
-      blogSlug,
+      blogId,
       userId: user.uid,
       username: displayName,
       content: newComment.trim(),
@@ -285,7 +285,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     setIsSubmitting(true);
 
     try {
-      const commentId = await addComment(blogSlug, user.uid, displayName, newComment.trim());
+      const commentId = await addComment(blogId, user.uid, displayName, newComment.trim());
       
       // 用服务端返回的真实ID更新评论
       setComments(prev => prev.map(comment => 
@@ -312,7 +312,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     // 客户端优先：立即添加回复到UI
     const optimisticReply: Comment = {
       id: `temp-reply-${Date.now()}`,
-      blogSlug,
+      blogId,
       userId: user.uid,
       username: displayName,
       content,
@@ -334,7 +334,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     }));
 
     try {
-      const replyId = await addComment(blogSlug, user.uid, displayName, content, parentId);
+      const replyId = await addComment(blogId, user.uid, displayName, content, parentId);
       
       // 用服务端返回的真实ID更新回复
       setComments(prev => prev.map(comment => {
@@ -371,7 +371,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
     
     if (confirm('确定要删除这条评论吗？')) {
       try {
-        await deleteComment(commentId, blogSlug);
+        await deleteComment(commentId, blogId);
         await loadComments();
       } catch (error) {
         console.error('删除评论失败:', error);
@@ -387,7 +387,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
         <h3 className="text-2xl font-bold text-foreground">
           评论 ({comments.reduce((total, comment) => total + 1 + (comment.replies?.length || 0), 0)})
         </h3>
-        <LikeButton blogSlug={blogSlug} className="shrink-0" />
+        <LikeButton blogId={blogId} className="shrink-0" />
       </div>
 
       {/* 添加评论表单 */}
@@ -440,7 +440,7 @@ export function CommentSection({ blogSlug }: CommentSectionProps) {
             <CommentItem
               key={comment.id}
               comment={comment}
-              blogSlug={blogSlug}
+              blogId={blogId}
               onReply={handleReply}
               onDelete={handleDeleteComment}
               user={user}

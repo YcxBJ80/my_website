@@ -1,51 +1,46 @@
-# 🔥 Firebase问题修复指南
+# Firebase配置修复指南
 
-## 🚨 当前问题
-1. **Firestore索引缺失** - 评论查询需要复合索引
-2. **权限不足** - Firestore安全规则配置问题  
-3. **图片CORS错误** - Firebase Storage跨域问题
+由于当前出现Firebase相关错误，请按照以下步骤手动修复Firebase配置：
 
-## ✅ 解决步骤
+## 1. 修复Firestore复合索引
 
-### 第一步：创建Firestore索引
+### 访问Firebase控制台
+前往 [Firebase控制台](https://console.firebase.google.com/project/bj80-ai-club/firestore/indexes)
 
-**选择以下任一方法：**
+### 创建复合索引
+在"索引"页面，点击"创建索引"，配置如下：
 
-#### 方法A：直接点击链接（最简单）
-```
-https://console.firebase.google.com/v1/r/project/bj80-ai-club/firestore/indexes?create_composite=Ck1wcm9qZWN0cy9iajgwLWFpLWNsdWIvZGF0YWJhc2VzLyhkZWZhdWx0KS9jb2xsZWN0aW9uR3JvdXBzL2NvbW1lbnRzL2luZGV4ZXMvXxABGgwKCGJsb2dTbHVnEAEaDQoJY3JlYXRlZEF0EAIaDAoIX19uYW1lX18QAg
-```
+**集合ID**: `comments`
+**索引字段**:
+- 字段1: `blogId` (升序) // 改为blogId
+- 字段2: `createdAt` (降序)
 
-#### 方法B：手动创建
-1. 访问 [Firestore索引页面](https://console.firebase.google.com/project/bj80-ai-club/firestore/indexes)
-2. 点击 "创建索引"
-3. 配置：
-   - 集合ID: `comments`
-   - 字段1: `blogSlug` (升序)
-   - 字段2: `createdAt` (降序)
-4. 点击创建
+点击"创建"并等待索引构建完成（通常需要几分钟）。
 
-### 第二步：更新安全规则
+## 2. 更新Firestore安全规则
 
-1. 访问 [Firestore规则页面](https://console.firebase.google.com/project/bj80-ai-club/firestore/rules)
-2. 将现有规则替换为：
+### 访问规则编辑器
+前往 [Firestore规则](https://console.firebase.google.com/project/bj80-ai-club/firestore/rules)
+
+### 替换规则内容
+将现有规则替换为以下内容：
 
 ```javascript
 rules_version = "2";
 service cloud.firestore {
   match /databases/{database}/documents {
-    // 用户数据
+    // 用户数据 - 用户只能读写自己的数据
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
-    // 博客数据
+    // 博客数据 - 所有人可读，认证用户可写
     match /blogs/{blogId} {
       allow read: if true;
       allow write: if request.auth != null;
     }
     
-    // 评论数据
+    // 评论数据 - 所有人可读，认证用户可写自己的评论
     match /comments/{commentId} {
       allow read: if true;
       allow create: if request.auth != null;
@@ -54,18 +49,18 @@ service cloud.firestore {
          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin");
     }
     
-    // 点赞数据
+    // 点赞数据 - 认证用户可读写
     match /likes/{likeId} {
       allow read, write: if request.auth != null;
     }
     
-    // 博客统计
+    // 博客统计 - 所有人可读，认证用户可写
     match /blogStats/{statId} {
       allow read: if true;
       allow write: if request.auth != null;
     }
     
-    // 用户资料
+    // 用户资料 - 认证用户可读写自己的资料
     match /userProfiles/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
@@ -73,7 +68,7 @@ service cloud.firestore {
 }
 ```
 
-3. 点击 "发布"
+点击"发布"保存规则。
 
 ### 第三步：修复Storage CORS
 
