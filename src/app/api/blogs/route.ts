@@ -71,12 +71,17 @@ export async function GET() {
     // 等待所有数据加载完成
     const blogsWithStats = await Promise.all(blogStatsPromises);
 
-    // 添加no-cache头部，确保数据实时更新
+    console.log(`🔄 API: 返回 ${blogsWithStats.length} 篇博客数据 (${new Date().toISOString()})`);
+
+    // 添加强制无缓存头部，确保数据实时更新
     return NextResponse.json(blogsWithStats, { 
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
         'Pragma': 'no-cache',
-        'Expires': '0'
+        'Expires': '0',
+        'Last-Modified': new Date().toUTCString(),
+        'ETag': `"${Date.now()}"`, // 动态ETag确保每次都是新的
+        'Vary': '*', // 告诉代理不要缓存
       }
     });
   } catch (error: any) {

@@ -126,6 +126,30 @@ export default function BlogsIndex() {
     loadBlogs();
   }, []);
 
+  // 添加窗口焦点监听，当用户回到页面时自动刷新
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('🔄 窗口获得焦点，自动刷新博客列表');
+      loadBlogs();
+    };
+
+    // 添加可见性变化监听
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('🔄 页面变为可见，自动刷新博客列表');
+        loadBlogs();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   useEffect(() => {
     // 搜索过滤逻辑
     if (searchTerm.trim() === '') {
@@ -145,18 +169,30 @@ export default function BlogsIndex() {
       setIsLoading(true);
       setError('');
       
-      // 添加no-cache标头，确保获取最新数据
-      const response = await fetch('/api/blogs', {
+      // 添加时间戳和强制缓存控制，确保每次都从服务端获取最新数据
+      const timestamp = Date.now();
+      const response = await fetch(`/api/blogs?t=${timestamp}`, {
+        method: 'GET',
         cache: 'no-store',
+        next: { revalidate: 0 }, // Next.js 强制不缓存
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'If-Modified-Since': '0',
+          'If-None-Match': '',
         }
       });
+      
       if (response.ok) {
         const blogsData = await response.json();
         setBlogs(blogsData);
-        console.log('博客数据已更新:', blogsData.length, '篇博客');
+        console.log('🔄 博客数据已强制更新:', blogsData.length, '篇博客', `(时间戳: ${timestamp})`);
+        
+        // 额外日志：显示每篇博客的ID和标题，便于调试
+        blogsData.forEach((blog: any, index: number) => {
+          console.log(`📄 博客 ${index + 1}: ${blog.title} (ID: ${blog.id})`);
+        });
       } else {
         const errorData = await response.json();
         setError(errorData.error || '获取博客失败');
@@ -199,25 +235,33 @@ export default function BlogsIndex() {
               />
             </div>
             
-            {/* 刷新按钮 */}
-            <button
-              onClick={loadBlogs}
-              disabled={isLoading}
-              className="flex items-center space-x-2 px-4 py-3 bg-monet-blue text-white rounded-xl hover:bg-monet-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title="刷新博客列表"
-            >
-              <svg 
-                className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
+            {/* 数据状态显示 */}
+            <div className="flex items-center space-x-3">
+              <div className="text-sm text-muted-foreground bg-card px-3 py-2 rounded-lg border border-border">
+                <span className="font-medium text-foreground">{blogs.length}</span> 篇博客
+                {isLoading && <span className="text-monet-blue ml-1">刷新中...</span>}
+              </div>
+              
+              {/* 强制刷新按钮 */}
+              <button
+                onClick={loadBlogs}
+                disabled={isLoading}
+                className="flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-blue/20"
+                title="强制从服务端刷新最新博客数据"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span className="hidden sm:inline">
-                {isLoading ? '刷新中...' : '刷新'}
-              </span>
-            </button>
+                <svg 
+                  className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span className="hidden sm:inline font-medium">
+                  {isLoading ? '强制刷新中...' : '强制刷新'}
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* 搜索结果计数 */}
