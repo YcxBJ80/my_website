@@ -7,8 +7,11 @@ import { createBlog, generateTagColor } from '@/lib/blogOperations';
 import { uploadBlogImage } from '@/lib/storage';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import 'katex/dist/katex.min.css'; // KaTeX CSS样式
 
 interface BlogData {
   id: string;
@@ -277,7 +280,6 @@ export default function CreateBlogPage() {
         alert(`${file.name} 不是图片文件`);
         continue;
       }
-
       const imageId = `${file.name}-${Date.now()}`;
       setUploadingImages(prev => new Set(prev).add(imageId));
 
@@ -290,16 +292,28 @@ export default function CreateBlogPage() {
           url: imageUrl,
           id: imageId
         };
-
         setUploadedImages(prev => [...prev, uploadedImage]);
 
-        // 自动插入到内容中
-        const imageMarkdown = `![${file.name}](${imageUrl})`;
-        setFormData(prev => ({
-          ...prev,
-          content: (prev.content || '') + '\n\n' + imageMarkdown
-        }));
-
+        // 智能图片插入 - 查找并替换占位符
+        const fileName = file.name.split('.')[0]; // 去掉扩展名
+        const placeholderPattern = new RegExp(`!\\[\\[${fileName}\\]\\]`, 'gi');
+        
+        setFormData(prev => {
+          const currentContent = prev.content || '';
+          
+          // 检查是否有匹配的占位符
+          if (placeholderPattern.test(currentContent)) {
+            // 替换所有匹配的占位符
+            const updatedContent = currentContent.replace(
+              placeholderPattern, 
+              `![${fileName}](${imageUrl})`
+            );
+            return { ...prev, content: updatedContent };
+          } else {
+            // 如果没有找到占位符，不自动插入，让用户手动操作
+            return prev;
+          }
+        });
       } catch (error) {
         console.error(`图片上传失败 ${file.name}:`, error);
         alert(`图片上传失败: ${file.name}`);
@@ -311,9 +325,7 @@ export default function CreateBlogPage() {
         });
       }
     }
-
-    // 清空input
-    event.target.value = '';
+    event.target.value = ''; // Clear input
   };
 
   const removeImage = (imageId: string) => {
@@ -321,7 +333,8 @@ export default function CreateBlogPage() {
     if (!image) return;
 
     // 从content中移除对应的markdown
-    const imageMarkdown = `![${image.name}](${image.url})`;
+    const fileName = image.name.split('.')[0];
+    const imageMarkdown = `![${fileName}](${image.url})`;
     setFormData(prev => ({
       ...prev,
       content: (prev.content || '').replace(imageMarkdown, '').replace(/\n{3,}/g, '\n\n')
@@ -332,11 +345,51 @@ export default function CreateBlogPage() {
   };
 
   const insertImageAtCursor = (imageUrl: string, imageName: string) => {
-    const imageMarkdown = `![${imageName}](${imageUrl})`;
-    setFormData(prev => ({
-      ...prev,
-      content: (prev.content || '') + '\n\n' + imageMarkdown
-    }));
+    const fileName = imageName.split('.')[0]; // 去掉扩展名
+    const imageMarkdown = `![${fileName}](${imageUrl})`;
+    
+    setFormData(prev => {
+      const currentContent = prev.content || '';
+      const placeholderPattern = new RegExp(`!\\[\\[${fileName}\\]\\]`, 'gi');
+      
+      // 先尝试替换占位符
+      if (placeholderPattern.test(currentContent)) {
+        const updatedContent = currentContent.replace(
+          placeholderPattern, 
+          imageMarkdown
+        );
+        return { ...prev, content: updatedContent };
+      } else {
+        // 如果没有占位符，插入到末尾
+        return {
+          ...prev,
+          content: currentContent + '\n\n' + imageMarkdown
+        };
+      }
+    });
+  };
+
+  // 检查内容中是否有未处理的占位符
+  const getUnprocessedPlaceholders = (): string[] => {
+    const content = formData.content || '';
+    const placeholderRegex = /!\[\[([^\]]+)\]\]/g;
+    const matches = [];
+    let match;
+    
+    while ((match = placeholderRegex.exec(content)) !== null) {
+      matches.push(match[1]); // 文件名部分
+    }
+    
+    return matches;
+  };
+
+  // 为占位符生成建议
+  const getSuggestedImages = (placeholder: string): UploadedImage[] => {
+    return uploadedImages.filter(img => {
+      const fileName = img.name.split('.')[0].toLowerCase();
+      return fileName.includes(placeholder.toLowerCase()) || 
+             placeholder.toLowerCase().includes(fileName);
+    });
   };
 
   const addTag = (tag: string) => {
@@ -482,7 +535,7 @@ export default function CreateBlogPage() {
                                 {image.name}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                点击插入按钮将图片添加到内容中
+                                {image.name.split('.')[0]} - 可用占位符: ![[{image.name.split('.')[0]}]]
                               </p>
                             </div>
                           </div>
@@ -507,25 +560,83 @@ export default function CreateBlogPage() {
                         </div>
                       ))}
                     </div>
-                    
-                    {/* 快速插入说明 */}
-                    <div className="mt-3 p-3 bg-monet-blue/10 border border-monet-blue/20 rounded-lg">
-                      <p className="text-xs text-monet-blue font-medium mb-1">💡 图片插入提示：</p>
-                      <ul className="text-xs text-muted-foreground space-y-1">
-                        <li>• 点击&ldquo;插入&rdquo;按钮将图片添加到内容末尾</li>
-                        <li>• 也可以手动输入：<code className="bg-card px-1 rounded">![图片名称](图片链接)</code></li>
-                        <li>• 支持拖拽调整图片在内容中的位置</li>
-                      </ul>
-                    </div>
                   </div>
                 )}
 
-                {/* 正在上传的提示 */}
-                {uploadingImages.size > 0 && (
-                  <div className="mt-2 text-sm text-muted-foreground">
-                    正在上传 {uploadingImages.size} 张图片...
-                  </div>
-                )}
+                {/* 占位符管理 */}
+                {(() => {
+                  const unprocessedPlaceholders = getUnprocessedPlaceholders();
+                  return unprocessedPlaceholders.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">
+                        📍 未处理的图片占位符:
+                      </h4>
+                      <div className="space-y-2">
+                        {unprocessedPlaceholders.map((placeholder, index) => {
+                          const suggestedImages = getSuggestedImages(placeholder);
+                          return (
+                            <div key={index} className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                              <div className="flex items-center justify-between mb-2">
+                                <code className="text-sm font-mono text-amber-800 dark:text-amber-200">
+                                  ![[{placeholder}]]
+                                </code>
+                                <span className="text-xs text-amber-600 dark:text-amber-400">
+                                  等待图片
+                                </span>
+                              </div>
+                              
+                              {suggestedImages.length > 0 ? (
+                                <div className="space-y-2">
+                                  <p className="text-xs text-muted-foreground">建议匹配的图片:</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {suggestedImages.map((img) => (
+                                      <button
+                                        key={img.id}
+                                        type="button"
+                                        onClick={() => insertImageAtCursor(img.url, img.name)}
+                                        className="flex items-center space-x-2 px-2 py-1 bg-monet-blue/10 hover:bg-monet-blue/20 border border-monet-blue/30 rounded text-xs transition-colors"
+                                        title={`使用 ${img.name} 替换占位符`}
+                                      >
+                                        <img src={img.url} alt={img.name} className="w-6 h-6 object-cover rounded" />
+                                        <span className="text-monet-blue">{img.name.split('.')[0]}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : (
+                                <p className="text-xs text-muted-foreground">
+                                  上传名为 &ldquo;{placeholder}&rdquo; 的图片将自动替换此占位符
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+                    
+                    {/* 快速插入说明 */}
+                    <div className="mt-3 p-3 bg-monet-blue/10 border border-monet-blue/20 rounded-lg">
+                      <p className="text-xs text-monet-blue font-medium mb-1">💡 智能图片插入指南：</p>
+                      <ul className="text-xs text-muted-foreground space-y-1">
+                        <li>• <strong>占位符方式</strong>：在内容中写 <code className="bg-card px-1 rounded">![[图片名]]</code>，上传同名图片会自动替换</li>
+                        <li>• <strong>手动插入</strong>：点击&ldquo;插入&rdquo;按钮将图片添加到内容中</li>
+                        <li>• <strong>支持数学公式</strong>：行内公式 <code className="bg-card px-1 rounded">$E=mc^2$</code>，块级公式 <code className="bg-card px-1 rounded">{'$$\\frac{a}{b}$$'}</code></li>
+                      </ul>
+                    </div>
+
+                    {/* 正在上传的提示 */}
+                    {uploadingImages.size > 0 && (
+                      <div className="mt-3 p-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+                          <span className="text-sm text-blue-600 dark:text-blue-400">
+                            正在上传 {uploadingImages.size} 张图片...
+                          </span>
+                        </div>
+                      </div>
+                    )}
               </div>
 
               {/* 基本信息 */}
@@ -688,7 +799,8 @@ export default function CreateBlogPage() {
               {formData.content ? (
                 <div className="prose prose-invert max-w-none">
                   <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
+                    remarkPlugins={[remarkGfm, remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
                     components={MarkdownComponents}
                   >
                     {formData.content}

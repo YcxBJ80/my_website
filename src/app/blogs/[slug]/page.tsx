@@ -5,10 +5,11 @@ import { db, isConfigValid } from '@/lib/firebase'
 import { BlogLayout } from '@/components/layout/BlogLayout'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
-
-export const runtime = process.env.NEXT_RUNTIME === 'edge' ? 'edge' : 'nodejs'
+import 'katex/dist/katex.min.css' // KaTeX CSS样式
 
 interface BlogData {
   id: string;
@@ -266,7 +267,8 @@ export default async function BlogPage({ params }: Props) {
     <BlogLayout blog={blog}>
       <div className="mt-8 max-w-none">
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={[remarkGfm, remarkMath]}
+          rehypePlugins={[rehypeKatex]}
           components={MarkdownComponents}
         >
           {blog.content}
