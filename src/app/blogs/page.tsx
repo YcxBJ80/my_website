@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/shared/Card'
+import Link from 'next/link';
 import { Container } from '@/components/layout/Container'
 import { formatDate } from '@/lib/formatDate'
 import { blogHeadLine, blogIntro } from '@/config/infoConfig'
 import { generateTagColor } from '@/lib/blogOperations'
+import { AnimatedList } from '@/components/ui/animated-list'
+import { ScrollReveal } from '@/components/ui/scroll-reveal'
 
 interface BlogWithStats {
   id: string;
@@ -23,7 +25,10 @@ interface BlogWithStats {
 
 function BlogCard({ blog }: { blog: BlogWithStats }) {
   return (
-    <div className="group relative">
+    <Link 
+      href={`/blogs/${blog.slug}`}
+      className="group relative block cursor-pointer"
+    >
       {/* Left timeline */}
       <div className="flex items-center mb-6">
         <div className="flex-shrink-0 w-24 text-right pr-6">
@@ -43,21 +48,23 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
 
         {/* Blog card */}
         <div className="flex-1 ml-6">
-          <Card className="hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group-hover:-translate-y-1">
+          <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-monet-blue/30">
             <div className="flex justify-between items-start mb-3">
               <div className="flex-1">
-                <Card.Title href={`/blogs/${blog.slug}`}>
-                  <span className="group-hover:text-monet-blue transition-colors">{blog.title}</span>
-                </Card.Title>
-                <div className="flex items-center space-x-3 mt-2 text-sm text-muted-foreground">
-                  <span>作者: {blog.author}</span>
+                <h3 className="text-xl font-semibold text-card-foreground mb-2 group-hover:text-monet-blue transition-colors line-clamp-2">
+                  {blog.title}
+                </h3>
+                <div className="flex items-center space-x-3 text-sm text-muted-foreground">
+                  <span>By: {blog.author}</span>
                   <span>•</span>
                   <span>{formatDate(blog.date)}</span>
                 </div>
               </div>
             </div>
 
-            <Card.Description>{blog.description}</Card.Description>
+            <p className="text-muted-foreground mb-4 line-clamp-3">
+              {blog.description}
+            </p>
 
             {/* Tags */}
             {blog.tags && blog.tags.length > 0 && (
@@ -79,39 +86,32 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
               </div>
             )}
             
-            {/* 统计信息和阅读全文 */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  <span>{blog.views || 0}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                  </svg>
-                  <span>{blog.likes || 0}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                  </svg>
-                  <span>{blog.comments || 0}</span>
-                </div>
-                
-                {/* 阅读全文按钮 */}
-                <Card.Cta>
-                  <span className="text-monet-blue hover:text-monet-blue-dark ml-4">阅读全文</span>
-                </Card.Cta>
+            {/* Statistics */}
+            <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                <span>{blog.views || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span>{blog.likes || 0}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                <span>{blog.comments || 0}</span>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 
@@ -126,17 +126,16 @@ export default function BlogsIndex() {
     loadBlogs();
   }, []);
 
-  // 添加窗口焦点监听，当用户回到页面时自动刷新
+  // Auto refresh when window gains focus
   useEffect(() => {
     const handleFocus = () => {
-      console.log('🔄 窗口获得焦点，自动刷新博客列表');
+      console.log('🔄 Window focused, auto refreshing blog list');
       loadBlogs();
     };
 
-    // 添加可见性变化监听
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        console.log('🔄 页面变为可见，自动刷新博客列表');
+        console.log('🔄 Page visible, auto refreshing blog list');
         loadBlogs();
       }
     };
@@ -151,7 +150,7 @@ export default function BlogsIndex() {
   }, []);
 
   useEffect(() => {
-    // 搜索过滤逻辑
+    // Search filter logic
     if (searchTerm.trim() === '') {
       setFilteredBlogs(blogs);
     } else {
@@ -169,12 +168,12 @@ export default function BlogsIndex() {
       setIsLoading(true);
       setError('');
       
-      // 添加时间戳和强制缓存控制，确保每次都从服务端获取最新数据
+      // Add timestamp and force cache control to ensure fresh data from server
       const timestamp = Date.now();
       const response = await fetch(`/api/blogs?t=${timestamp}`, {
         method: 'GET',
         cache: 'no-store',
-        next: { revalidate: 0 }, // Next.js 强制不缓存
+        next: { revalidate: 0 }, // Next.js force no cache
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
           'Pragma': 'no-cache',
@@ -187,171 +186,172 @@ export default function BlogsIndex() {
       if (response.ok) {
         const blogsData = await response.json();
         setBlogs(blogsData);
-        console.log('🔄 博客数据已更新:', blogsData.length, '篇博客', `(时间戳: ${timestamp})`);
+        console.log('🔄 Blog data updated:', blogsData.length, 'blogs', `(timestamp: ${timestamp})`);
         
-        // 额外日志：显示每篇博客的ID和标题，便于调试
+        // Additional log: show each blog's ID and title for debugging
         blogsData.forEach((blog: any, index: number) => {
-          console.log(`📄 博客 ${index + 1}: ${blog.title} (ID: ${blog.id})`);
+          console.log(`📄 Blog ${index + 1}: ${blog.title} (ID: ${blog.id})`);
         });
       } else {
         const errorData = await response.json();
-        setError(errorData.error || '获取博客失败');
-        console.error('获取博客失败:', response.statusText);
+        setError(errorData.error || 'Failed to fetch blogs');
+        console.error('Failed to fetch blogs:', response.statusText);
       }
     } catch (error) {
-      console.error('加载博客失败:', error);
-      setError('网络错误，请稍后重试');
+      console.error('Failed to load blogs:', error);
+      setError('Network error, please try again later');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Container className="py-16">
-        <div className="max-w-4xl mx-auto">
-          {/* 页面标题和描述 */}
-          <header className="mb-12 text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl mb-4">
+    <div className="min-h-screen bg-background py-16">
+      <Container>
+        <ScrollReveal>
+          <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
               {blogHeadLine}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               {blogIntro}
             </p>
-          </header>
+          </div>
+        </ScrollReveal>
 
-          {/* 搜索和刷新区域 */}
-          <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="flex-1 max-w-md">
-              <div className="relative">
-                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="搜索博客..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
-                />
-              </div>
-              {/* 延迟提示 */}
-              <p className="text-xs text-gray-400 mt-2">
-                💡 上传博客可能有3-5分钟的延迟
-              </p>
+        {/* Search and controls */}
+        <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search blogs..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+              />
+            </div>
+            {/* Delay notice */}
+            <p className="text-xs text-gray-400 mt-2">
+              💡 Blog uploads may have a 3-5 minute delay
+            </p>
+          </div>
+          
+          {/* Data status display */}
+          <div className="flex items-center space-x-3">
+            <div className="text-sm text-muted-foreground bg-card px-3 py-2 rounded-lg border border-border">
+              <span className="font-medium text-foreground">{blogs.length}</span> articles
+              {isLoading && <span className="text-monet-blue ml-1">refreshing...</span>}
             </div>
             
-            {/* 数据状态显示 */}
-            <div className="flex items-center space-x-3">
-              <div className="text-sm text-muted-foreground bg-card px-3 py-2 rounded-lg border border-border">
-                <span className="font-medium text-foreground">{blogs.length}</span> 篇博客
-                {isLoading && <span className="text-monet-blue ml-1">刷新中...</span>}
-              </div>
-              
-              {/* 刷新按钮 */}
-              <button
-                onClick={loadBlogs}
-                disabled={isLoading}
-                className="flex items-center space-x-2 px-4 py-3 bg-monet-blue text-white rounded-xl hover:bg-monet-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                title="刷新博客列表"
+            {/* Refresh button */}
+            <button
+              onClick={loadBlogs}
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-4 py-3 bg-monet-blue text-white rounded-xl hover:bg-monet-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Refresh blog list"
+            >
+              <svg 
+                className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
               >
-                <svg 
-                  className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span className="hidden sm:inline font-medium">
-                  {isLoading ? '刷新中...' : '刷新'}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* 搜索结果计数 */}
-          {searchTerm && (
-            <div className="mb-6 text-sm text-muted-foreground">
-              找到 {filteredBlogs.length} 篇相关文章
-              {searchTerm && (
-                <span className="ml-2">
-                  关于 &ldquo;<span className="text-monet-blue font-medium">{searchTerm}</span>&rdquo;
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* 错误提示 */}
-          {error && (
-            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <div className="flex items-center space-x-2">
-                <svg className="w-5 h-5 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-destructive text-sm font-medium">加载失败</span>
-              </div>
-              <p className="text-destructive text-sm mt-1">{error}</p>
-              <button 
-                onClick={loadBlogs}
-                className="mt-2 text-xs text-monet-blue hover:text-monet-blue-dark transition-colors"
-              >
-                重新加载
-              </button>
-            </div>
-          )}
-
-          {/* 博客列表 */}
-          <div className="relative">
-            {isLoading ? (
-              // 加载骨架屏
-              <div className="space-y-8">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex items-center">
-                    <div className="w-24 h-8 bg-muted rounded animate-pulse mr-10"></div>
-                    <div className="w-4 h-4 bg-muted rounded-full mr-6"></div>
-                    <div className="flex-1 bg-card border border-border rounded-xl p-6">
-                      <div className="h-6 bg-muted rounded mb-3 animate-pulse"></div>
-                      <div className="h-4 bg-muted rounded mb-2 animate-pulse"></div>
-                      <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : filteredBlogs.length === 0 ? (
-              // 无结果消息
-              <div className="text-center py-16">
-                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {searchTerm ? '未找到相关文章' : '暂无文章'}
-                </h3>
-                <p className="text-muted-foreground">
-                  {searchTerm ? '请尝试使用其他关键词搜索' : '快来发布第一篇技术文章吧！'}
-                </p>
-                {!searchTerm && (
-                  <div className="mt-6">
-                    <a
-                      href="/blogs/create"
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
-                    >
-                      发布文章
-                    </a>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-0">
-                {filteredBlogs.map((blog: BlogWithStats) => (
-                  <BlogCard key={blog.id} blog={blog} />
-                ))}
-              </div>
-            )}
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="hidden sm:inline font-medium">
+                {isLoading ? 'Refreshing...' : 'Refresh'}
+              </span>
+            </button>
           </div>
         </div>
+
+        {/* Error display */}
+        {error && (
+          <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+            <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="font-medium">Error: {error}</span>
+            </div>
+            <button 
+              onClick={loadBlogs}
+              className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
+        {/* Blog list */}
+        {isLoading ? (
+          <div className="space-y-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center mb-6">
+                <div className="flex-shrink-0 w-24 text-right pr-6">
+                  <div className="h-6 w-16 bg-muted rounded-full animate-pulse"></div>
+                </div>
+                <div className="flex-shrink-0 relative">
+                  <div className="w-4 h-4 bg-muted rounded-full animate-pulse"></div>
+                </div>
+                <div className="flex-1 ml-6">
+                  <div className="bg-card border border-border rounded-xl p-6 animate-pulse">
+                    <div className="h-6 bg-muted rounded mb-2"></div>
+                    <div className="h-4 bg-muted rounded mb-4 w-3/4"></div>
+                    <div className="h-4 bg-muted rounded mb-4"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredBlogs.length > 0 ? (
+          <AnimatedList className="space-y-0">
+            {filteredBlogs.map((blog) => (
+              <BlogCard key={blog.id} blog={blog} />
+            ))}
+          </AnimatedList>
+        ) : searchTerm ? (
+          <ScrollReveal>
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No matching blogs found</h3>
+              <p className="text-muted-foreground mb-6">Try adjusting your search terms</p>
+              <button
+                onClick={() => setSearchTerm('')}
+                className="text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+              >
+                Clear search
+              </button>
+            </div>
+          </ScrollReveal>
+        ) : (
+          <ScrollReveal>
+            <div className="text-center py-16">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No articles yet</h3>
+              <p className="text-muted-foreground mb-6">Be the first to publish a tech article!</p>
+              <Link
+                href="/blogs/create"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+              >
+                Publish Article
+              </Link>
+            </div>
+          </ScrollReveal>
+        )}
       </Container>
     </div>
   );

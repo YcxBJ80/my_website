@@ -5,6 +5,9 @@ import Link from 'next/link';
 import { Container } from '@/components/layout/Container';
 import { getCurrentUser } from '@/lib/auth';
 import { formatDate } from '@/lib/formatDate';
+import { TextType } from '@/components/ui/text-type';
+import { SquaresBackground } from '@/components/ui/squares-background';
+import { ScrollReveal } from '@/components/ui/scroll-reveal';
 
 interface BlogType {
   id: string;
@@ -15,10 +18,40 @@ interface BlogType {
   slug: string;
 }
 
+interface ProjectType {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  link?: string;
+  tags?: string[];
+}
+
 export default function HomePage() {
   const [recentBlogs, setRecentBlogs] = useState<BlogType[]>([]);
+  const [recentProjects] = useState<ProjectType[]>([
+    {
+      id: '1',
+      title: 'AI Image Recognition',
+      description: 'A deep learning model for real-time image classification using TensorFlow',
+      tags: ['Python', 'TensorFlow', 'Computer Vision']
+    },
+    {
+      id: '2', 
+      title: 'Natural Language Chatbot',
+      description: 'An intelligent chatbot powered by transformer models and NLP',
+      tags: ['Python', 'NLP', 'Transformers']
+    },
+    {
+      id: '3',
+      title: 'Data Analysis Platform',
+      description: 'Interactive data visualization and analysis tool for students',
+      tags: ['Python', 'Pandas', 'Streamlit']
+    }
+  ]);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSecondaryText, setShowSecondaryText] = useState(false);
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -32,27 +65,24 @@ export default function HomePage() {
       const response = await fetch('/api/blogs');
       if (response.ok) {
         const blogs = await response.json();
-        setRecentBlogs(blogs.slice(0, 3)); // 只显示最新的3篇
+        setRecentBlogs(blogs.slice(0, 3));
       } else {
-        console.error('获取博客失败:', response.statusText);
+        console.error('Failed to fetch blogs:', response.statusText);
       }
     } catch (error) {
-      console.error('加载博客失败:', error);
+      console.error('Failed to load blogs:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 处理作者名称显示
   const getDisplayAuthor = (author: string) => {
-    if (!author) return '匿名';
+    if (!author) return 'Anonymous';
     
-    // 如果是邮箱，提取用户名部分
     if (author.includes('@')) {
       return author.split('@')[0];
     }
     
-    // 如果名称太长，截断
     if (author.length > 10) {
       return author.substring(0, 10) + '...';
     }
@@ -67,8 +97,8 @@ export default function HomePage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
       ),
-      title: '技术博客',
-      description: '分享AI学习心得、项目经验和前沿技术资讯',
+      title: 'Tech Blog',
+      description: 'Share AI learning insights, project experiences and cutting-edge tech news',
       color: 'from-monet-blue to-monet-purple'
     },
     {
@@ -77,8 +107,8 @@ export default function HomePage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       ),
-      title: '社区互动',
-      description: '与同学们一起讨论AI话题，分享学习资源',
+      title: 'Community',
+      description: 'Connect with fellow students to discuss AI topics and share resources',
       color: 'from-monet-green to-monet-blue'
     },
     {
@@ -87,8 +117,8 @@ export default function HomePage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
         </svg>
       ),
-      title: '项目实践',
-      description: '参与AI项目开发，提升实战能力',
+      title: 'Projects',
+      description: 'Participate in AI project development and enhance practical skills',
       color: 'from-monet-purple to-monet-pink'
     },
     {
@@ -97,119 +127,137 @@ export default function HomePage() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       ),
-      title: '前沿技术',
-      description: '紧跟AI发展趋势，学习最新技术动态',
+      title: 'Innovation',
+      description: 'Stay ahead with the latest AI trends and technological developments',
       color: 'from-monet-yellow to-monet-green'
     }
   ];
 
   return (
     <div className="min-h-screen bg-background">
-      {/* 英雄区域 */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/10 via-background to-monet-purple/10"></div>
+      {/* Hero Section with Animated Background */}
+      <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex items-center">
+        <SquaresBackground className="opacity-30" squareCount={25} />
+        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-background/90 to-monet-purple/5"></div>
+        
         <Container className="relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
+          <div className="text-center max-w-5xl mx-auto">
             <div className="mb-8">
-              <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium mb-6">
+              <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium mb-8">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                欢迎来到AI社团
+                Welcome to BJ80 AI
               </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-                探索人工智能的
-                <span className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent">
-                  无限可能
-                </span>
+              
+              {/* Animated Title */}
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-8 leading-tight">
+                <TextType 
+                  text="Welcome to BJ80 AI"
+                  speed={120}
+                  className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent"
+                  onComplete={() => setShowSecondaryText(true)}
+                />
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
-                加入我们的高中AI社团，一起学习前沿技术，分享项目经验，构建属于未来的智能世界
-              </p>
+              
+              {showSecondaryText && (
+                <ScrollReveal>
+                  <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-4xl mx-auto">
+                    Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future
+                  </p>
+                </ScrollReveal>
+              )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              {user ? (
-                <Link
-                  href="/blogs"
-                  className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-8 py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-lg"
-                >
-                  浏览博客
-                </Link>
-              ) : (
-                <Link
-                  href="/auth"
-                  className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-8 py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-lg"
-                >
-                  立即加入
-                </Link>
-              )}
-              <Link
-                href="/about"
-                className="border border-border text-foreground px-8 py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-lg"
-              >
-                了解更多
-              </Link>
-            </div>
+            {showSecondaryText && (
+              <ScrollReveal delay={300}>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  {user ? (
+                    <Link
+                      href="/blogs"
+                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-8 py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-lg"
+                    >
+                      Browse Blogs
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/auth"
+                      className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-8 py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-lg"
+                    >
+                      Join Now
+                    </Link>
+                  )}
+                  <Link
+                    href="/about"
+                    className="border border-border text-foreground px-8 py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-lg"
+                  >
+                    Learn More
+                  </Link>
+                </div>
+              </ScrollReveal>
+            )}
           </div>
         </Container>
       </section>
 
-      {/* 特色功能 */}
+      {/* Features Section */}
       <section className="py-20 bg-accent/20">
         <Container>
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              为什么选择我们
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              在这里，你将获得全面的AI学习体验，从理论知识到实践项目，从个人成长到团队合作
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                What We Offer
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Get a comprehensive AI learning experience, from theory to practice, from personal growth to team collaboration
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
-              >
-                <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
-                  {feature.icon}
+              <ScrollReveal key={index} delay={index * 100}>
+                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold text-card-foreground mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="text-xl font-semibold text-card-foreground mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </Container>
       </section>
 
-      {/* 最新博客 */}
+      {/* Recent Blogs Section */}
       <section className="py-20">
         <Container>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                最新文章
-              </h2>
-              <p className="text-lg text-muted-foreground">
-                社团成员分享的最新技术文章和学习心得
-              </p>
+          <ScrollReveal>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Recent Articles
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Latest tech articles and insights shared by our club members
+                </p>
+              </div>
+              <Link
+                href="/blogs"
+                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+              >
+                View All
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
-            <Link
-              href="/blogs"
-              className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
-            >
-              查看全部
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
-          </div>
+          </ScrollReveal>
 
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -224,53 +272,104 @@ export default function HomePage() {
             </div>
           ) : recentBlogs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {recentBlogs.map((blog) => (
-                <Link
-                  key={blog.slug}
-                  href={`/blogs/${blog.slug}`}
-                  className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
-                >
-                  <div className="flex items-center text-sm text-muted-foreground mb-3">
-                    <span>{formatDate(blog.date)}</span>
-                    <span className="mx-2">·</span>
-                    <span className="truncate" title={blog.author}>
-                      {getDisplayAuthor(blog.author)}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2">
-                    {blog.title}
-                  </h3>
-                  <p className="text-muted-foreground line-clamp-3">
-                    {blog.description}
-                  </p>
-                  <div className="mt-4 inline-flex items-center text-monet-blue text-sm font-medium">
-                    阅读全文
-                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </div>
-                </Link>
+              {recentBlogs.map((blog, index) => (
+                <ScrollReveal key={blog.slug} delay={index * 100}>
+                  <Link
+                    href={`/blogs/${blog.slug}`}
+                    className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1"
+                  >
+                    <div className="flex items-center text-sm text-muted-foreground mb-3">
+                      <span>{formatDate(blog.date)}</span>
+                      <span className="mx-2">·</span>
+                      <span className="truncate" title={blog.author}>
+                        {getDisplayAuthor(blog.author)}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2">
+                      {blog.title}
+                    </h3>
+                    <p className="text-muted-foreground line-clamp-3">
+                      {blog.description}
+                    </p>
+                  </Link>
+                </ScrollReveal>
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
+            <ScrollReveal>
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Articles Yet</h3>
+                <p className="text-muted-foreground mb-6">Be the first to publish a tech article!</p>
+                {user && (
+                  <Link
+                    href="/blogs/create"
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+                  >
+                    Publish Article
+                  </Link>
+                )}
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-2">暂无文章</h3>
-              <p className="text-muted-foreground mb-6">快来发布第一篇技术文章吧！</p>
-              {user && (
-                <Link
-                  href="/blogs/create"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
-                >
-                  发布文章
-                </Link>
-              )}
-            </div>
+            </ScrollReveal>
           )}
+        </Container>
+      </section>
+
+      {/* Recent Projects Section */}
+      <section className="py-20 bg-accent/20">
+        <Container>
+          <ScrollReveal>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Recent Projects
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Innovative AI projects developed by our club members
+                </p>
+              </div>
+              <Link
+                href="/projects"
+                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+              >
+                View All
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {recentProjects.map((project, index) => (
+              <ScrollReveal key={project.id} delay={index * 100}>
+                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1">
+                  <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-3">
+                    {project.description}
+                  </p>
+                  {project.tags && (
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-1 text-xs bg-monet-blue/10 text-monet-blue rounded-md border border-monet-blue/20"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
         </Container>
       </section>
     </div>
