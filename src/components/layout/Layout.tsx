@@ -49,7 +49,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {/* Footer */}
       <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          <div className="text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               try{' '}
               <RotatingText
                 texts={['vibe coding', 'image generation', 'LLMs', 'prompt engineering']}
@@ -64,7 +65,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 rotationInterval={2000}
                 splitBy="characters"
               />
-          </h2>
+            </h2>
+            <p className="text-muted-foreground">
+              Explore the latest in AI technology and development
+            </p>
+          </div>
         </div>
       </footer>
     </div>
