@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   white-space: pre-wrap;
   position: relative;
+  overflow: hidden;
 }
 
 .text-rotate-sr-only {
@@ -19,6 +20,7 @@
 
 .text-rotate-word {
   display: inline-flex;
+  overflow: hidden;
 }
 
 .text-rotate-lines {
@@ -29,6 +31,9 @@
 
 .text-rotate-element {
   display: inline-block;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .text-rotate-space {
