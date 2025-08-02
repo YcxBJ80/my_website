@@ -46,7 +46,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="pt-16 min-h-screen">
         {children}
       </main>
-      
       {/* Footer */}
       <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -63,6 +62,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
                 transition={{ type: "spring", damping: 30, stiffness: 400 }}
                 rotationInterval={2000}
+                splitBy="characters"
               />
             </div>
         </div>

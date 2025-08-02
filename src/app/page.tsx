@@ -448,6 +448,7 @@ export default function HomePage() {
                 splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
                 transition={{ type: "spring", damping: 30, stiffness: 400 }}
                 rotationInterval={3000}
+                splitBy="characters"
               />
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
