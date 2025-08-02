@@ -53,16 +53,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                       <div className="text-center text-gray-400 flex items-center justify-center">
               <span className="mr-3 text-lg sm:text-xl md:text-2xl">try</span>
               <RotatingText 
-                texts={['vibe coding', 'image generation', 'LLMs', 'prompt engineering']}
-                mainClassName="px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30"
-                staggerFrom="last"
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '-120%' }}
-                staggerDuration={0.025}
-                splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
-                transition={{ type: 'spring', damping: 30, stiffness: 400 }}
-                rotationInterval={2000}
+                words={['vibe coding', 'image generation', 'LLMs', 'prompt engineering']}
+                duration={2000}
+                className="px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30"
               />
             </div>
         </div>

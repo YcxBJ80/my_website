@@ -6,7 +6,7 @@ import { Container } from '@/components/layout/Container';
 import { getCurrentUser } from '@/lib/auth';
 import { formatDate } from '@/lib/formatDate';
 import { TextType } from '@/components/ui/text-type';
-import { SquaresBackground } from '@/components/ui/squares-background';
+import Squares from '@/components/ui/Squares';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
 import { RotatingText } from '@/components/ui/rotating-text';
 
@@ -127,13 +127,12 @@ export default function HomePage() {
       {/* Hero Section with Animated Background */}
       <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex flex-col">
         <div className="absolute inset-0">
-          <SquaresBackground 
-            squareSize={60} 
-            gap={4}
-            speed={1}
-            opacity={0.3}
-            color="rgba(79, 70, 229, 0.4)"
-            className="opacity-80"
+          <Squares 
+            speed={0.5} 
+            squareSize={40}
+            direction='diagonal'
+            borderColor='rgba(79, 70, 229, 0.3)'
+            hoverFillColor='rgba(79, 70, 229, 0.1)'
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
