@@ -80,13 +80,8 @@
     @apply min-h-screen w-full;
   }
   
-  /* AI社团特色渐变背景 - 莫兰迪风格 */
+  /* AI社团特色背景 - 纯色莫兰迪风格 */
   .ai-gradient-bg {
-    background: linear-gradient(135deg, 
-      hsl(var(--background)) 0%,
-      hsl(45 25% 92%) 30%,
-      hsl(30 20% 88%) 70%,
-      hsl(var(--background)) 100%
-    );
+    background: hsl(var(--background));
   }
 }

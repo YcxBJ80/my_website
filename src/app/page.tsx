@@ -179,21 +179,21 @@ export default function HomePage() {
                 {user ? (
                   <Link
                     href="/blogs"
-                    className="bg-gradient-to-r from-morandi-rose to-morandi-lavender text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-morandi-rose-dark hover:to-morandi-lavender-dark transition-all duration-300 shadow-lg hover:shadow-morandi-rose/20 text-base md:text-lg text-center"
+                    className="bg-morandi-btn-1 text-morandi-beige px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-btn-2 transition-all duration-300 shadow-lg hover:shadow-morandi-btn-1/20 text-base md:text-lg text-center"
                   >
                     Browse Blogs
                   </Link>
                 ) : (
                   <Link
                     href="/auth"
-                    className="bg-gradient-to-r from-morandi-rose to-morandi-lavender text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-morandi-rose-dark hover:to-morandi-lavender-dark transition-all duration-300 shadow-lg hover:shadow-morandi-rose/20 text-base md:text-lg text-center"
+                    className="bg-morandi-btn-2 text-morandi-beige px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-btn-3 transition-all duration-300 shadow-lg hover:shadow-morandi-btn-2/20 text-base md:text-lg text-center"
                   >
                     Join Now
                   </Link>
                 )}
                 <Link
                   href="/about"
-                  className="border border-border text-foreground px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-base md:text-lg text-center"
+                  className="bg-morandi-btn-3 text-morandi-beige px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-btn-1 transition-all duration-300 shadow-lg hover:shadow-morandi-btn-3/20 text-base md:text-lg text-center"
                 >
                   Learn More
                 </Link>
@@ -221,7 +221,7 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <ScrollReveal key={index} delay={index * 100}>
                 <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 h-full flex flex-col">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 bg-morandi-icon-${index + 1} rounded-xl flex items-center justify-center mb-4 text-morandi-beige group-hover:scale-110 transition-transform duration-300`}>
                     {feature.icon}
                   </div>
                   <h3 className="text-xl font-semibold text-card-foreground mb-2">

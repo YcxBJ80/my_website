@@ -96,7 +96,18 @@ export default {
   				'gray': '#D8D8D8',        // 浅灰
   				'gray-dark': '#C4C4C4',   // 深灰
   				'warm-gray': '#E0D8D0',   // 暖灰
-  				'warm-gray-dark': '#CCC4BC' // 深暖灰
+  				'warm-gray-dark': '#CCC4BC', // 深暖灰
+  				// 按钮颜色
+  				'btn-1': '#9E9BD2',       // 按钮颜色1
+  				'btn-2': '#C3AAE1',       // 按钮颜色2
+  				'btn-3': '#7E78A7',       // 按钮颜色3
+  				// 图标背景颜色
+  				'icon-1': '#DCCDC6',      // 图标背景1
+  				'icon-2': '#C9EEB',       // 图标背景2
+  				'icon-3': '#EBEBE4',      // 图标背景3
+  				'icon-4': '#8B7D86',      // 图标背景4
+  				// 头像背景颜色
+  				'avatar': '#F2AF9B'       // 头像背景
   			}
   		}
   	}
