@@ -8,7 +8,7 @@ import { formatDate } from '@/lib/formatDate';
 import { TextType } from '@/components/ui/text-type';
 import Squares from '@/components/ui/Squares';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
-import { RotatingText } from '@/components/ui/rotating-text';
+import RotatingText from '@/components/ui/RotatingText';
 
 interface BlogType {
   id: string;
@@ -132,7 +132,7 @@ export default function HomePage() {
             squareSize={40}
             direction='diagonal'
             borderColor='rgba(79, 70, 229, 0.3)'
-            hoverFillColor='rgba(79, 70, 229, 0.1)'
+            hoverFillColor='rgba(70, 229, 105, 0.76)'
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
@@ -437,10 +437,17 @@ export default function HomePage() {
           <div className="text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               Building the future of{' '}
-              <RotatingText 
-                words={['AI Development', 'Machine Learning', 'Deep Learning', 'Computer Vision', 'Natural Language Processing']}
-                duration={3000}
-                className="text-monet-blue font-bold"
+              <RotatingText
+                texts={['AI Development', 'Machine Learning', 'Deep Learning', 'Computer Vision', 'Natural Language Processing']}
+                mainClassName="text-monet-blue font-bold"
+                staggerFrom={"last"}
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "-120%" }}
+                staggerDuration={0.025}
+                splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                rotationInterval={3000}
               />
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
