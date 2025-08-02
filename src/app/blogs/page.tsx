@@ -231,11 +231,11 @@ export default function BlogsIndex() {
                 placeholder="Search blogs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
               />
             </div>
             {/* Delay notice */}
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-morandi-gray-dark mt-2">
               💡 Blog uploads may have a 3-5 minute delay
             </p>
           </div>
@@ -271,8 +271,8 @@ export default function BlogsIndex() {
 
         {/* Error display */}
         {error && (
-          <div className="mb-8 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-            <div className="flex items-center space-x-2 text-red-600 dark:text-red-400">
+          <div className="mb-8 p-4 bg-morandi-pink/10 border border-morandi-pink/20 rounded-xl">
+            <div className="flex items-center space-x-2 text-morandi-pink">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -280,7 +280,7 @@ export default function BlogsIndex() {
             </div>
             <button 
               onClick={loadBlogs}
-              className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
+              className="mt-2 text-sm text-morandi-pink hover:underline"
             >
               Try again
             </button>

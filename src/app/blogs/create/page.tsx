@@ -624,7 +624,7 @@ export default function CreateBlogPage() {
                             <button
                               type="button"
                               onClick={() => setUploadedImages(prev => prev.filter(img => img.id !== image.id))}
-                              className="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                              className="px-2 py-1 text-xs bg-morandi-pink text-white rounded hover:bg-morandi-pink-dark transition-colors"
                               title="Delete Image"
                             >
                               ×
@@ -638,18 +638,18 @@ export default function CreateBlogPage() {
 
                 {/* Images to Upload */}
                 {unconvertedImages.length > 0 && (
-                  <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-                    <h4 className="text-sm font-medium text-orange-600 dark:text-orange-400 mb-2">
+                  <div className="mt-4 p-3 bg-morandi-yellow/10 border border-morandi-yellow/20 rounded-lg">
+                    <h4 className="text-sm font-medium text-morandi-yellow-dark mb-2">
                       🔍 Images to Upload:
                     </h4>
                     <div className="space-y-1">
                       {unconvertedImages.map((fileName, index) => (
                         <div key={index} className="text-xs">
-                          <span className="text-orange-500">Please upload image named &quot;{fileName}&quot;</span>
+                          <span className="text-morandi-yellow-dark">Please upload image named &quot;{fileName}&quot;</span>
                         </div>
                       ))}
                     </div>
-                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-2">
+                    <p className="text-xs text-morandi-yellow-dark mt-2">
                       💡 After uploading corresponding named images, the system will automatically convert to standard markdown format
                     </p>
                   </div>
@@ -657,8 +657,8 @@ export default function CreateBlogPage() {
               </div>
 
               {/* Image Conversion Tip */}
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                <p className="text-sm text-blue-600 dark:text-blue-400">
+              <div className="bg-morandi-blue/10 border border-morandi-blue/20 rounded-xl p-4">
+                <p className="text-sm text-morandi-blue-dark">
                   💡 Write <code>![[image name]]</code> in content, upload corresponding image to auto-convert to standard markdown
                 </p>
               </div>

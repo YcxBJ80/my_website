@@ -85,8 +85,8 @@ export function LikeButton({ blogId, className = '' }: LikeButtonProps) {
       disabled={!user || isUpdating}
       className={`flex items-center space-x-2 transition-all duration-200 ${
         isLiked 
-          ? 'text-red-500 hover:text-red-600' 
-          : 'text-muted-foreground hover:text-red-500'
+          ? 'text-morandi-pink hover:text-morandi-pink-dark' 
+          : 'text-morandi-gray-dark hover:text-morandi-pink'
       } ${!user ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'} ${className}`}
       title={!user ? 'Please login' : isLiked ? 'Unlike' : 'Like'}
     >

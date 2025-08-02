@@ -39,7 +39,8 @@ export const cloudProps: Omit<ICloud, "children"> = {
 
 export const renderCustomIcon = (icon: SimpleIcon, theme: string) => {
   const bgHex = theme === "light" ? "#f3f2ef" : "#080510";
-  const fallbackHex = theme === "light" ? "#6e6e73" : "#ffffff";
+  // 使用莫兰迪色系作为图标颜色
+  const fallbackHex = theme === "light" ? "#A8C0D6" : "#C4D4E4"; // 莫兰迪蓝
   const minContrastRatio = theme === "dark" ? 2 : 1.2;
 
   return renderSimpleIcon({

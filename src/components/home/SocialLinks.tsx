@@ -16,7 +16,7 @@ export default function SocialLinks({ className }: { className?: string }) {
                     target="_blank"
                     rel="noreferrer"
                     aria-label={`Follow on ${link.name}`}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-md text-morandi-gray-dark hover:bg-morandi-gray-light hover:text-morandi-gray-dark transition-colors"
                 >
                     <CustomIcon name={link.icon} />
                     <span className="sr-only">{link.name}</span>
@@ -27,7 +27,7 @@ export default function SocialLinks({ className }: { className?: string }) {
                 target="_blank"
                 rel="noreferrer"
                 aria-label='Email'
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-md text-morandi-gray-dark hover:bg-morandi-gray-light hover:text-morandi-gray-dark transition-colors"
             >
                 <CustomIcon name='email' />
                 <span className="sr-only">Email</span>

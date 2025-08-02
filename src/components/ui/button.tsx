@@ -10,15 +10,22 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+          "bg-morandi-blue text-white shadow hover:bg-morandi-blue-dark",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-morandi-pink text-white shadow-sm hover:bg-morandi-pink-dark",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-morandi-gray bg-background shadow-sm hover:bg-morandi-gray-light hover:text-morandi-gray-dark",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-morandi-green text-white shadow-sm hover:bg-morandi-green-dark",
+        ghost: "hover:bg-morandi-gray-light hover:text-morandi-gray-dark",
+        link: "text-morandi-blue underline-offset-4 hover:underline",
+        // 新增莫兰迪色系变体
+        morandiBlue: "bg-morandi-blue text-white shadow hover:bg-morandi-blue-dark",
+        morandiGreen: "bg-morandi-green text-white shadow hover:bg-morandi-green-dark",
+        morandiPurple: "bg-morandi-purple text-white shadow hover:bg-morandi-purple-dark",
+        morandiPink: "bg-morandi-pink text-white shadow hover:bg-morandi-pink-dark",
+        morandiYellow: "bg-morandi-yellow text-white shadow hover:bg-morandi-yellow-dark",
+        morandiGray: "bg-morandi-gray text-white shadow hover:bg-morandi-gray-dark",
       },
       size: {
         default: "h-9 px-4 py-2",

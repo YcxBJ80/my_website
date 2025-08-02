@@ -19,16 +19,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
             
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/blogs" className="text-gray-300 hover:text-morandi-blue transition-colors">
+              <Link href="/blogs" className="text-morandi-gray-dark hover:text-morandi-blue transition-colors">
                 Blog
               </Link>
-              <Link href="/blogs/create" className="text-gray-300 hover:text-morandi-green transition-colors">
-                Publish
+              <Link href="/blogs/create"
+                className="text-morandi-gray-dark hover:text-morandi-green transition-colors">
+                Create
               </Link>
-              <Link href="/projects" className="text-gray-300 hover:text-morandi-green transition-colors">
+              <Link href="/projects" className="text-morandi-gray-dark hover:text-morandi-green transition-colors">
                 Projects
               </Link>
-              <Link href="/about" className="text-gray-300 hover:text-morandi-purple transition-colors">
+              <Link href="/about" className="text-morandi-gray-dark hover:text-morandi-purple transition-colors">
                 About
               </Link>
               <AuthButton />
