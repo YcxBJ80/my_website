@@ -141,6 +141,8 @@ const Squares: React.FC<SquaresProps> = ({
         hoveredSquareRef.current.y !== hoveredSquareY
       ) {
         hoveredSquareRef.current = { x: hoveredSquareX, y: hoveredSquareY };
+        // 强制重绘以显示悬停效果
+        drawGrid();
       }
     };
 

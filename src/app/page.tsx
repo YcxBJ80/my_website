@@ -126,7 +126,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background">
       {/* Hero Section with Animated Background */}
       <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex flex-col">
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           <Squares 
             speed={0.5} 
             squareSize={40}
