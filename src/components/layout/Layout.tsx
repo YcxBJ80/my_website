@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { AuthButton } from '@/components/auth/AuthButton'
-import RotatingText from '@/components/ui/RotatingText'
+
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -52,19 +52,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               try{' '}
-              <RotatingText
-                texts={['vibe coding', 'image generation', 'LLMs', 'prompt engineering']}
-                mainClassName="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30"
-                staggerFrom={"last"}
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "-120%", opacity: 0 }}
-                staggerDuration={0.015}
-                splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
-                transition={{ type: "spring", damping: 25, stiffness: 300, mass: 0.8 }}
-                rotationInterval={2000}
-                splitBy="characters"
-              />
+              <span className="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30">
+                vibe coding
+              </span>
             </h2>
             <p className="text-muted-foreground">
               Explore the latest in AI technology and development

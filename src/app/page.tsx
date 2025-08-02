@@ -8,7 +8,7 @@ import { formatDate } from '@/lib/formatDate';
 import { TextType } from '@/components/ui/text-type';
 import Squares from '@/components/ui/Squares';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
-import RotatingText from '@/components/ui/RotatingText';
+
 
 interface BlogType {
   id: string;
@@ -437,19 +437,9 @@ export default function HomePage() {
           <div className="text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
               Building the future of{' '}
-              <RotatingText
-                texts={['AI Development', 'Machine Learning', 'Deep Learning', 'Computer Vision', 'Natural Language Processing']}
-                mainClassName="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30"
-                staggerFrom={"last"}
-                initial={{ y: "100%", opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: "-120%", opacity: 0 }}
-                staggerDuration={0.015}
-                splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
-                transition={{ type: "spring", damping: 25, stiffness: 300, mass: 0.8 }}
-                rotationInterval={3000}
-                splitBy="characters"
-              />
+              <span className="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30">
+                AI Development
+              </span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Join our community of passionate students exploring the endless possibilities of artificial intelligence
