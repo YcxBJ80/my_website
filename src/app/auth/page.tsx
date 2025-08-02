@@ -59,7 +59,7 @@ export default function AuthPage() {
             {isLogin ? 'Welcome Back' : 'Join Us'}
           </h1>
           <p className="text-muted-foreground">
-            {isLogin ? 'Sign in to your BJ80 AI account' : 'Create your BJ80 AI account'}
+            {isLogin ? 'Sign in to your AI Community account' : 'Create your AI Community account'}
           </p>
         </div>
 

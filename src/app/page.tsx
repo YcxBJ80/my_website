@@ -144,16 +144,16 @@ export default function HomePage() {
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              Welcome to BJ80 AI
+              Welcome to AI Community
             </div>
           </div>
 
           {/* Centered Title */}
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground leading-tight">
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold text-foreground leading-tight">
                 <TextType 
-                  text="Welcome to BJ80 AI"
+                  text="Welcome to AI Community"
                   speed={120}
                   className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent"
                   onComplete={() => setShowSecondaryText(true)}

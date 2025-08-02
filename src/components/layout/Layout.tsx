@@ -13,7 +13,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <div className="w-8 h-8 bg-gradient-to-br from-monet-blue to-monet-purple rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">AI</span>
               </div>
-              <span className="text-white font-semibold text-lg">BJ80 AI</span>
+              <span className="text-white font-semibold text-lg">AI Community</span>
             </Link>
             
             {/* Navigation Links */}
@@ -50,7 +50,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="text-center text-gray-400">
-            <p>&copy; 2024 BJ80 AI. Exploring the infinite possibilities of AI</p>
+            <p>&copy; 2024 AI Community. Exploring the infinite possibilities of AI</p>
           </div>
         </div>
       </footer>

@@ -1,5 +1,5 @@
 export const infoConfig = {
-  name: 'BJ80 AI Club',
+  name: 'AI Community',
   headline: 'Exploring the Infinite Possibilities of AI',
   introduction: 'Join our high school AI club to learn cutting-edge technology, share project experiences, and build an intelligent world for the future.',
   email: 'contact@bj80ai.club',
@@ -39,9 +39,9 @@ export const infoConfig = {
   ],
 
   // About Page
-  aboutMeHeadline: 'About BJ80 AI Club',
+  aboutMeHeadline: 'About AI Community',
   aboutParagraphs: [
-    'BJ80 AI Club is a passionate community of high school students dedicated to exploring the frontiers of artificial intelligence. We believe AI is not just technology, but a tool to change the world.',
+    'AI Community is a passionate community of high school students dedicated to exploring the frontiers of artificial intelligence. We believe AI is not just technology, but a tool to change the world.',
     'Our club focuses on practical projects, combining theoretical learning with hands-on experience. From machine learning basics to deep learning applications, from computer vision to natural language processing, we explore every fascinating corner of AI.',
     'We regularly organize technical sharing sessions, project showcases, and collaborative development activities, creating a platform for like-minded students to learn and grow together.',
     'Join us and lets shape the future with AI!'
