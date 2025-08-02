@@ -144,7 +144,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-monet-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-2 border-morandi-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-muted-foreground">加载中...</p>
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function ProfilePage() {
           <div className="bg-card border border-border rounded-xl p-6 space-y-6">
             {/* 头像和基本信息 */}
             <div className="flex items-center space-x-4">
-              <div className="w-20 h-20 bg-gradient-to-br from-monet-green to-monet-blue rounded-full flex items-center justify-center">
+              <div className="w-20 h-20 bg-morandi-green rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-2xl">
                   {profile.username?.charAt(0).toUpperCase()}
                 </span>
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-semibold text-card-foreground">{profile.username}</h2>
                 <p className="text-muted-foreground">{profile.email}</p>
                 <div className="flex items-center space-x-2 mt-1">
-                  <span className="px-2 py-1 bg-monet-blue/20 text-monet-blue text-xs rounded-full capitalize">
+                  <span className="px-2 py-1 bg-morandi-blue/20 text-morandi-blue text-xs rounded-full capitalize">
                     {profile.role}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -194,7 +194,7 @@ export default function ProfilePage() {
               </div>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-4 py-2 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+                className="bg-morandi-blue text-white px-4 py-2 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 shadow-lg hover:shadow-morandi-blue/20"
               >
                 {isEditing ? '取消编辑' : '编辑资料'}
               </button>
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                       type="text"
                       value={formData.username}
                       onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
                       placeholder="输入用户名"
                     />
                     {errors.username && (
@@ -235,7 +235,7 @@ export default function ProfilePage() {
                     <textarea
                       value={formData.bio}
                       onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent resize-none"
+                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent resize-none"
                       rows={3}
                       placeholder="介绍一下自己..."
                     />
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                       type="text"
                       value={formData.school}
                       onChange={(e) => setFormData({ ...formData, school: e.target.value })}
-                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
                       placeholder="输入学校名称"
                     />
                     {errors.school && (
@@ -281,11 +281,11 @@ export default function ProfilePage() {
                   年级
                 </label>
                 {isEditing ? (
-                  <select
-                    value={formData.grade}
-                    onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                    className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
-                  >
+                                      <select
+                      value={formData.grade}
+                      onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
+                      className="w-full p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
+                    >
                     <option value="">选择年级</option>
                     <option value="高一">高一</option>
                     <option value="高二">高二</option>
@@ -309,12 +309,12 @@ export default function ProfilePage() {
                       {formData.interests.map((interest) => (
                         <span
                           key={interest}
-                          className="inline-flex items-center px-3 py-1 bg-monet-blue/20 text-monet-blue rounded-full text-sm"
+                          className="inline-flex items-center px-3 py-1 bg-morandi-blue/20 text-morandi-blue rounded-full text-sm"
                         >
                           {interest}
                           <button
                             onClick={() => removeInterest(interest)}
-                            className="ml-2 text-monet-blue hover:text-monet-blue-dark"
+                            className="ml-2 text-morandi-blue hover:text-morandi-blue-dark"
                           >
                             ×
                           </button>
@@ -327,12 +327,12 @@ export default function ProfilePage() {
                         value={newInterest}
                         onChange={(e) => setNewInterest(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addInterest()}
-                        className="flex-1 p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                        className="flex-1 p-3 bg-background border border-border rounded-xl text-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
                         placeholder="添加兴趣爱好"
                       />
                       <button
                         onClick={addInterest}
-                        className="px-4 py-3 bg-monet-green text-white rounded-xl hover:bg-monet-green-dark transition-colors"
+                        className="px-4 py-3 bg-morandi-green text-white rounded-xl hover:bg-morandi-green-dark transition-colors"
                       >
                         添加
                       </button>
@@ -345,7 +345,7 @@ export default function ProfilePage() {
                         {profile.interests.map((interest) => (
                           <span
                             key={interest}
-                            className="px-3 py-1 bg-monet-blue/20 text-monet-blue rounded-full text-sm"
+                            className="px-3 py-1 bg-morandi-blue/20 text-morandi-blue rounded-full text-sm"
                           >
                             {interest}
                           </span>
@@ -365,7 +365,7 @@ export default function ProfilePage() {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex-1 bg-gradient-to-r from-monet-green to-monet-blue text-white py-3 rounded-xl font-medium hover:from-monet-green-dark hover:to-monet-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-green/20"
+                  className="flex-1 bg-morandi-green text-white py-3 rounded-xl font-medium hover:bg-morandi-green-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-morandi-green/20"
                 >
                   {isSaving ? '保存中...' : '保存更改'}
                 </button>

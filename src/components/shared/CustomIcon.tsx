@@ -26,33 +26,33 @@ export function CustomIcon({
 }) {
   switch (name) {
     case 'bank':
-      return <Bank size={size} weight="duotone" />
+      return <Bank size={size} weight="fill" />
     case 'github':
-      return <GithubLogo size={size} weight="duotone" />
+      return <GithubLogo size={size} weight="fill" />
     case 'x':
-      return <XLogo size={size} weight="duotone" />
+      return <XLogo size={size} weight="fill" />
     case 'instagram':
-      return <InstagramLogo size={size} weight="duotone" />
+      return <InstagramLogo size={size} weight="fill" />
     case 'bsky':
-      return <Butterfly size={size} weight="duotone" />
+      return <Butterfly size={size} weight="fill" />
     case 'email':
-      return <Envelope size={size} weight="duotone" />
+      return <Envelope size={size} weight="fill" />
     case 'college':
-      return <GraduationCap size={size} weight="duotone" />
+      return <GraduationCap size={size} weight="fill" />
     case 'coffee':
-      return <Coffee size={size} weight="duotone" />
+      return <Coffee size={size} weight="fill" />
     case 'pill':
-      return <Pill size={size} weight="duotone" />
+      return <Pill size={size} weight="fill" />
     case 'wechat':
-      return <WechatLogo size={size} weight="duotone" />
+      return <WechatLogo size={size} weight="fill" />
     case 'discord':
-      return <DiscordLogo size={size} weight="duotone" />
+      return <DiscordLogo size={size} weight="fill" />
     case 'linkedin':
-      return <LinkedinLogo size={size} weight="duotone" />
+      return <LinkedinLogo size={size} weight="fill" />
     case 'tiktok':
-      return <TiktokLogo size={size} weight="duotone" />
+      return <TiktokLogo size={size} weight="fill" />
     case 'bilibili':
-      return <Television size={size} weight="duotone" />
+      return <Television size={size} weight="fill" />
     default:
       return null
   }

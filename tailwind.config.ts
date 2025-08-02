@@ -71,23 +71,26 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			// 莫奈色系
-  			monet: {
-  				'blue': '#6C9BD1',      // 莫奈蓝
-  				'blue-light': '#B8D4F0', // 浅莫奈蓝
-  				'blue-dark': '#4A73A8',  // 深莫奈蓝
-  				'green': '#8FBC8F',      // 莫奈绿
-  				'green-light': '#B8D4B8', // 浅莫奈绿
-  				'green-dark': '#6B9A6B',  // 深莫奈绿
-  				'purple': '#9370DB',     // 莫奈紫
-  				'purple-light': '#C4A8E8', // 浅莫奈紫
-  				'purple-dark': '#7051B8', // 深莫奈紫
-  				'pink': '#DDA0DD',       // 莫奈粉
-  				'pink-light': '#F0C4F0',  // 浅莫奈粉
-  				'pink-dark': '#B878B8',   // 深莫奈粉
-  				'yellow': '#F0E68C',     // 莫奈黄
-  				'yellow-light': '#F8F2B8', // 浅莫奈黄
-  				'yellow-dark': '#C8BA70'  // 深莫奈黄
+  			// 莫兰迪色系
+  			morandi: {
+  				'blue': '#A8C0D6',      // 莫兰迪蓝
+  				'blue-light': '#C4D4E4', // 浅莫兰迪蓝
+  				'blue-dark': '#8BA3C0',  // 深莫兰迪蓝
+  				'green': '#B8C5B8',      // 莫兰迪绿
+  				'green-light': '#D1DCD1', // 浅莫兰迪绿
+  				'green-dark': '#9FB09F',  // 深莫兰迪绿
+  				'purple': '#C4B5C4',     // 莫兰迪紫
+  				'purple-light': '#D8CCD8', // 浅莫兰迪紫
+  				'purple-dark': '#A89BA8', // 深莫兰迪紫
+  				'pink': '#D4B8C4',       // 莫兰迪粉
+  				'pink-light': '#E4CCD4',  // 浅莫兰迪粉
+  				'pink-dark': '#B8A0AC',   // 深莫兰迪粉
+  				'yellow': '#D4C8A8',     // 莫兰迪黄
+  				'yellow-light': '#E4D8C4', // 浅莫兰迪黄
+  				'yellow-dark': '#B8A890',  // 深莫兰迪黄
+  				'gray': '#C4C4C4',       // 莫兰迪灰
+  				'gray-light': '#D8D8D8',  // 浅莫兰迪灰
+  				'gray-dark': '#A8A8A8'   // 深莫兰迪灰
   			}
   		}
   	}

@@ -31,7 +31,7 @@ export default function AuthPage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-monet-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-2 border-morandi-blue border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <div className="text-muted-foreground">Loading...</div>
         </div>
       </div>
@@ -52,7 +52,7 @@ export default function AuthPage() {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-monet-blue to-monet-purple rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-morandi-blue rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-xl">AI</span>
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">

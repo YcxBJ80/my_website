@@ -40,7 +40,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent transition-all"
             placeholder="Enter your email"
             required
           />
@@ -54,7 +54,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent transition-all"
             placeholder="Enter your password"
             required
           />
@@ -69,7 +69,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-gradient-to-r from-monet-blue to-monet-purple text-white py-3 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-blue/20"
+          className="w-full bg-morandi-blue text-white py-3 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-morandi-blue/20"
         >
           {loading ? 'Signing In...' : 'Sign In'}
         </button>
@@ -78,7 +78,7 @@ export function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
       <div className="mt-6 text-center">
         <button
           onClick={onSwitchToRegister}
-          className="text-monet-blue hover:text-monet-blue-dark text-sm transition-colors"
+          className="text-morandi-blue hover:text-morandi-blue-dark text-sm transition-colors"
         >
           Don&apos;t have an account? Sign up
         </button>

@@ -34,7 +34,7 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
         <div className="flex-shrink-0 w-24 text-right pr-6">
           <time
           dateTime={blog.date}
-            className="text-sm font-medium text-monet-blue bg-monet-blue/10 px-3 py-1 rounded-full"
+            className="text-sm font-medium text-morandi-blue bg-morandi-blue/10 px-3 py-1 rounded-full"
           >
             {formatDate(blog.date).split(' ')[0]}
           </time>
@@ -42,16 +42,16 @@ function BlogCard({ blog }: { blog: BlogWithStats }) {
 
         {/* Connector line */}
         <div className="flex-shrink-0 relative">
-          <div className="w-4 h-4 bg-monet-blue rounded-full border-4 border-background"></div>
+          <div className="w-4 h-4 bg-morandi-blue rounded-full border-4 border-background"></div>
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-0.5 h-20 bg-border group-last:hidden"></div>
         </div>
 
         {/* Blog card */}
         <div className="flex-1 ml-6">
-          <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-monet-blue/30">
+          <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-morandi-blue/10 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-morandi-blue/30">
             <div className="flex justify-between items-start mb-3">
               <div className="flex-1">
-                <h3 className="text-xl font-semibold text-card-foreground mb-2 group-hover:text-monet-blue transition-colors line-clamp-2">
+                <h3 className="text-xl font-semibold text-card-foreground mb-2 group-hover:text-morandi-blue transition-colors line-clamp-2">
                   {blog.title}
                 </h3>
                 <div className="flex items-center space-x-3 text-sm text-muted-foreground">
@@ -244,14 +244,14 @@ export default function BlogsIndex() {
           <div className="flex items-center space-x-3">
             <div className="text-sm text-muted-foreground bg-card px-3 py-2 rounded-lg border border-border">
               <span className="font-medium text-foreground">{blogs.length}</span> articles
-              {isLoading && <span className="text-monet-blue ml-1">refreshing...</span>}
+              {isLoading && <span className="text-morandi-blue ml-1">refreshing...</span>}
             </div>
             
             {/* Refresh button */}
             <button
               onClick={loadBlogs}
               disabled={isLoading}
-              className="flex items-center space-x-2 px-4 py-3 bg-monet-blue text-white rounded-xl hover:bg-monet-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center space-x-2 px-4 py-3 bg-morandi-blue text-white rounded-xl hover:bg-morandi-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Refresh blog list"
             >
               <svg 
@@ -327,7 +327,7 @@ export default function BlogsIndex() {
               <p className="text-muted-foreground mb-6">Try adjusting your search terms</p>
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+                className="text-morandi-blue hover:text-morandi-blue-dark transition-colors font-medium"
               >
                 Clear search
               </button>
@@ -345,7 +345,7 @@ export default function BlogsIndex() {
               <p className="text-muted-foreground mb-6">Be the first to publish a tech article!</p>
               <Link
                 href="/blogs/create"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+                className="inline-flex items-center px-6 py-3 bg-morandi-blue text-white rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 shadow-lg hover:shadow-morandi-blue/20"
               >
                 Publish Article
               </Link>

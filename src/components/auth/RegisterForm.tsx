@@ -65,7 +65,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-green focus:border-transparent transition-all"
             placeholder="Enter your username"
             required
           />
@@ -79,7 +79,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-green focus:border-transparent transition-all"
             placeholder="Enter your email"
             required
           />
@@ -93,7 +93,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-green focus:border-transparent transition-all"
             placeholder="Enter password (at least 6 characters)"
             required
             minLength={6}
@@ -108,7 +108,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
             type="password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-green focus:border-transparent transition-all"
+            className="w-full px-4 py-3 bg-background border border-border rounded-xl text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-green focus:border-transparent transition-all"
             placeholder="Confirm your password"
             required
           />
@@ -123,7 +123,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-gradient-to-r from-monet-green to-monet-blue text-white py-3 rounded-xl font-medium hover:from-monet-green-dark hover:to-monet-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-green/20"
+          className="w-full bg-morandi-green text-white py-3 rounded-xl font-medium hover:bg-morandi-green-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-morandi-green/20"
         >
           {loading ? 'Creating Account...' : 'Sign Up'}
         </button>
@@ -132,7 +132,7 @@ export function RegisterForm({ onSuccess, onSwitchToLogin }: RegisterFormProps) 
       <div className="mt-6 text-center">
         <button
           onClick={onSwitchToLogin}
-          className="text-monet-blue hover:text-monet-blue-dark text-sm transition-colors"
+          className="text-morandi-blue hover:text-morandi-blue-dark text-sm transition-colors"
         >
           Already have an account? Sign in
         </button>

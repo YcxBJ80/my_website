@@ -75,7 +75,7 @@ export function UserProfile() {
     return (
       <div className="bg-card border border-border rounded-2xl shadow-lg p-6 max-w-lg w-full">
         <div className="flex items-center justify-center space-x-2">
-          <div className="w-6 h-6 border-2 border-monet-blue border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-6 h-6 border-2 border-morandi-blue border-t-transparent rounded-full animate-spin"></div>
           <span className="text-muted-foreground">Loading...</span>
         </div>
       </div>
@@ -89,7 +89,7 @@ export function UserProfile() {
   return (
     <div className="bg-card border border-border rounded-2xl shadow-lg p-6 max-w-lg w-full">
       <h2 className="text-xl font-bold text-card-foreground mb-6 flex items-center">
-        <div className="w-8 h-8 bg-gradient-to-br from-monet-blue to-monet-purple rounded-full flex items-center justify-center mr-3">
+        <div className="w-8 h-8 bg-morandi-blue rounded-full flex items-center justify-center mr-3">
           <span className="text-white font-bold text-sm">
             {(userData?.username || user.email)?.charAt(0).toUpperCase()}
           </span>
@@ -133,8 +133,8 @@ export function UserProfile() {
           <div className="text-card-foreground font-medium">
             <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
               userData?.role === 'admin' 
-                ? 'bg-monet-purple/10 text-monet-purple' 
-                : 'bg-monet-blue/10 text-monet-blue'
+                ? 'bg-morandi-purple/10 text-morandi-purple' 
+                : 'bg-morandi-blue/10 text-morandi-blue'
             }`}>
               {userData?.role === 'admin' ? 'Admin' : 'User'}
             </span>
@@ -151,7 +151,7 @@ export function UserProfile() {
 
       <button
         onClick={handleLogout}
-        className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white py-3 rounded-xl font-medium hover:from-red-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-red-500/20"
+        className="w-full bg-morandi-gray text-white py-3 rounded-xl font-medium hover:bg-morandi-gray-dark transition-all duration-300 shadow-lg hover:shadow-morandi-gray/20"
       >
         Sign Out
       </button>

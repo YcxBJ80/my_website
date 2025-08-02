@@ -145,7 +145,7 @@ const MarkdownComponents = {
   a: ({ href, children, ...props }: any) => (
     <a 
       href={href}
-      className="text-monet-blue hover:text-monet-blue-dark underline underline-offset-2 transition-colors"
+      className="text-morandi-blue hover:text-morandi-blue-dark underline underline-offset-2 transition-colors"
       target={href?.startsWith('http') ? '_blank' : undefined}
       rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
       {...props}
@@ -173,7 +173,7 @@ const MarkdownComponents = {
 
   // 引用组件
   blockquote: ({ children, ...props }: any) => (
-    <blockquote className="border-l-4 border-monet-blue pl-4 py-2 my-4 bg-card/50 rounded-r-lg" {...props}>
+    <blockquote className="border-l-4 border-morandi-blue pl-4 py-2 my-4 bg-card/50 rounded-r-lg" {...props}>
       <div className="text-muted-foreground italic">
         {children}
       </div>
@@ -240,7 +240,7 @@ const MarkdownComponents = {
       </div>
     ) : (
       <code 
-        className="px-1.5 py-0.5 bg-card border border-border rounded text-sm font-mono text-monet-blue" 
+                  className="px-1.5 py-0.5 bg-card border border-border rounded text-sm font-mono text-morandi-blue" 
         {...props}
       >
         {children}

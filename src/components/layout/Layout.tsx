@@ -11,7 +11,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex justify-between items-center h-16">
             {/* Logo and Title */}
             <Link href="/" className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-monet-blue to-monet-purple rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-morandi-blue rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">AI</span>
               </div>
               <span className="text-white font-semibold text-lg">AI Community</span>
@@ -19,16 +19,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
             
             {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/blogs" className="text-gray-300 hover:text-monet-blue transition-colors">
+              <Link href="/blogs" className="text-gray-300 hover:text-morandi-blue transition-colors">
                 Blog
               </Link>
-              <Link href="/blogs/create" className="text-gray-300 hover:text-monet-green transition-colors">
+              <Link href="/blogs/create" className="text-gray-300 hover:text-morandi-green transition-colors">
                 Publish
               </Link>
-              <Link href="/projects" className="text-gray-300 hover:text-monet-green transition-colors">
+              <Link href="/projects" className="text-gray-300 hover:text-morandi-green transition-colors">
                 Projects
               </Link>
-              <Link href="/about" className="text-gray-300 hover:text-monet-purple transition-colors">
+              <Link href="/about" className="text-gray-300 hover:text-morandi-purple transition-colors">
                 About
               </Link>
               <AuthButton />

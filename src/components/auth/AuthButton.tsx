@@ -54,7 +54,7 @@ export function AuthButton() {
     return (
       <Link
         href="/auth"
-        className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 py-2 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+        className="bg-morandi-blue text-white px-6 py-2 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 shadow-lg hover:shadow-morandi-blue/20"
       >
         Sign In / Sign Up
       </Link>
@@ -68,7 +68,7 @@ export function AuthButton() {
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="bg-gradient-to-r from-monet-green to-monet-blue text-white px-6 py-2 rounded-xl font-medium hover:from-monet-green-dark hover:to-monet-blue-dark transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-monet-green/20"
+        className="bg-morandi-green text-white px-6 py-2 rounded-xl font-medium hover:bg-morandi-green-dark transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-morandi-green/20"
       >
         {/* User Avatar */}
         <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
@@ -87,7 +87,7 @@ export function AuthButton() {
           {/* User Info */}
           <div className="px-4 py-3 border-b border-border/50">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-monet-green to-monet-blue rounded-full flex items-center justify-center">
+              <div className="w-10 h-10 bg-morandi-green rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">
                   {displayName?.charAt(0).toUpperCase()}
                 </span>
@@ -95,7 +95,7 @@ export function AuthButton() {
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-card-foreground truncate" title={displayName}>{displayName}</div>
                 <div className="text-xs text-muted-foreground truncate" title={user.email}>{user.email}</div>
-                <div className="text-xs text-monet-blue capitalize">{userRole}</div>
+                <div className="text-xs text-morandi-blue capitalize">{userRole}</div>
               </div>
             </div>
           </div>

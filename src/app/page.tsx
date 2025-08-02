@@ -88,7 +88,7 @@ export default function HomePage() {
       ),
       title: 'Tech Blog',
       description: 'Share AI learning insights, project experiences and cutting-edge tech news',
-      color: 'from-monet-blue to-monet-purple'
+      color: 'bg-morandi-blue'
     },
     {
       icon: (
@@ -98,7 +98,7 @@ export default function HomePage() {
       ),
       title: 'Community',
       description: 'Connect with fellow students to discuss AI topics and share resources',
-      color: 'from-monet-green to-monet-blue'
+      color: 'bg-morandi-green'
     },
     {
       icon: (
@@ -108,7 +108,7 @@ export default function HomePage() {
       ),
       title: 'Projects',
       description: 'Participate in AI project development and enhance practical skills',
-      color: 'from-monet-purple to-monet-pink'
+      color: 'bg-morandi-purple'
     },
     {
       icon: (
@@ -118,7 +118,7 @@ export default function HomePage() {
       ),
       title: 'Innovation',
       description: 'Stay ahead with the latest AI trends and technological developments',
-      color: 'from-monet-yellow to-monet-green'
+      color: 'bg-morandi-yellow'
     }
   ];
 
@@ -135,12 +135,12 @@ export default function HomePage() {
             hoverFillColor='rgba(70, 229, 105, 0.76)'
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
+        <div className="absolute inset-0 bg-morandi-blue/5"></div>
         
         <Container className="relative z-10 flex-1 flex flex-col">
           {/* Top Badge */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium">
+            <div className="inline-flex items-center px-4 py-2 bg-morandi-blue/20 text-morandi-blue rounded-full text-sm font-medium">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
@@ -156,8 +156,8 @@ export default function HomePage() {
                   text="Welcome to AI Community"
                   speed={120}
                   delay={500}
-                  className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent"
-                  cursorClassName="text-monet-blue"
+                  className="bg-morandi-blue bg-clip-text text-transparent"
+                  cursorClassName="text-morandi-blue"
                   onComplete={() => setShowSecondaryText(true)}
                 />
               </h1>
@@ -179,14 +179,14 @@ export default function HomePage() {
                 {user ? (
                   <Link
                     href="/blogs"
-                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
+                    className="bg-morandi-blue text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 shadow-lg hover:shadow-morandi-blue/20 text-base md:text-lg text-center"
                   >
                     Browse Blogs
                   </Link>
                 ) : (
                   <Link
                     href="/auth"
-                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
+                    className="bg-morandi-blue text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 shadow-lg hover:shadow-morandi-blue/20 text-base md:text-lg text-center"
                   >
                     Join Now
                   </Link>
@@ -221,7 +221,7 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <ScrollReveal key={index} delay={index * 100}>
                 <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 h-full flex flex-col">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
                     {feature.icon}
                   </div>
                   <h3 className="text-xl font-semibold text-card-foreground mb-2">
@@ -252,7 +252,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/blogs"
-                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+                className="mt-6 md:mt-0 inline-flex items-center text-morandi-blue hover:text-morandi-blue-dark transition-colors font-medium"
               >
                 View All
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,7 +279,7 @@ export default function HomePage() {
                 <ScrollReveal key={blog.slug} delay={index * 100}>
                   <Link
                     href={`/blogs/${blog.slug}`}
-                    className="block bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col"
+                    className="block bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-morandi-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-morandi-blue/30 h-full flex flex-col"
                   >
                     {/* Date and Author */}
                     <div className="flex items-center text-sm text-muted-foreground mb-4">
@@ -297,7 +297,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Title */}
-                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors line-clamp-2 leading-tight flex-1">
+                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-morandi-blue transition-colors line-clamp-2 leading-tight flex-1">
                       {blog.title}
                     </h3>
 
@@ -312,7 +312,7 @@ export default function HomePage() {
                         {blog.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-1 text-xs bg-monet-blue/10 text-monet-blue rounded-full border border-monet-blue/20"
+                            className="px-2 py-1 text-xs bg-morandi-blue/10 text-morandi-blue rounded-full border border-morandi-blue/20"
                           >
                             {tag}
                           </span>
@@ -341,7 +341,7 @@ export default function HomePage() {
                 {user && (
                   <Link
                     href="/blogs/create"
-                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-monet-blue to-monet-purple text-white rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20"
+                    className="inline-flex items-center px-6 py-3 bg-morandi-blue text-white rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 shadow-lg hover:shadow-morandi-blue/20"
                   >
                     Publish Article
                   </Link>
@@ -367,7 +367,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/projects"
-                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+                className="mt-6 md:mt-0 inline-flex items-center text-morandi-blue hover:text-morandi-blue-dark transition-colors font-medium"
               >
                 View All
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -392,8 +392,8 @@ export default function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
               {recentProjects.map((project, index) => (
                 <ScrollReveal key={project.id} delay={index * 100}>
-                  <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-monet-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-monet-blue/30 h-full flex flex-col">
-                    <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-monet-blue transition-colors flex-1">
+                                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg hover:shadow-morandi-blue/10 transition-all duration-300 group hover:-translate-y-1 hover:border-morandi-blue/30 h-full flex flex-col">
+                <h3 className="text-xl font-semibold text-card-foreground mb-3 group-hover:text-morandi-blue transition-colors flex-1">
                       {project.title}
                     </h3>
                     <p className="text-muted-foreground mb-4 line-clamp-3 flex-1">
@@ -404,7 +404,7 @@ export default function HomePage() {
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-1 text-xs bg-monet-blue/10 text-monet-blue rounded-md border border-monet-blue/20"
+                            className="px-2 py-1 text-xs bg-morandi-blue/10 text-morandi-blue rounded-md border border-morandi-blue/20"
                           >
                             {tag}
                           </span>

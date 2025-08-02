@@ -102,7 +102,7 @@ const MarkdownComponents = {
   a: ({ href, children, ...props }: any) => (
     <a 
       href={href}
-      className="text-monet-blue hover:text-monet-blue-dark underline underline-offset-2 transition-colors"
+      className="text-morandi-blue hover:text-morandi-blue-dark underline underline-offset-2 transition-colors"
       target={href?.startsWith('http') ? '_blank' : undefined}
       rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
       {...props}
@@ -130,7 +130,7 @@ const MarkdownComponents = {
 
   // 引用组件
   blockquote: ({ children, ...props }: any) => (
-    <blockquote className="border-l-4 border-monet-blue pl-3 py-2 my-3 bg-card/50 rounded-r-lg" {...props}>
+    <blockquote className="border-l-4 border-morandi-blue pl-3 py-2 my-3 bg-card/50 rounded-r-lg" {...props}>
       <div className="text-muted-foreground italic">
         {children}
       </div>
@@ -197,7 +197,7 @@ const MarkdownComponents = {
       </div>
     ) : (
       <code 
-        className="px-1.5 py-0.5 bg-card border border-border rounded text-xs font-mono text-monet-blue" 
+        className="px-1.5 py-0.5 bg-card border border-border rounded text-xs font-mono text-morandi-blue" 
         {...props}
       >
         {children}
@@ -548,7 +548,7 @@ export default function CreateBlogPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Please log in first</h1>
-          <a href="/auth" className="text-monet-blue hover:underline">Go to login</a>
+          <a href="/auth" className="text-morandi-blue hover:underline">Go to login</a>
         </div>
       </div>
     );
@@ -579,7 +579,7 @@ export default function CreateBlogPage() {
                     type="file"
                     accept=".md,.markdown"
                     onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                    className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-monet-blue file:text-white hover:file:bg-monet-blue-dark"
+                    className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-morandi-blue file:text-white hover:file:bg-morandi-blue-dark"
                   />
                 </div>
 
@@ -593,7 +593,7 @@ export default function CreateBlogPage() {
                     accept="image/*"
                     multiple
                     onChange={(e) => e.target.files && handleMultipleImageUpload(e.target.files)}
-                    className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-monet-green file:text-white hover:file:bg-monet-green-dark"
+                    className="w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-morandi-green file:text-white hover:file:bg-morandi-green-dark"
                   />
                 </div>
 
@@ -616,7 +616,7 @@ export default function CreateBlogPage() {
                             <button
                               type="button"
                               onClick={() => insertImageAtCursor(image.url, image.name)}
-                              className="px-2 py-1 text-xs bg-monet-blue text-white rounded hover:bg-monet-blue-dark transition-colors"
+                              className="px-2 py-1 text-xs bg-morandi-blue text-white rounded hover:bg-morandi-blue-dark transition-colors"
                               title="Smart Insert Image"
                             >
                               Insert
@@ -675,7 +675,7 @@ export default function CreateBlogPage() {
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="Enter blog title..."
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
                   />
                 </div>
 
@@ -687,7 +687,7 @@ export default function CreateBlogPage() {
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Brief description of blog content..."
                     rows={3}
-                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent resize-none"
+                    className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent resize-none"
                   />
                 </div>
 
@@ -701,7 +701,7 @@ export default function CreateBlogPage() {
                       {formData.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-flex items-center px-2 py-1 bg-monet-blue/20 text-monet-blue text-xs rounded-md"
+                          className="inline-flex items-center px-2 py-1 bg-morandi-blue/20 text-morandi-blue text-xs rounded-md"
                         >
                           {tag}
                           <button
@@ -710,7 +710,7 @@ export default function CreateBlogPage() {
                               ...prev,
                               tags: prev.tags?.filter(t => t !== tag) || []
                             }))}
-                            className="ml-1 text-monet-blue hover:text-monet-blue-dark"
+                            className="ml-1 text-morandi-blue hover:text-morandi-blue-dark"
                           >
                             ×
                           </button>
@@ -757,7 +757,7 @@ This is a paragraph.
 
 Content below the image."
                   rows={20}
-                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent resize-none font-mono text-sm"
+                  className="w-full px-3 py-2 bg-background border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent resize-none font-mono text-sm"
                 />
               </div>
 
@@ -765,7 +765,7 @@ Content below the image."
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-monet-blue to-monet-purple text-white py-3 px-6 rounded-lg font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-morandi-blue text-white py-3 px-6 rounded-lg font-medium hover:bg-morandi-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Publishing...' : 'Publish Blog'}
               </button>

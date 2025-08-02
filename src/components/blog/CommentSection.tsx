@@ -70,7 +70,7 @@ function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemPr
       {/* 评论头部 */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-monet-green to-monet-blue rounded-full flex items-center justify-center">
+                          <div className="w-10 h-10 bg-morandi-green rounded-full flex items-center justify-center">
             <span className="text-white font-medium text-sm">
               {comment.username.charAt(0).toUpperCase()}
             </span>
@@ -109,7 +109,7 @@ function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemPr
           {user && (
             <button 
               onClick={() => setShowReplyForm(!showReplyForm)}
-              className="flex items-center space-x-2 text-muted-foreground hover:text-monet-blue transition-colors"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-morandi-blue transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
@@ -122,7 +122,7 @@ function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemPr
           {comment.replies && comment.replies.length > 0 && (
             <button
               onClick={() => setShowReplies(!showReplies)}
-              className="flex items-center space-x-2 text-muted-foreground hover:text-monet-blue transition-colors"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-morandi-blue transition-colors"
             >
               <svg 
                 className={`w-4 h-4 transition-transform ${showReplies ? 'rotate-180' : ''}`}
@@ -147,7 +147,7 @@ function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemPr
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
             placeholder={`回复 @${comment.username}...`}
-            className="w-full p-3 bg-background border border-border rounded-lg text-card-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+            className="w-full p-3 bg-background border border-border rounded-lg text-card-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
             rows={3}
             disabled={isSubmitting}
           />
@@ -162,7 +162,7 @@ function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemPr
             <button
               type="submit"
               disabled={isSubmitting || !replyContent.trim()}
-              className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-4 py-2 rounded-lg font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-morandi-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-morandi-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? '回复中...' : '回复'}
             </button>
@@ -172,12 +172,12 @@ function CommentItem({ comment, blogId, onReply, onDelete, user }: CommentItemPr
 
       {/* 回复列表 */}
       {showReplies && comment.replies && comment.replies.length > 0 && (
-        <div className="mt-4 pl-6 border-l-2 border-monet-blue/20 space-y-4">
+        <div className="mt-4 pl-6 border-l-2 border-morandi-blue/20 space-y-4">
           {comment.replies.map((reply) => (
             <div key={reply.id} className="bg-background/50 border border-border/50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-gradient-to-br from-monet-purple to-monet-pink rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-morandi-purple rounded-full flex items-center justify-center">
                     <span className="text-white font-medium text-xs">
                       {reply.username.charAt(0).toUpperCase()}
                     </span>
@@ -398,7 +398,7 @@ export function CommentSection({ blogId }: CommentSectionProps) {
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Share your thoughts..."
-              className="w-full p-4 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-monet-blue focus:border-transparent"
+              className="w-full p-4 bg-card border border-border rounded-xl text-card-foreground placeholder-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
               rows={4}
               disabled={isSubmitting}
             />
@@ -407,7 +407,7 @@ export function CommentSection({ blogId }: CommentSectionProps) {
             <button
               type="submit"
               disabled={isSubmitting || !newComment.trim()}
-              className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 py-2 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-monet-blue/20"
+              className="bg-morandi-blue text-white px-6 py-2 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-morandi-blue/20"
             >
               {isSubmitting ? 'Publishing...' : 'Post Comment'}
             </button>
@@ -418,7 +418,7 @@ export function CommentSection({ blogId }: CommentSectionProps) {
           <p className="text-muted-foreground mb-4">Please login to participate in comments</p>
           <a
             href="/auth"
-            className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 py-2 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 inline-block shadow-lg hover:shadow-monet-blue/20"
+            className="bg-morandi-blue text-white px-6 py-2 rounded-xl font-medium hover:bg-morandi-blue-dark transition-all duration-300 inline-block shadow-lg hover:shadow-morandi-blue/20"
           >
             Login Now
           </a>

@@ -59,7 +59,7 @@ export function BlogLayout({
                 aria-label="返回博客列表"
                 className="group mb-8 flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-lg border border-border transition-all duration-300 lg:absolute lg:-left-5 lg:-mt-2 lg:mb-0 xl:-top-1.5 xl:left-0 xl:mt-0 hover:bg-accent"
               >
-                <ArrowLeftIcon className="h-4 w-4 stroke-muted-foreground transition group-hover:stroke-monet-blue" />
+                <ArrowLeftIcon className="h-4 w-4 stroke-muted-foreground transition group-hover:stroke-morandi-blue" />
               </button>
             )}
             
@@ -94,7 +94,7 @@ export function BlogLayout({
                       {blog.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-1 text-xs rounded-md bg-monet-blue/10 text-monet-blue border border-monet-blue/20"
+                          className="px-2 py-1 text-xs rounded-md bg-morandi-blue/10 text-morandi-blue border border-morandi-blue/20"
                         >
                           {tag}
                         </span>
