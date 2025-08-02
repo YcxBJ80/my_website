@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { AuthButton } from '@/components/auth/AuthButton'
+import { RotatingText } from '@/components/ui/rotating-text'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -49,9 +50,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {/* Footer */}
       <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center text-gray-400">
-            <p>&copy; 2024 AI Community. Exploring the infinite possibilities of AI</p>
-          </div>
+                      <div className="text-center text-gray-400">
+              <RotatingText 
+                staticText="try"
+                rotatingWords={['vibe coding', 'image generation', 'LLMs', 'prompt engineering']}
+                speed={2000}
+              />
+            </div>
         </div>
       </footer>
     </div>
