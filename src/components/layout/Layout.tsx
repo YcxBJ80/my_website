@@ -46,22 +46,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <main className="pt-16 min-h-screen">
         {children}
       </main>
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              try{' '}
-              <span className="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30">
-                vibe coding
-              </span>
-            </h2>
-            <p className="text-muted-foreground">
-              Explore the latest in AI technology and development
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

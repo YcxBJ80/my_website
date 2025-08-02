@@ -88,7 +88,7 @@ export default function HomePage() {
       ),
       title: 'Tech Blog',
       description: 'Share AI learning insights, project experiences and cutting-edge tech news',
-      color: 'from-monet-blue to-monet-purple'
+      color: 'from-morandi-rose to-morandi-lavender'
     },
     {
       icon: (
@@ -98,7 +98,7 @@ export default function HomePage() {
       ),
       title: 'Community',
       description: 'Connect with fellow students to discuss AI topics and share resources',
-      color: 'from-monet-green to-monet-blue'
+      color: 'from-morandi-sage to-morandi-blue'
     },
     {
       icon: (
@@ -108,7 +108,7 @@ export default function HomePage() {
       ),
       title: 'Projects',
       description: 'Participate in AI project development and enhance practical skills',
-      color: 'from-monet-purple to-monet-pink'
+      color: 'from-morandi-lavender to-morandi-peach'
     },
     {
       icon: (
@@ -118,7 +118,7 @@ export default function HomePage() {
       ),
       title: 'Innovation',
       description: 'Stay ahead with the latest AI trends and technological developments',
-      color: 'from-monet-yellow to-monet-green'
+      color: 'from-morandi-yellow to-morandi-sage'
     }
   ];
 
@@ -135,12 +135,12 @@ export default function HomePage() {
             hoverFillColor='rgba(70, 229, 105, 0.76)'
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-morandi-rose/10 via-transparent to-morandi-lavender/10"></div>
         
         <Container className="relative z-10 flex-1 flex flex-col">
           {/* Top Badge */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium">
+            <div className="inline-flex items-center px-4 py-2 bg-morandi-rose/30 text-morandi-rose-dark rounded-full text-sm font-medium">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
@@ -156,8 +156,8 @@ export default function HomePage() {
                   text="Welcome to AI Community"
                   speed={120}
                   delay={500}
-                  className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent"
-                  cursorClassName="text-monet-blue"
+                            className="bg-gradient-to-r from-morandi-rose to-morandi-lavender bg-clip-text text-transparent"
+          cursorClassName="text-morandi-rose-dark"
                   onComplete={() => setShowSecondaryText(true)}
                 />
               </h1>
@@ -179,14 +179,14 @@ export default function HomePage() {
                 {user ? (
                   <Link
                     href="/blogs"
-                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
+                    className="bg-gradient-to-r from-morandi-rose to-morandi-lavender text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-morandi-rose-dark hover:to-morandi-lavender-dark transition-all duration-300 shadow-lg hover:shadow-morandi-rose/20 text-base md:text-lg text-center"
                   >
                     Browse Blogs
                   </Link>
                 ) : (
                   <Link
                     href="/auth"
-                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
+                    className="bg-gradient-to-r from-morandi-rose to-morandi-lavender text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-morandi-rose-dark hover:to-morandi-lavender-dark transition-all duration-300 shadow-lg hover:shadow-morandi-rose/20 text-base md:text-lg text-center"
                   >
                     Join Now
                   </Link>
@@ -252,7 +252,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/blogs"
-                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+                className="mt-6 md:mt-0 inline-flex items-center text-morandi-rose-dark hover:text-morandi-rose transition-colors font-medium"
               >
                 View All
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -367,7 +367,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/projects"
-                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
+                className="mt-6 md:mt-0 inline-flex items-center text-morandi-rose-dark hover:text-morandi-rose transition-colors font-medium"
               >
                 View All
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -428,23 +428,6 @@ export default function HomePage() {
               </div>
             </ScrollReveal>
           )}
-        </Container>
-      </section>
-
-      {/* Bottom Section with Rotating Text */}
-      <section className="py-16 bg-gradient-to-r from-monet-blue/10 to-monet-purple/10">
-        <Container>
-          <div className="text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-              Building the future of{' '}
-              <span className="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30">
-                AI Development
-              </span>
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Join our community of passionate students exploring the endless possibilities of artificial intelligence
-            </p>
-          </div>
         </Container>
       </section>
     </div>
