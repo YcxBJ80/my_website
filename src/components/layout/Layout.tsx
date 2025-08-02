@@ -51,10 +51,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="border-t border-white/10 bg-black/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-8">
                       <div className="text-center text-gray-400 flex items-center justify-center">
-              <span className="mr-2">try</span>
+              <span className="mr-3 text-lg sm:text-xl md:text-2xl">try</span>
               <RotatingText 
                 texts={['vibe coding', 'image generation', 'LLMs', 'prompt engineering']}
-                mainClassName="px-2 sm:px-2 md:px-3 bg-monet-blue/20 text-monet-blue overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg"
                 rotationInterval={2000}
               />
             </div>

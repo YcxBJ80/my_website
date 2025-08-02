@@ -17,12 +17,12 @@ interface RotatingTextProps {
 
 export function RotatingText({
   texts,
-  mainClassName = "px-2 sm:px-2 md:px-3 bg-green-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg",
-  splitLevelClassName = "overflow-hidden pb-0.5 sm:pb-1 md:pb-1",
-  elementLevelClassName = "",
+  mainClassName = "px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30",
+  splitLevelClassName = "overflow-hidden pb-1 sm:pb-2 md:pb-3",
+  elementLevelClassName = "text-lg sm:text-xl md:text-2xl font-semibold",
   rotationInterval = 2000,
-  staggerDuration = 0.025,
-  staggerFrom = 'last',
+  staggerDuration = 0.05,
+  staggerFrom = 'first',
   splitBy = 'characters',
   onNext
 }: RotatingTextProps) {
@@ -58,7 +58,7 @@ export function RotatingText({
   const splitTexts = splitText(currentText);
 
   return (
-    <div className={`flex ${mainClassName}`}>
+    <div className={`flex items-center justify-center min-w-[200px] ${mainClassName}`}>
       <AnimatePresence mode="wait">
         {isVisible && (
           <motion.div
@@ -71,10 +71,10 @@ export function RotatingText({
               damping: 30,
               stiffness: 400
             }}
-            className="flex"
+            className="flex items-center justify-center"
           >
             {splitTexts.map((line, lineIndex) => (
-              <div key={lineIndex} className={`${splitLevelClassName}`}>
+              <div key={lineIndex} className={`${splitLevelClassName} flex items-center justify-center`}>
                 {line.map((char, charIndex) => (
                   <motion.span
                     key={charIndex}
