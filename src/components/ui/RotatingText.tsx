@@ -1,22 +1,7 @@
 "use client";
 
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useState,
-} from "react";
-import {
-  motion,
-  AnimatePresence,
-  Transition,
-  type VariantLabels,
-  type Target,
-  type TargetAndTransition,
-} from "framer-motion";
-
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from "react";
+import { motion, AnimatePresence, Transition, type VariantLabels, type Target, type TargetAndTransition } from "framer-motion";
 import "./RotatingText.css";
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
@@ -81,7 +66,9 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
 
     const splitIntoCharacters = (text: string): string[] => {
       if (typeof Intl !== "undefined" && Intl.Segmenter) {
-        const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+        const segmenter = new Intl.Segmenter("en", {
+          granularity: "grapheme",
+        });
         return Array.from(
           segmenter.segment(text),
           (segment) => segment.segment
@@ -111,7 +98,6 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
           needsSpace: i !== arr.length - 1,
         }));
       }
-
       return currentText.split(splitBy).map((part, i, arr) => ({
         characters: [part],
         needsSpace: i !== arr.length - 1,
@@ -269,4 +255,5 @@ const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
 );
 
 RotatingText.displayName = "RotatingText";
+
 export default RotatingText; 
