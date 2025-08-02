@@ -439,7 +439,7 @@ export default function HomePage() {
               Building the future of{' '}
               <RotatingText
                 texts={['AI Development', 'Machine Learning', 'Deep Learning', 'Computer Vision', 'Natural Language Processing']}
-                mainClassName="px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30"
+                mainClassName="inline-block px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30"
                 staggerFrom={"last"}
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
