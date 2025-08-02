@@ -13,35 +13,60 @@ interface RotatingTextProps {
   staggerFrom?: 'first' | 'last' | 'center' | 'random' | number;
   splitBy?: 'characters' | 'words' | 'lines';
   onNext?: (index: number) => void;
+  initial?: any;
+  animate?: any;
+  exit?: any;
+  transition?: any;
+  loop?: boolean;
+  auto?: boolean;
+  animatePresenceMode?: 'sync' | 'wait';
+  animatePresenceInitial?: boolean;
 }
 
 export function RotatingText({
   texts,
-  mainClassName = "px-3 sm:px-4 md:px-6 bg-gradient-to-r from-monet-blue/20 to-monet-purple/20 text-monet-blue overflow-hidden py-1 sm:py-2 md:py-3 justify-center rounded-xl border border-monet-blue/30",
-  splitLevelClassName = "overflow-hidden pb-1 sm:pb-2 md:pb-3",
-  elementLevelClassName = "text-lg sm:text-xl md:text-2xl font-semibold",
+  mainClassName = "px-2 sm:px-2 md:px-3 bg-green-300 text-black overflow-hidden py-0.5 sm:py-1 md:py-2 justify-center rounded-lg",
+  splitLevelClassName = "overflow-hidden pb-0.5 sm:pb-1 md:pb-1",
+  elementLevelClassName = "",
   rotationInterval = 2000,
-  staggerDuration = 0.05,
-  staggerFrom = 'first',
+  staggerDuration = 0.025,
+  staggerFrom = 'last',
   splitBy = 'characters',
-  onNext
+  onNext,
+  initial = { y: '100%' },
+  animate = { y: 0 },
+  exit = { y: '-120%' },
+  transition = { type: 'spring', damping: 30, stiffness: 400 },
+  loop = true,
+  auto = true,
+  animatePresenceMode = 'wait',
+  animatePresenceInitial = false
 }: RotatingTextProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    if (!auto) return;
+
     const interval = setInterval(() => {
       setIsVisible(false);
       
       setTimeout(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % texts.length);
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = (prevIndex + 1) % texts.length;
+          if (!loop && nextIndex === 0) {
+            clearInterval(interval);
+            return prevIndex;
+          }
+          return nextIndex;
+        });
         setIsVisible(true);
         onNext?.(currentIndex);
       }, 150);
     }, rotationInterval);
 
     return () => clearInterval(interval);
-  }, [texts.length, rotationInterval, currentIndex, onNext]);
+  }, [texts.length, rotationInterval, currentIndex, onNext, loop, auto]);
 
   const splitText = (text: string) => {
     switch (splitBy) {
@@ -58,33 +83,27 @@ export function RotatingText({
   const splitTexts = splitText(currentText);
 
   return (
-    <div className={`flex items-center justify-center min-w-[200px] ${mainClassName}`}>
-      <AnimatePresence mode="wait">
+    <div className={`flex ${mainClassName}`}>
+      <AnimatePresence mode={animatePresenceMode} initial={animatePresenceInitial}>
         {isVisible && (
           <motion.div
             key={currentIndex}
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '-120%' }}
-            transition={{
-              type: 'spring',
-              damping: 30,
-              stiffness: 400
-            }}
-            className="flex items-center justify-center"
+            initial={initial}
+            animate={animate}
+            exit={exit}
+            transition={transition}
+            className="flex"
           >
             {splitTexts.map((line, lineIndex) => (
-              <div key={lineIndex} className={`${splitLevelClassName} flex items-center justify-center`}>
+              <div key={lineIndex} className={`${splitLevelClassName}`}>
                 {line.map((char, charIndex) => (
                   <motion.span
                     key={charIndex}
-                    initial={{ y: '100%' }}
-                    animate={{ y: 0 }}
-                    exit={{ y: '-120%' }}
+                    initial={initial}
+                    animate={animate}
+                    exit={exit}
                     transition={{
-                      type: 'spring',
-                      damping: 30,
-                      stiffness: 400,
+                      ...transition,
                       delay: staggerFrom === 'last' 
                         ? (line.length - charIndex - 1) * staggerDuration
                         : charIndex * staggerDuration
