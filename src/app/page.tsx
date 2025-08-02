@@ -88,7 +88,7 @@ export default function HomePage() {
       ),
       title: 'Tech Blog',
       description: 'Share AI learning insights, project experiences and cutting-edge tech news',
-      color: 'from-morandi-rose to-morandi-lavender'
+      color: 'from-monet-blue to-monet-purple'
     },
     {
       icon: (
@@ -98,7 +98,7 @@ export default function HomePage() {
       ),
       title: 'Community',
       description: 'Connect with fellow students to discuss AI topics and share resources',
-      color: 'from-morandi-sage to-morandi-blue'
+      color: 'from-monet-green to-monet-blue'
     },
     {
       icon: (
@@ -108,7 +108,7 @@ export default function HomePage() {
       ),
       title: 'Projects',
       description: 'Participate in AI project development and enhance practical skills',
-      color: 'from-morandi-lavender to-morandi-peach'
+      color: 'from-monet-purple to-monet-pink'
     },
     {
       icon: (
@@ -118,7 +118,7 @@ export default function HomePage() {
       ),
       title: 'Innovation',
       description: 'Stay ahead with the latest AI trends and technological developments',
-      color: 'from-morandi-yellow to-morandi-sage'
+      color: 'from-monet-yellow to-monet-green'
     }
   ];
 
@@ -135,12 +135,12 @@ export default function HomePage() {
             hoverFillColor='rgba(70, 229, 105, 0.76)'
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-br from-morandi-rose/10 via-transparent to-morandi-lavender/10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-monet-blue/5 via-transparent to-monet-purple/5"></div>
         
         <Container className="relative z-10 flex-1 flex flex-col">
           {/* Top Badge */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center px-4 py-2 bg-morandi-rose/30 text-morandi-rose-dark rounded-full text-sm font-medium">
+            <div className="inline-flex items-center px-4 py-2 bg-monet-blue/20 text-monet-blue rounded-full text-sm font-medium">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
@@ -156,8 +156,8 @@ export default function HomePage() {
                   text="Welcome to AI Community"
                   speed={120}
                   delay={500}
-                            className="bg-gradient-to-r from-morandi-rose to-morandi-lavender bg-clip-text text-transparent"
-          cursorClassName="text-morandi-rose-dark"
+                  className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent"
+                  cursorClassName="text-monet-blue"
                   onComplete={() => setShowSecondaryText(true)}
                 />
               </h1>
@@ -179,21 +179,21 @@ export default function HomePage() {
                 {user ? (
                   <Link
                     href="/blogs"
-                    className="bg-morandi-btn-1 text-morandi-beige px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-btn-2 transition-all duration-300 shadow-lg hover:shadow-morandi-btn-1/20 text-base md:text-lg text-center"
+                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
                   >
                     Browse Blogs
                   </Link>
                 ) : (
                   <Link
                     href="/auth"
-                    className="bg-morandi-btn-2 text-morandi-beige px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-btn-3 transition-all duration-300 shadow-lg hover:shadow-morandi-btn-2/20 text-base md:text-lg text-center"
+                    className="bg-gradient-to-r from-monet-blue to-monet-purple text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:from-monet-blue-dark hover:to-monet-purple-dark transition-all duration-300 shadow-lg hover:shadow-monet-blue/20 text-base md:text-lg text-center"
                   >
                     Join Now
                   </Link>
                 )}
                 <Link
                   href="/about"
-                  className="bg-morandi-btn-3 text-morandi-beige px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-morandi-btn-1 transition-all duration-300 shadow-lg hover:shadow-morandi-btn-3/20 text-base md:text-lg text-center"
+                  className="border border-border text-foreground px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium hover:bg-accent transition-all duration-300 text-base md:text-lg text-center"
                 >
                   Learn More
                 </Link>
@@ -221,7 +221,7 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <ScrollReveal key={index} delay={index * 100}>
                 <div className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300 group hover:-translate-y-1 h-full flex flex-col">
-                  <div className={`w-16 h-16 bg-morandi-icon-${index + 1} rounded-xl flex items-center justify-center mb-4 text-morandi-beige group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-16 h-16 bg-gradient-to-r ${feature.color} rounded-xl flex items-center justify-center mb-4 text-white group-hover:scale-110 transition-transform duration-300`}>
                     {feature.icon}
                   </div>
                   <h3 className="text-xl font-semibold text-card-foreground mb-2">
@@ -252,7 +252,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/blogs"
-                className="mt-6 md:mt-0 inline-flex items-center text-morandi-rose-dark hover:text-morandi-rose transition-colors font-medium"
+                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
               >
                 View All
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -367,7 +367,7 @@ export default function HomePage() {
               </div>
               <Link
                 href="/projects"
-                className="mt-6 md:mt-0 inline-flex items-center text-morandi-rose-dark hover:text-morandi-rose transition-colors font-medium"
+                className="mt-6 md:mt-0 inline-flex items-center text-monet-blue hover:text-monet-blue-dark transition-colors font-medium"
               >
                 View All
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

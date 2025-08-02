@@ -72,22 +72,22 @@ const Squares: React.FC<SquaresProps> = ({
         }
       }
 
-      // 移除渐变背景，使用透明背景
-      // if (!hoveredSquareRef.current) {
-      //   const gradient = ctx.createRadialGradient(
-      //     canvas.width / 2,
-      //     canvas.height / 2,
-      //     0,
-      //     canvas.width / 2,
-      //     canvas.height / 2,
-      //     Math.sqrt(canvas.width ** 2 + canvas.height ** 2) / 2
-      //   );
-      //   gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
-      //   gradient.addColorStop(1, "#060010");
+      // 只在没有悬停方块时绘制渐变背景
+      if (!hoveredSquareRef.current) {
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2,
+          canvas.height / 2,
+          0,
+          canvas.width / 2,
+          canvas.height / 2,
+          Math.sqrt(canvas.width ** 2 + canvas.height ** 2) / 2
+        );
+        gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+        gradient.addColorStop(1, "#060010");
 
-      //   ctx.fillStyle = gradient;
-      //   ctx.fillRect(0, 0, canvas.width, canvas.height);
-      // }
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
     };
 
     const updateAnimation = () => {

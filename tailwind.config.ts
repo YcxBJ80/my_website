@@ -71,43 +71,23 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			// 莫兰迪色系
-  			morandi: {
-  				'beige': '#F5F1E8',      // 米白
-  				'beige-dark': '#E8E0D1',  // 深米白
-  				'cream': '#F8F6F0',       // 奶油色
-  				'cream-dark': '#EFE8D8',  // 深奶油色
-  				'rose': '#E8D5C4',        // 玫瑰灰
-  				'rose-dark': '#D4C1B0',   // 深玫瑰灰
-  				'lavender': '#D8D0E3',    // 薰衣草灰
-  				'lavender-dark': '#C4B8D1', // 深薰衣草灰
-  				'sage': '#C8D5C8',        // 鼠尾草灰
-  				'sage-dark': '#B4C4B4',   // 深鼠尾草灰
-  				'peach': '#E8C8B8',       // 桃灰
-  				'peach-dark': '#D4B4A4',  // 深桃灰
-  				'blue': '#B8C8D8',        // 蓝灰
-  				'blue-dark': '#A4B4C4',   // 深蓝灰
-  				'green': '#B8C8B8',       // 绿灰
-  				'green-dark': '#A4B4A4',  // 深绿灰
-  				'purple': '#C8B8D8',      // 紫灰
-  				'purple-dark': '#B4A4C4', // 深紫灰
-  				'yellow': '#E8D8B8',      // 黄灰
-  				'yellow-dark': '#D4C4A4', // 深黄灰
-  				'gray': '#D8D8D8',        // 浅灰
-  				'gray-dark': '#C4C4C4',   // 深灰
-  				'warm-gray': '#E0D8D0',   // 暖灰
-  				'warm-gray-dark': '#CCC4BC', // 深暖灰
-  				// 按钮颜色
-  				'btn-1': '#9E9BD2',       // 按钮颜色1
-  				'btn-2': '#C3AAE1',       // 按钮颜色2
-  				'btn-3': '#7E78A7',       // 按钮颜色3
-  				// 图标背景颜色
-  				'icon-1': '#DCCDC6',      // 图标背景1
-  				'icon-2': '#C9EEB',       // 图标背景2
-  				'icon-3': '#EBEBE4',      // 图标背景3
-  				'icon-4': '#8B7D86',      // 图标背景4
-  				// 头像背景颜色
-  				'avatar': '#F2AF9B'       // 头像背景
+  			// 莫奈色系
+  			monet: {
+  				'blue': '#6C9BD1',      // 莫奈蓝
+  				'blue-light': '#B8D4F0', // 浅莫奈蓝
+  				'blue-dark': '#4A73A8',  // 深莫奈蓝
+  				'green': '#8FBC8F',      // 莫奈绿
+  				'green-light': '#B8D4B8', // 浅莫奈绿
+  				'green-dark': '#6B9A6B',  // 深莫奈绿
+  				'purple': '#9370DB',     // 莫奈紫
+  				'purple-light': '#C4A8E8', // 浅莫奈紫
+  				'purple-dark': '#7051B8', // 深莫奈紫
+  				'pink': '#DDA0DD',       // 莫奈粉
+  				'pink-light': '#F0C4F0',  // 浅莫奈粉
+  				'pink-dark': '#B878B8',   // 深莫奈粉
+  				'yellow': '#F0E68C',     // 莫奈黄
+  				'yellow-light': '#F8F2B8', // 浅莫奈黄
+  				'yellow-dark': '#C8BA70'  // 深莫奈黄
   			}
   		}
   	}

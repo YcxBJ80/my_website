@@ -5,32 +5,32 @@
 
 @layer base {
   :root {
-    /* 莫兰迪色系主题 */
-    --background: 45 30% 96%;           /* 米白背景 */
-    --foreground: 30 20% 25%;           /* 深棕文字 */
-    --card: 45 25% 94%;                 /* 浅米白卡片背景 */
-    --card-foreground: 30 20% 25%;      /* 深棕文字 */
-    --popover: 45 25% 94%;              /* 弹窗背景 */
-    --popover-foreground: 30 20% 25%;   /* 弹窗文字 */
-    --primary: 30 25% 35%;              /* 主要颜色 - 暖棕 */
-    --primary-foreground: 45 30% 96%;   /* 主要颜色文字 */
-    --secondary: 45 20% 90%;            /* 次要颜色 */
-    --secondary-foreground: 30 20% 30%; /* 次要颜色文字 */
-    --muted: 45 15% 88%;                /* 静音背景 */
-    --muted-foreground: 30 15% 45%;     /* 静音文字 */
-    --accent: 30 20% 85%;               /* 强调色 */
-    --accent-foreground: 30 20% 25%;    /* 强调色文字 */
-    --destructive: 0 60% 70%;           /* 危险色 */
-    --destructive-foreground: 45 30% 96%; /* 危险色文字 */
-    --border: 45 20% 85%;               /* 边框颜色 */
-    --input: 45 20% 90%;                /* 输入框背景 */
-    --ring: 30 25% 35%;                 /* 焦点环 */
+    /* 黑色主题作为默认主题 */
+    --background: 240 10% 3.9%;        /* 深黑背景 */
+    --foreground: 0 0% 98%;             /* 白色文字 */
+    --card: 240 8% 8%;                  /* 深灰卡片背景 */
+    --card-foreground: 0 0% 95%;        /* 浅色文字 */
+    --popover: 240 10% 5%;              /* 弹窗背景 */
+    --popover-foreground: 0 0% 98%;     /* 弹窗文字 */
+    --primary: 240 8% 12%;              /* 主要颜色 */
+    --primary-foreground: 0 0% 98%;     /* 主要颜色文字 */
+    --secondary: 240 5% 15%;            /* 次要颜色 */
+    --secondary-foreground: 0 0% 90%;   /* 次要颜色文字 */
+    --muted: 240 5% 10%;                /* 静音背景 */
+    --muted-foreground: 240 5% 64.9%;  /* 静音文字 */
+    --accent: 240 5% 15%;               /* 强调色 */
+    --accent-foreground: 0 0% 98%;      /* 强调色文字 */
+    --destructive: 0 84.2% 60.2%;       /* 危险色 */
+    --destructive-foreground: 0 0% 98%; /* 危险色文字 */
+    --border: 240 3.7% 20%;             /* 边框颜色 */
+    --input: 240 3.7% 15.9%;            /* 输入框背景 */
+    --ring: 240 4.9% 83.9%;             /* 焦点环 */
     --radius: 0.75rem;
-    --chart-1: 30 25% 65%;              /* 莫兰迪棕 */
-    --chart-2: 45 20% 75%;              /* 莫兰迪米 */
-    --chart-3: 15 25% 70%;              /* 莫兰迪绿 */
-    --chart-4: 280 15% 75%;             /* 莫兰迪紫 */
-    --chart-5: 20 30% 70%;              /* 莫兰迪橙 */
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
   
   /* 保留浅色主题选项 */
@@ -80,8 +80,12 @@
     @apply min-h-screen w-full;
   }
   
-  /* AI社团特色背景 - 纯色莫兰迪风格 */
+  /* AI社团特色渐变背景 */
   .ai-gradient-bg {
-    background: hsl(var(--background));
+    background: linear-gradient(135deg, 
+      hsl(var(--background)) 0%,
+      hsl(240 8% 5%) 50%,
+      hsl(var(--background)) 100%
+    );
   }
 }
