@@ -8,6 +8,7 @@ import { formatDate } from '@/lib/formatDate';
 import { TextType } from '@/components/ui/text-type';
 import { SquaresBackground } from '@/components/ui/squares-background';
 import { ScrollReveal } from '@/components/ui/scroll-reveal';
+import { RotatingText } from '@/components/ui/rotating-text';
 
 interface BlogType {
   id: string;
@@ -127,11 +128,11 @@ export default function HomePage() {
       <section className="relative py-20 lg:py-32 overflow-hidden min-h-screen flex flex-col">
         <div className="absolute inset-0">
           <SquaresBackground 
-            direction="diagonal" 
-            speed={0.5} 
-            borderColor="rgba(79, 70, 229, 0.3)" 
             squareSize={60} 
-            hoverFillColor="rgba(79, 70, 229, 0.1)"
+            gap={4}
+            speed={1}
+            opacity={0.3}
+            color="rgba(79, 70, 229, 0.4)"
             className="opacity-80"
           />
         </div>
@@ -155,7 +156,9 @@ export default function HomePage() {
                 <TextType 
                   text="Welcome to AI Community"
                   speed={120}
+                  delay={500}
                   className="bg-gradient-to-r from-monet-blue to-monet-purple bg-clip-text text-transparent"
+                  cursorClassName="text-monet-blue"
                   onComplete={() => setShowSecondaryText(true)}
                 />
               </h1>
@@ -426,6 +429,25 @@ export default function HomePage() {
               </div>
             </ScrollReveal>
           )}
+        </Container>
+      </section>
+
+      {/* Bottom Section with Rotating Text */}
+      <section className="py-16 bg-gradient-to-r from-monet-blue/10 to-monet-purple/10">
+        <Container>
+          <div className="text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+              Building the future of{' '}
+              <RotatingText 
+                words={['AI Development', 'Machine Learning', 'Deep Learning', 'Computer Vision', 'Natural Language Processing']}
+                duration={3000}
+                className="text-monet-blue font-bold"
+              />
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Join our community of passionate students exploring the endless possibilities of artificial intelligence
+            </p>
+          </div>
         </Container>
       </section>
     </div>

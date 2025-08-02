@@ -1,29 +1,26 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 interface SquaresBackgroundProps {
   className?: string
-  direction?: 'diagonal' | 'up' | 'right' | 'down' | 'left'
-  speed?: number
-  borderColor?: string
   squareSize?: number
-  hoverFillColor?: string
+  gap?: number
+  speed?: number
+  opacity?: number
+  color?: string
 }
 
-export function SquaresBackground({ 
+export function SquaresBackground({
   className = '',
-  direction = 'diagonal',
-  speed = 1,
-  borderColor = '#999999',
   squareSize = 40,
-  hoverFillColor = '#222222'
+  gap = 2,
+  speed = 1,
+  opacity = 0.3,
+  color = '#6366f1'
 }: SquaresBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const animationFrameRef = useRef<number>()
-  const offsetRef = useRef({ x: 0, y: 0 })
-  const mouseRef = useRef({ x: -1, y: -1 })
-  const [hoveredSquare, setHoveredSquare] = useState<{ row: number; col: number } | null>(null)
+  const animationRef = useRef<number>()
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -33,124 +30,73 @@ export function SquaresBackground({
     if (!ctx) return
 
     const resizeCanvas = () => {
-      const rect = canvas.getBoundingClientRect()
-      canvas.width = rect.width
-      canvas.height = rect.height
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
     }
 
-    const getMovementVector = () => {
-      switch (direction) {
-        case 'up': return { x: 0, y: -speed }
-        case 'down': return { x: 0, y: speed }
-        case 'left': return { x: -speed, y: 0 }
-        case 'right': return { x: speed, y: 0 }
-        case 'diagonal': return { x: speed * 0.7, y: speed * 0.7 }
-        default: return { x: speed, y: 0 }
-      }
-    }
+    resizeCanvas()
+    window.addEventListener('resize', resizeCanvas)
 
-    const drawGrid = () => {
-      if (!ctx || !canvas) return
+    const squares: Array<{
+      x: number
+      y: number
+      size: number
+      rotation: number
+      rotationSpeed: number
+      opacity: number
+    }> = []
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      ctx.strokeStyle = borderColor
-      ctx.lineWidth = 1
+    // Initialize squares grid
+    const cols = Math.ceil(canvas.width / (squareSize + gap))
+    const rows = Math.ceil(canvas.height / (squareSize + gap))
 
-      const cols = Math.ceil(canvas.width / squareSize) + 2
-      const rows = Math.ceil(canvas.height / squareSize) + 2
-
-      const offset = offsetRef.current
-
-      // 绘制网格线
-      ctx.beginPath()
-      
-      // 垂直线
-      for (let i = 0; i < cols; i++) {
-        const x = (i * squareSize + offset.x) % (canvas.width + squareSize) - squareSize
-        ctx.moveTo(x, 0)
-        ctx.lineTo(x, canvas.height)
-      }
-      
-      // 水平线
-      for (let i = 0; i < rows; i++) {
-        const y = (i * squareSize + offset.y) % (canvas.height + squareSize) - squareSize
-        ctx.moveTo(0, y)
-        ctx.lineTo(canvas.width, y)
-      }
-      
-      ctx.stroke()
-
-      // 绘制鼠标悬停的方块填充
-      if (hoveredSquare) {
-        const { row, col } = hoveredSquare
-        const x = (col * squareSize + offset.x) % (canvas.width + squareSize) - squareSize
-        const y = (row * squareSize + offset.y) % (canvas.height + squareSize) - squareSize
-        
-        if (x >= -squareSize && x < canvas.width && y >= -squareSize && y < canvas.height) {
-          ctx.fillStyle = hoverFillColor
-          ctx.fillRect(x, y, squareSize, squareSize)
-        }
+    for (let i = 0; i < cols; i++) {
+      for (let j = 0; j < rows; j++) {
+        squares.push({
+          x: i * (squareSize + gap),
+          y: j * (squareSize + gap),
+          size: squareSize,
+          rotation: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * speed,
+          opacity: Math.random() * opacity
+        })
       }
     }
 
     const animate = () => {
-      const movement = getMovementVector()
-      offsetRef.current.x += movement.x
-      offsetRef.current.y += movement.y
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // 保持偏移在合理范围内
-      if (offsetRef.current.x > squareSize) offsetRef.current.x -= squareSize
-      if (offsetRef.current.x < -squareSize) offsetRef.current.x += squareSize
-      if (offsetRef.current.y > squareSize) offsetRef.current.y -= squareSize
-      if (offsetRef.current.y < -squareSize) offsetRef.current.y += squareSize
+      squares.forEach((square) => {
+        ctx.save()
+        ctx.translate(square.x + square.size / 2, square.y + square.size / 2)
+        ctx.rotate((square.rotation * Math.PI) / 180)
+        ctx.globalAlpha = square.opacity
+        ctx.fillStyle = color
+        ctx.fillRect(-square.size / 2, -square.size / 2, square.size, square.size)
+        ctx.restore()
 
-      drawGrid()
-      animationFrameRef.current = requestAnimationFrame(animate)
+        square.rotation += square.rotationSpeed
+        square.opacity = Math.sin(Date.now() * 0.001 + square.x * 0.01) * 0.3 + 0.2
+      })
+
+      animationRef.current = requestAnimationFrame(animate)
     }
 
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      
-      mouseRef.current = { x, y }
-      
-      // 计算鼠标悬停的方块
-      const offset = offsetRef.current
-      const col = Math.floor((x - offset.x + squareSize) / squareSize)
-      const row = Math.floor((y - offset.y + squareSize) / squareSize)
-      
-      setHoveredSquare({ row, col })
-    }
-
-    const handleMouseLeave = () => {
-      setHoveredSquare(null)
-      mouseRef.current = { x: -1, y: -1 }
-    }
-
-    // 初始化
-    resizeCanvas()
-    canvas.addEventListener('mousemove', handleMouseMove)
-    canvas.addEventListener('mouseleave', handleMouseLeave)
-    window.addEventListener('resize', resizeCanvas)
-    
-    // 开始动画
     animate()
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current)
-      }
-      canvas.removeEventListener('mousemove', handleMouseMove)
-      canvas.removeEventListener('mouseleave', handleMouseLeave)
       window.removeEventListener('resize', resizeCanvas)
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+      }
     }
-  }, [direction, speed, borderColor, squareSize, hoverFillColor])
+  }, [squareSize, gap, speed, opacity, color])
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      className={`w-full h-full border-none block pointer-events-auto ${className}`}
+    <canvas
+      ref={canvasRef}
+      className={`fixed inset-0 pointer-events-none ${className}`}
+      style={{ zIndex: -1 }}
     />
   )
-} 
+}
