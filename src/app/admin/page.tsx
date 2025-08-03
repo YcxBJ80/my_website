@@ -105,18 +105,18 @@ export default function AdminPage() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-morandi-gray-light p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center text-lg text-morandi-gray-dark">加载中...</div>
+        <div className="text-center text-lg text-muted-foreground">加载中...</div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-morandi-gray-light p-8">
+    <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div className="bg-card border border-border rounded-2xl shadow-lg p-6 mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">AI社团后台管理</h1>
           <p className="text-muted-foreground">管理博客、推荐文章和评论</p>
         </div>
@@ -133,38 +133,38 @@ export default function AdminPage() {
 
         {/* Add/Edit Form */}
         {(showAddForm || editingBlog) && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+          <div className="bg-card border border-border rounded-2xl shadow-lg p-6 mb-8">
             <h2 className="text-xl font-semibold text-foreground mb-4">
               {editingBlog ? '编辑博客' : '添加新博客'}
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-morandi-gray-dark mb-2">标题</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">标题</label>
                 <input
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  className="w-full px-4 py-2 border border-morandi-gray rounded-xl focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
+                  className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:ring-2 focus:ring-morandi-blue focus:border-transparent text-foreground"
                   placeholder="博客标题"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-morandi-gray-dark mb-2">内容</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">内容</label>
                 <textarea
                   value={formData.content}
                   onChange={(e) => setFormData({...formData, content: e.target.value})}
                   rows={4}
-                  className="w-full px-4 py-2 border border-morandi-gray rounded-xl focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
+                  className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:ring-2 focus:ring-morandi-blue focus:border-transparent text-foreground"
                   placeholder="博客内容"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-morandi-gray-dark mb-2">作者</label>
+                <label className="block text-sm font-medium text-muted-foreground mb-2">作者</label>
                 <input
                   type="text"
                   value={formData.author}
                   onChange={(e) => setFormData({...formData, author: e.target.value})}
-                  className="w-full px-4 py-2 border border-morandi-gray rounded-xl focus:ring-2 focus:ring-morandi-blue focus:border-transparent"
+                  className="w-full px-4 py-2 bg-background border border-border rounded-xl focus:ring-2 focus:ring-morandi-blue focus:border-transparent text-foreground"
                   placeholder="作者姓名"
                 />
               </div>
@@ -200,26 +200,26 @@ export default function AdminPage() {
         )}
 
         {/* Blogs Table */}
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="px-6 py-4 border-b border-morandi-gray">
+        <div className="bg-card border border-border rounded-2xl shadow-lg overflow-hidden">
+          <div className="px-6 py-4 border-b border-border">
             <h2 className="text-xl font-semibold text-foreground">博客列表</h2>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-morandi-gray-light">
+              <thead className="bg-muted">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-morandi-gray-dark uppercase tracking-wider">标题</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-morandi-gray-dark uppercase tracking-wider">作者</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-morandi-gray-dark uppercase tracking-wider">推荐</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-morandi-gray-dark uppercase tracking-wider">操作</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">标题</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">作者</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">推荐</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">操作</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-morandi-gray">
+              <tbody className="bg-card divide-y divide-border">
                 {blogs.map(blog => (
-                  <tr key={blog.id} className="hover:bg-morandi-gray-light transition-colors duration-150">
+                  <tr key={blog.id} className="hover:bg-muted transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-foreground">{blog.title}</div>
-                      <div className="text-sm text-morandi-gray-dark">{blog.content.substring(0, 50)}...</div>
+                      <div className="text-sm text-muted-foreground">{blog.content.substring(0, 50)}...</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">{blog.author}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -264,17 +264,17 @@ export default function AdminPage() {
 
         {/* Stats */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="bg-card border border-border rounded-2xl shadow-lg p-6">
             <div className="text-2xl font-bold text-morandi-blue">{blogs.length}</div>
-            <div className="text-sm text-morandi-gray-dark">总博客数</div>
+            <div className="text-sm text-muted-foreground">总博客数</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="bg-card border border-border rounded-2xl shadow-lg p-6">
             <div className="text-2xl font-bold text-morandi-green">{blogs.filter(b => b.isRecommended).length}</div>
-            <div className="text-sm text-morandi-gray-dark">推荐文章</div>
+            <div className="text-sm text-muted-foreground">推荐文章</div>
           </div>
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="bg-card border border-border rounded-2xl shadow-lg p-6">
             <div className="text-2xl font-bold text-morandi-purple">{blogs.length > 0 ? Math.round(blogs.filter(b => b.isRecommended).length / blogs.length * 100) : 0}%</div>
-            <div className="text-sm text-morandi-gray-dark">推荐比例</div>
+            <div className="text-sm text-muted-foreground">推荐比例</div>
           </div>
         </div>
       </div>
