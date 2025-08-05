@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Container } from '@/components/layout/Container'
 import { formatDate } from '@/lib/formatDate'
@@ -121,76 +121,45 @@ export default function BlogsIndex() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  const [lastRefreshTime, setLastRefreshTime] = useState<number>(0);
 
-  useEffect(() => {
-    loadBlogs();
-  }, []);
-
-  // Auto refresh when window gains focus
-  useEffect(() => {
-    const handleFocus = () => {
-      console.log('🔄 Window focused, auto refreshing blog list');
-      loadBlogs();
-    };
-
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        console.log('🔄 Page visible, auto refreshing blog list');
-        loadBlogs();
-      }
-    };
-
-    window.addEventListener('focus', handleFocus);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    // Search filter logic
-    if (searchTerm.trim() === '') {
-      setFilteredBlogs(blogs);
-    } else {
-      const filtered = blogs.filter(blog =>
-        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        blog.author.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredBlogs(filtered);
-    }
-  }, [searchTerm, blogs]);
-
-  const loadBlogs = async () => {
+  // 加载博客数据的函数
+  const loadBlogs = useCallback(async (forceRefresh = false) => {
     try {
       setIsLoading(true);
       setError('');
       
-      // Add timestamp and force cache control to ensure fresh data from server
+      // 添加强制刷新参数和时间戳
       const timestamp = Date.now();
-      const response = await fetch(`/api/blogs?t=${timestamp}`, {
+      const forceParam = forceRefresh ? '&force=1' : '';
+      const url = `/api/blogs?t=${timestamp}${forceParam}`;
+      
+      console.log(`🔄 Loading blogs from: ${url}`);
+      
+      const response = await fetch(url, {
         method: 'GET',
         cache: 'no-store',
-        next: { revalidate: 0 }, // Next.js force no cache
+        next: { revalidate: 0 },
         headers: {
-          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+          'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
           'Pragma': 'no-cache',
           'Expires': '0',
           'If-Modified-Since': '0',
           'If-None-Match': '',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-Refresh-Timestamp': timestamp.toString(),
         }
       });
       
       if (response.ok) {
         const blogsData = await response.json();
         setBlogs(blogsData);
+        setLastRefreshTime(timestamp);
         console.log('🔄 Blog data updated:', blogsData.length, 'blogs', `(timestamp: ${timestamp})`);
         
-        // Additional log: show each blog's ID and title for debugging
+        // 详细日志：显示每个博客的信息
         blogsData.forEach((blog: any, index: number) => {
-          console.log(`📄 Blog ${index + 1}: ${blog.title} (ID: ${blog.id})`);
+          console.log(`📄 Blog ${index + 1}: ${blog.title} (ID: ${blog.id}, Likes: ${blog.likes}, Views: ${blog.views})`);
         });
       } else {
         const errorData = await response.json();
@@ -203,7 +172,56 @@ export default function BlogsIndex() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // 初始加载
+  useEffect(() => {
+    loadBlogs(true); // 强制刷新初始加载
+  }, [loadBlogs]);
+
+  // 自动刷新逻辑
+  useEffect(() => {
+    const handleFocus = () => {
+      console.log('🔄 Window focused, auto refreshing blog list');
+      loadBlogs(true);
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log('🔄 Page visible, auto refreshing blog list');
+        loadBlogs(true);
+      }
+    };
+
+    // 定期刷新（每5分钟）
+    const intervalId = setInterval(() => {
+      console.log('🔄 Periodic refresh triggered');
+      loadBlogs(false); // 非强制刷新
+    }, 5 * 60 * 1000);
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(intervalId);
+    };
+  }, [loadBlogs]);
+
+  // 搜索过滤逻辑
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredBlogs(blogs);
+    } else {
+      const filtered = blogs.filter(blog =>
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        blog.author.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredBlogs(filtered);
+    }
+  }, [searchTerm, blogs]);
 
   return (
     <div className="min-h-screen bg-background py-16">
@@ -245,11 +263,16 @@ export default function BlogsIndex() {
             <div className="text-sm text-muted-foreground bg-card px-3 py-2 rounded-lg border border-border">
               <span className="font-medium text-foreground">{blogs.length}</span> articles
               {isLoading && <span className="text-morandi-blue ml-1">refreshing...</span>}
+              {lastRefreshTime > 0 && (
+                <span className="text-xs text-muted-foreground block">
+                  Last updated: {new Date(lastRefreshTime).toLocaleTimeString()}
+                </span>
+              )}
             </div>
             
             {/* Refresh button */}
             <button
-              onClick={loadBlogs}
+              onClick={() => loadBlogs(true)}
               disabled={isLoading}
               className="flex items-center space-x-2 px-4 py-3 bg-morandi-blue text-white rounded-xl hover:bg-morandi-blue-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title="Refresh blog list"
@@ -279,7 +302,7 @@ export default function BlogsIndex() {
               <span className="font-medium">Error: {error}</span>
             </div>
             <button 
-              onClick={loadBlogs}
+              onClick={() => loadBlogs(true)}
               className="mt-2 text-sm text-morandi-pink hover:underline"
             >
               Try again

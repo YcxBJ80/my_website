@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/firestore';
 import { db, isConfigValid } from '@/lib/firebase';
 
@@ -16,12 +16,19 @@ interface BlogData {
   content: string;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     // 检查Firebase配置
     if (!isConfigValid || !db) {
       return NextResponse.json({ error: 'Firebase配置无效' }, { status: 500 });
     }
+
+    // 获取查询参数
+    const { searchParams } = new URL(request.url);
+    const timestamp = searchParams.get('t');
+    const forceRefresh = searchParams.get('force') === '1';
+    
+    console.log(`🔄 API: 处理博客请求 (timestamp: ${timestamp}, force: ${forceRefresh})`);
 
     // 从Firestore获取博客列表
     const blogsQuery = query(
@@ -73,16 +80,24 @@ export async function GET() {
 
     console.log(`🔄 API: 返回 ${blogsWithStats.length} 篇博客数据 (${new Date().toISOString()})`);
 
-    // 添加强制无缓存头部，确保数据实时更新
+    // 根据是否强制刷新设置不同的缓存策略
+    const headers: Record<string, string> = {
+      'Last-Modified': new Date().toUTCString(),
+      'ETag': `"${Date.now()}"`,
+    };
+
+    if (forceRefresh) {
+      headers['Cache-Control'] = 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0';
+      headers['Pragma'] = 'no-cache';
+      headers['Expires'] = '0';
+      headers['Vary'] = '*';
+      headers['X-Force-Refresh'] = 'true';
+    } else {
+      headers['Cache-Control'] = 'public, max-age=60, s-maxage=300'; // 1分钟客户端缓存，5分钟CDN缓存
+    }
+
     return NextResponse.json(blogsWithStats, { 
-      headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-        'Last-Modified': new Date().toUTCString(),
-        'ETag': `"${Date.now()}"`, // 动态ETag确保每次都是新的
-        'Vary': '*', // 告诉代理不要缓存
-      }
+      headers
     });
   } catch (error: any) {
     console.error('获取博客失败:', error);

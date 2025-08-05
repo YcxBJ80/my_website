@@ -5,6 +5,49 @@ import { db } from '@/lib/firebase';
 // 获取网站统计信息
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const action = searchParams.get('action');
+    
+    // 处理获取用户点赞状态的请求
+    if (action === 'getUserLikeStatus') {
+      const blogId = searchParams.get('blogId');
+      const userId = searchParams.get('userId');
+      
+      if (!blogId || !userId) {
+        return NextResponse.json(
+          { error: 'Missing blogId or userId' },
+          { status: 400 }
+        );
+      }
+      
+      try {
+        // 查询用户是否已点赞该博客
+        const likesQuery = query(
+          collection(db, 'likes'),
+          where('blogId', '==', blogId),
+          where('userId', '==', userId)
+        );
+        
+        const querySnapshot = await getDocs(likesQuery);
+        const isLiked = !querySnapshot.empty;
+        
+        return NextResponse.json({ isLiked }, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          }
+        });
+      } catch (error) {
+        console.error('Failed to check user like status:', error);
+        return NextResponse.json(
+          { error: 'Failed to check like status' },
+          { status: 500 }
+        );
+      }
+    }
+    
+    // 获取网站总体统计信息
     // 获取博客总数
     const blogsSnapshot = await getDocs(collection(db, 'blogs'));
     const totalBlogs = blogsSnapshot.size;
@@ -44,7 +87,13 @@ export async function GET(request: NextRequest) {
       updatedAt: new Date().toISOString()
     };
 
-    return NextResponse.json({ stats });
+    return NextResponse.json({ stats }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    });
 
   } catch (error) {
     console.error('获取统计信息失败:', error);
